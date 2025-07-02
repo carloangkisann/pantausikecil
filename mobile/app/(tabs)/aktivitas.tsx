@@ -1,0 +1,14 @@
+import { View, Text, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function AktivitasScreen() {
+  return (
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1">
+        <View>
+            <Text>Aktivitas</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

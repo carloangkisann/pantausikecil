@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CircularProgress } from 'react-native-circular-progress';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Header from '../components/Header';
+import Header from '../../components/Header';
 
 interface KehamilanData {
   id: string;
@@ -31,8 +30,6 @@ export default function Dashboard() {
 
   const [activeKehamilan, setActiveKehamilan] = useState<KehamilanData | null>(mockActiveKehamilan);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     // Update date every minute
@@ -57,18 +54,6 @@ export default function Dashboard() {
     return match ? parseInt(match[0]) : 12;
   };
 
-  const handleDateChange = (event: any, date?: Date) => {
-    setShowDatePicker(false);
-    if (date) {
-      setSelectedDate(date);
-      setCurrentDate(date);
-    }
-  };
-
-  const openDatePicker = () => {
-    setShowDatePicker(true);
-  };
-
   if (!activeKehamilan) {
     return (
       <View className="flex-1 bg-pink-low justify-center items-center">
@@ -87,36 +72,28 @@ export default function Dashboard() {
       {/* Content */}
       <View className="flex-1 bg-pink-low rounded-t-3xl">
         <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
-        
+          
           {/* Insight Banner */}
-
-          <View className="flex-row items-center mb-4">
-            <View className="bg-pink-medium rounded-2xl px-4 py-3 flex-row items-center flex-1 mr-3">
+          <View className="bg-pink-semi-medium rounded-2xl px-4 py-3 mb-4 flex-row items-center">
+            <Image 
+              source={require('../../../assets/images/pantausikecil.png')}
+              className="w-8 h-8 mr-3"
+              resizeMode="contain"
+            />
+            <Text className="text-white font-medium flex-1">
+              Hai Bunda, ini insight tentang harimu!
+            </Text>
+            <TouchableOpacity>
               <Image 
-                source={require('../../assets/images/envelope.png')}
-                className="w-8 h-8 mr-3"
-                resizeMode="contain"
-              />
-              <Text className="text-white font-medium flex-1">
-                Hai Bunda, ini insight tentang harimu!
-              </Text>
-            </View>
-
-            <TouchableOpacity 
-              onPress={openDatePicker} 
-              className="bg-pink-medium rounded-2xl p-3 items-center justify-center"
-              style={{ width: 48, height: 48 }}
-            >
-              <Image 
-                source={require('../../assets/images/calendar-search.png')}
+                source={require('../../../assets/images/calendar-search.png')}
                 className="w-6 h-6"
                 resizeMode="contain"
               />
             </TouchableOpacity>
           </View>
 
-          {/* Konsultasi Card */}
-          <View className="bg-pink-medium rounded-t-2xl px-6 py-4 ">
+          {/* Date & Time Card */}
+          <View className="bg-pink-medium rounded-2xl px-6 py-4 mb-4">
             <View className="flex-row justify-between items-center">
               <View>
                 <Text className="text-white text-lg font-semibold">
@@ -132,15 +109,15 @@ export default function Dashboard() {
             </View>
           </View>
 
-       
-          <View className="bg-white rounded-b-2xl px-4 py-4 mb-4 shadow-sm">
+          {/* Konsultasi Card */}
+          <View className="bg-white rounded-2xl px-4 py-4 mb-4 shadow-sm">
             <View className="flex-row items-center">
               <View className="w-2 h-2 bg-pink-medium rounded-full mr-3"></View>
               <View className="flex-1">
                 <Text className="text-gray-800 font-semibold text-lg">
                   Konsultasi Trisemester Kedua
                 </Text>
-                <Text className="text-gray-600 text-sm mt-1=">
+                <Text className="text-gray-600 text-sm mt-1">
                   Senin, 23 Juni 2025
                 </Text>
                 <Text className="text-gray-600 text-sm">
@@ -151,14 +128,14 @@ export default function Dashboard() {
           </View>
 
           {/* Water & Nutrition Tracking */}
-          <View className="bg-pink-medium rounded-2xl px-6 py-4 mb-4 flex-row items-center">
-            <Text className="text-black font-semibold text-lg mb-4">
+          <View className="bg-pink-medium rounded-2xl px-6 py-4 mb-4">
+            <Text className="text-white font-semibold text-lg mb-4">
               Pemenuhan Air & Gizi
             </Text>
             
             <View className="flex-row justify-between">
               {/* Water */}
-              <View className="items-center mr-4">
+              <View className="items-center">
                 <View className="relative">
                   <CircularProgress
                     size={80}
@@ -171,7 +148,7 @@ export default function Dashboard() {
                     {() => (
                       <View className="items-center justify-center">
                         <Image 
-                          source={require('../../assets/images/water.png')}
+                          source={require('../../../assets/images/water.png')}
                           className="w-8 h-8"
                           resizeMode="contain"
                         />
@@ -196,7 +173,7 @@ export default function Dashboard() {
                     {() => (
                       <View className="items-center justify-center">
                         <Image 
-                          source={require('../../assets/images/nutrition.png')}
+                          source={require('../../../assets/images/nutrition.png')}
                           className="w-8 h-8"
                           resizeMode="contain"
                         />
@@ -210,21 +187,21 @@ export default function Dashboard() {
           </View>
 
           {/* Activities Card */}
-          <View className="bg-pink-faint rounded-2xl px-4 py-4 mb-6 shadow-sm">
-            <Text className="text-gray-800 font-semibold text-center text-lg mb-3">
+          <View className="bg-white rounded-2xl px-4 py-4 mb-6 shadow-sm">
+            <Text className="text-gray-800 font-semibold text-lg mb-3">
               Aktivitas
             </Text>
             
             <View className="flex-row">
               {/* Minutes & Activities */}
               <View className="flex-row mr-6">
-                <View className="bg-white rounded-2xl px-4 py-3 mr-4 min-w-[80px] items-center">
-                  <Text className="text-gray-800  text-2xl">30</Text>
+                <View className="bg-pink-low rounded-2xl px-4 py-3 mr-4 min-w-[80px] items-center">
+                  <Text className="text-gray-800 font-bold text-2xl">30</Text>
                   <Text className="text-gray-600 text-sm">Menit</Text>
                 </View>
                 
-                <View className="bg-white rounded-2xl px-4 py-3 min-w-[80px] items-center">
-                  <Text className="text-gray-800  text-2xl">3</Text>
+                <View className="bg-pink-low rounded-2xl px-4 py-3 min-w-[80px] items-center">
+                  <Text className="text-gray-800 font-bold text-2xl">3</Text>
                   <Text className="text-gray-600 text-sm">Aktivitas</Text>
                 </View>
               </View>
@@ -232,34 +209,45 @@ export default function Dashboard() {
               {/* Activity List */}
               <View className="flex-1">
                 <View className="flex-row items-center mb-1">
-                  <View className="w-1 h-1 bg-black rounded-full mr-2"></View>
+                  <View className="w-2 h-2 bg-pink-medium rounded-full mr-2"></View>
                   <Text className="text-gray-600 text-sm">Berenang</Text>
                 </View>
                 <View className="flex-row items-center mb-1">
-                  <View className="w-1 h-1 bg-black rounded-full mr-2"></View>
+                  <View className="w-2 h-2 bg-pink-medium rounded-full mr-2"></View>
                   <Text className="text-gray-600 text-sm">Senam hamil</Text>
                 </View>
                 <View className="flex-row items-center">
-                  <View className="w-1 h-1 bg-black rounded-full mr-2"></View>
+                  <View className="w-2 h-2 bg-pink-medium rounded-full mr-2"></View>
                   <Text className="text-gray-600 text-sm">Jalan</Text>
                 </View>
               </View>
             </View>
           </View>
 
-
+          {/* Quick Actions */}
+          <View className="flex-row justify-between mb-6">
+            <TouchableOpacity
+              onPress={() => router.push('/beranda')}
+              className="bg-pink-semi-medium rounded-2xl px-4 py-3 flex-1 mr-2"
+              activeOpacity={0.8}
+            >
+              <Text className="text-white text-center font-semibold">
+                Ganti Kehamilan
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              onPress={() => router.push('/(tabs)/chatbot')}
+              className="bg-pink-medium rounded-2xl px-4 py-3 flex-1 ml-2"
+              activeOpacity={0.8}
+            >
+              <Text className="text-white text-center font-semibold">
+                Konsultasi AI
+              </Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
-
-      {/* DateTimePicker */}
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-        />
-      )}
     </View>
   );
 }

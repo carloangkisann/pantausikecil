@@ -1,253 +1,279 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Modal, Platform,Image } from 'react-native';
 import { CircularProgress } from 'react-native-circular-progress';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import Header from '../../components/Header';
 
-interface KehamilanData {
-  id: string;
-  kehamilanKe: string;
-  usiaKehamilan: string;
-  jenisKelaminBayi: string;
-  komplikasiKehamilan: string;
-  jenisKomplikasi: string;
-  createdAt: string;
-}
 
-export default function Dashboard() {
-  const router = useRouter();
-  
-  // Mock data kehamilan aktif
-  const mockActiveKehamilan: KehamilanData = {
-    id: '1',
-    kehamilanKe: '2',
-    usiaKehamilan: '12 minggu',
-    jenisKelaminBayi: 'Perempuan',
-    komplikasiKehamilan: 'Tidak ada komplikasi',
-    jenisKomplikasi: '',
-    createdAt: '2024-06-01T00:00:00.000Z'
-  };
+const NutritionDashboard = () => {
+  const [selectedTab, setSelectedTab] = useState<'harian' | 'pilih'>('harian');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const [activeKehamilan, setActiveKehamilan] = useState<KehamilanData | null>(mockActiveKehamilan);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const nutritionData = [
+    { 
+      name: 'Asam Folat', 
+      current: 420, 
+      target: 600, 
+      unit: 'mg',
+      color: '#22C55E'
+    },
+    { 
+      name: 'Zat Besi', 
+      current: 420, 
+      target: 600, 
+      unit: 'mg',
+      color: '#A855F7' 
+    },
+    { 
+      name: 'Kalsium', 
+      current: 420, 
+      target: 600, 
+      unit: 'mg',
+      color: '#3B82F6' 
+    },
+    { 
+      name: 'Vitamin D', 
+      current: 420, 
+      target: 600, 
+      unit: 'mg',
+      color: '#F59E0B' 
+    }
+  ];
 
-  useEffect(() => {
-    // Update date every minute
-    const interval = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const mealTypes = [
+    { name: 'Sarapan', calories: 0 },
+    { name: 'Makan Siang', calories: 0 },
+    { name: 'Makan Malam', calories: 0 },
+    { name: 'Cemilan Pagi', calories: 0 },
+    { name: 'Cemilan Sore', calories: 0 }
+  ];
 
   const formatDate = (date: Date) => {
-    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-                   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    
-    return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+    return date.toLocaleDateString('id-ID', { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
+    });
   };
 
-  const getWeekOfPregnancy = (usiaKehamilan: string) => {
-    // Extract number from usia kehamilan string
-    const match = usiaKehamilan.match(/\d+/);
-    return match ? parseInt(match[0]) : 12;
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (selectedDate) {
+      setSelectedDate(selectedDate);
+      if (Platform.OS === 'ios') {
+        // iOS handling if needed
+      }
+    }
   };
 
-  if (!activeKehamilan) {
-    return (
-      <View className="flex-1 bg-pink-low justify-center items-center">
-        <Text className="text-gray-600">Memuat data kehamilan...</Text>
-      </View>
-    );
-  }
+  const getProgressPercentage = (current: number, target: number) => {
+    return Math.min((current / target) * 100, 100); // Cap at 100%
+  };
 
   return (
-    <View className="flex-1 bg-pink-low">
-      <StatusBar barStyle="light-content" backgroundColor="#F789AC" />
+    <LinearGradient
+      colors={['#FF9EBD', '#F2789F']}
+      start={{ x: 0.2, y: 0 }}
+      end={{ x: 0.8, y: 1 }}
+      style={{ flex: 1 }}
       
-      {/* Header */}
-      <Header />
-      
-      {/* Content */}
-      <View className="flex-1 bg-pink-low rounded-t-3xl">
-        <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
-          
-          {/* Insight Banner */}
-          <View className="bg-pink-semi-medium rounded-2xl px-4 py-3 mb-4 flex-row items-center">
-            <Image 
-              source={require('../../../assets/images/pantausikecil.png')}
-              className="w-8 h-8 mr-3"
-              resizeMode="contain"
-            />
-            <Text className="text-white font-medium flex-1">
-              Hai Bunda, ini insight tentang harimu!
-            </Text>
-            <TouchableOpacity>
-              <Image 
-                source={require('../../../assets/images/calendar-search.png')}
-                className="w-6 h-6"
-                resizeMode="contain"
-              />
+    >
+      <Header 
+          greeting="Selamat datang"
+          userName="Bunda Matchaciz"
+          onAvatarPress={() => console.log('Avatar pressed')}
+        />
+      <ScrollView style={{ flex: 1 }} className='bg-pink-low rounded-t-2xl'>
+  
+
+        {/* Date Tabs */}
+        <View className="px-4 py-4">
+          <View className="flex-row bg-pink-semi-low rounded-full p-1">
+            <TouchableOpacity
+              className={`flex-1 py-3 rounded-full ${
+                selectedTab === 'harian' ? 'bg-pink-medium' : 'bg-transparent'
+              }`}
+              onPress={() => setSelectedTab('harian')}
+            >
+              <Text className={`text-center font-medium ${
+                selectedTab === 'harian' ? 'text-white' : 'text-pink-600'
+              }`}>
+                Harian
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              className={`flex-1 py-3 rounded-full ${
+                selectedTab === 'pilih' ? 'bg-pink-medium' : 'bg-transparent'
+              }`}
+              onPress={() => {
+                setSelectedTab('pilih');
+                setShowDatePicker(true);
+              }}
+            >
+              <Text className={`text-center font-medium ${
+                selectedTab === 'pilih' ? 'text-white' : 'text-pink-600'
+              }`}>
+                Pilih Tanggal
+              </Text>
             </TouchableOpacity>
           </View>
 
-          {/* Date & Time Card */}
-          <View className="bg-pink-medium rounded-2xl px-6 py-4 mb-4">
-            <View className="flex-row justify-between items-center">
-              <View>
-                <Text className="text-white text-lg font-semibold">
-                  {formatDate(currentDate)}
-                </Text>
-                <Text className="text-white text-sm opacity-90">
-                  Minggu ke-{getWeekOfPregnancy(activeKehamilan.usiaKehamilan)}
-                </Text>
+          {/* Current Date */}
+          <Text className="text-center text-gray-700 text-lg font-medium mt-4">
+            {formatDate(selectedDate)}
+          </Text>
+        </View>
+
+        {/* Water Intake */}
+        <View className="mx-4 mb-6">
+          <View className="bg-pink-semi-medium rounded-2xl p-4 border-l-8 border-pink-medium">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <Image source={require('../../../assets/images/water.png')}></Image>
+                <View>
+                  <Text className="text-gray-800 text-xl font-bold">600 / 2,000 ml</Text>
+                  <Text className="text-gray-600">600ml air (3 Gelas)</Text>
+                </View>
               </View>
-              <Text className="text-white text-2xl font-bold">
-                {currentDate.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+              <TouchableOpacity className="bg-white px-4 py-2 rounded-full">
+                <Text className="text-gray-700 font-medium">Minum</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* Nutrition Info */}
+        <View className="mx-4 mb-6">
+          <View className="bg-pink-semi-medium rounded-2xl p-4">
+            <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-gray-800 text-lg font-semibold">Info Nutrisi</Text>
+              <TouchableOpacity>
+                <Text className="text-gray-600 text-2xl">›</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View className="flex-row flex-wrap justify-between">
+              {nutritionData.map((item, index) => (
+                <View key={index} className="w-[48%] items-center mb-4">
+                  <Text className="text-gray-800 font-medium mb-2">{item.name}</Text>
+                  
+                  <View className="relative items-center justify-center">
+                    <CircularProgress
+                      size={120}
+                      width={10}
+                      fill={getProgressPercentage(item.current, item.target)}
+                      tintColor={item.color}
+                      backgroundColor="#FFE3EC"
+                      rotation={0}
+                      lineCap="round"
+                    />
+                    <View className="absolute items-center">
+                      <Text className="text-gray-800 font-bold text-lg">{item.current}</Text>
+                      <Text className="text-gray-600 text-xs">dari {item.target} {item.unit}</Text>
+                      <Text className="text-gray-600 text-xs">kebutuhan</Text>
+                    </View>
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity 
+              className="bg-white rounded-full py-3 mt-4"
+              onPress={() => router.push('/nutrisi/recommendation')}
+            >
+              <Text className="text-center text-gray-700 font-medium">
+                Rekomendasi Makanan
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
+        </View>
 
-          {/* Konsultasi Card */}
-          <View className="bg-white rounded-2xl px-4 py-4 mb-4 shadow-sm">
-            <View className="flex-row items-center">
-              <View className="w-2 h-2 bg-pink-medium rounded-full mr-3"></View>
-              <View className="flex-1">
-                <Text className="text-gray-800 font-semibold text-lg">
-                  Konsultasi Trisemester Kedua
-                </Text>
-                <Text className="text-gray-600 text-sm mt-1">
-                  Senin, 23 Juni 2025
-                </Text>
-                <Text className="text-gray-600 text-sm">
-                  10.00-11.50
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Water & Nutrition Tracking */}
-          <View className="bg-pink-medium rounded-2xl px-6 py-4 mb-4">
-            <Text className="text-white font-semibold text-lg mb-4">
-              Pemenuhan Air & Gizi
+        {/* Food Log */}
+        <View className="mx-4 mb-6">
+          <View className="bg-pink-semi-medium rounded-2xl p-4">
+            <Text className="text-gray-800 text-lg font-semibold mb-4">
+              Catatan Makanan
             </Text>
-            
-            <View className="flex-row justify-between">
-              {/* Water */}
-              <View className="items-center">
-                <View className="relative">
-                  <CircularProgress
-                    size={80}
-                    width={8}
-                    fill={75}
-                    tintColor="#3B82F6"
-                    backgroundColor="#FBB1C6"
-                    rotation={0}
-                  >
-                    {() => (
-                      <View className="items-center justify-center">
-                        <Image 
-                          source={require('../../../assets/images/water.png')}
-                          className="w-8 h-8"
-                          resizeMode="contain"
-                        />
-                      </View>
-                    )}
-                  </CircularProgress>
-                </View>
-                <Text className="text-white font-semibold mt-2">75%</Text>
-              </View>
 
-              {/* Nutrition */}
-              <View className="items-center">
-                <View className="relative">
-                  <CircularProgress
-                    size={80}
-                    width={8}
-                    fill={50}
-                    tintColor="#EAB308"
-                    backgroundColor="#FBB1C6"
-                    rotation={0}
-                  >
-                    {() => (
-                      <View className="items-center justify-center">
-                        <Image 
-                          source={require('../../../assets/images/nutrition.png')}
-                          className="w-8 h-8"
-                          resizeMode="contain"
-                        />
-                      </View>
-                    )}
-                  </CircularProgress>
-                </View>
-                <Text className="text-white font-semibold mt-2">50%</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Activities Card */}
-          <View className="bg-white rounded-2xl px-4 py-4 mb-6 shadow-sm">
-            <Text className="text-gray-800 font-semibold text-lg mb-3">
-              Aktivitas
-            </Text>
-            
-            <View className="flex-row">
-              {/* Minutes & Activities */}
-              <View className="flex-row mr-6">
-                <View className="bg-pink-low rounded-2xl px-4 py-3 mr-4 min-w-[80px] items-center">
-                  <Text className="text-gray-800 font-bold text-2xl">30</Text>
-                  <Text className="text-gray-600 text-sm">Menit</Text>
-                </View>
-                
-                <View className="bg-pink-low rounded-2xl px-4 py-3 min-w-[80px] items-center">
-                  <Text className="text-gray-800 font-bold text-2xl">3</Text>
-                  <Text className="text-gray-600 text-sm">Aktivitas</Text>
-                </View>
-              </View>
-
-              {/* Activity List */}
-              <View className="flex-1">
-                <View className="flex-row items-center mb-1">
-                  <View className="w-2 h-2 bg-pink-medium rounded-full mr-2"></View>
-                  <Text className="text-gray-600 text-sm">Berenang</Text>
-                </View>
-                <View className="flex-row items-center mb-1">
-                  <View className="w-2 h-2 bg-pink-medium rounded-full mr-2"></View>
-                  <Text className="text-gray-600 text-sm">Senam hamil</Text>
-                </View>
+            {mealTypes.map((meal, index) => (
+              <TouchableOpacity key={index} className="flex-row items-center justify-between py-3 border-b border-pink-300/50">
                 <View className="flex-row items-center">
-                  <View className="w-2 h-2 bg-pink-medium rounded-full mr-2"></View>
-                  <Text className="text-gray-600 text-sm">Jalan</Text>
+                  <View className="w-12 h-12 bg-pink-medium rounded-full items-center justify-center mr-3">
+                    <Text className="text-white text-xs font-medium">{meal.calories}</Text>
+                    <Text className="text-white text-xs">Cal</Text>
+                  </View>
+                  <Text className="text-gray-800 font-medium">{meal.name}</Text>
                 </View>
-              </View>
-            </View>
+                <Image 
+                      source={require('../../../assets/images/plus.svg')} 
+                      style={{width: 24, height: 24}} 
+                    />
+              </TouchableOpacity>
+            ))}
           </View>
+        </View>
 
-          {/* Quick Actions */}
-          <View className="flex-row justify-between mb-6">
-            <TouchableOpacity
-              onPress={() => router.push('/beranda')}
-              className="bg-pink-semi-medium rounded-2xl px-4 py-3 flex-1 mr-2"
-              activeOpacity={0.8}
-            >
-              <Text className="text-white text-center font-semibold">
-                Ganti Kehamilan
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              onPress={() => router.push('/(tabs)/chatbot')}
-              className="bg-pink-medium rounded-2xl px-4 py-3 flex-1 ml-2"
-              activeOpacity={0.8}
-            >
-              <Text className="text-white text-center font-semibold">
-                Konsultasi AI
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </View>
-    </View>
+        {/* Bottom Navigation Spacer */}
+        <View className="h-20" />
+
+        {/* Date Picker Modal */}
+        {showDatePicker && (
+          <>
+            {Platform.OS === 'ios' ? (
+              <Modal
+                visible={showDatePicker}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setShowDatePicker(false)}
+              >
+                <View className="flex-1 justify-end bg-black/50">
+                  <View className="bg-white rounded-t-2xl p-4">
+                    <View className="flex-row justify-between items-center mb-4">
+                      <TouchableOpacity
+                        onPress={() => setShowDatePicker(false)}
+                        className="px-4 py-2"
+                      >
+                        <Text className="text-pink-500 font-medium">Batal</Text>
+                      </TouchableOpacity>
+                      <Text className="text-lg font-semibold text-gray-800">
+                        Pilih Tanggal
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => setShowDatePicker(false)}
+                        className="px-4 py-2"
+                      >
+                        <Text className="text-pink-500 font-medium">Selesai</Text>
+                      </TouchableOpacity>
+                    </View>
+                    
+                    <DateTimePicker
+                      value={selectedDate}
+                      mode="date"
+                      display="spinner"
+                      onChange={onDateChange}
+                    />
+                  </View>
+                </View>
+              </Modal>
+            ) : (
+              <DateTimePicker
+                value={selectedDate}
+                mode="date"
+                display="calendar"
+                onChange={onDateChange}
+              />
+            )}
+          </>
+        )}
+      </ScrollView>
+    </LinearGradient>
   );
-}
+};
+
+export default NutritionDashboard;

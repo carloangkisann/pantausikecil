@@ -1,20 +1,22 @@
 // app/(tabs)/nutrisi/components/Header.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { useRouter } from 'expo-router';
 
 interface HeaderProps {
   greeting?: string;
   userName?: string;
   avatarUrl?: string;
-  onAvatarPress?: () => void;
+
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   greeting = "Selamat datang", 
   userName = "Bunda Matchaciz",
   avatarUrl,
-  onAvatarPress 
+
 }) => {
+  const router = useRouter();
   return (
     <View className="px-4 py-6 pb-4 bg-pink-medium">
       <View className="flex-row items-center justify-between">
@@ -24,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({
         
         <TouchableOpacity 
           className="w-12 h-12 bg-white rounded-full items-center justify-center"
-          onPress={onAvatarPress}
+          onPress={()=> router.push('../profile')}
         >
           {avatarUrl ? (
             <Image 

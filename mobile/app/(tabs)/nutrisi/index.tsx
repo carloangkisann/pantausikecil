@@ -86,7 +86,6 @@ const NutritionDashboard = () => {
       <Header 
           greeting="Selamat datang"
           userName="Bunda Matchaciz"
-          onAvatarPress={() => console.log('Avatar pressed')}
         />
       <ScrollView style={{ flex: 1 }} className='bg-pink-low rounded-t-2xl'>
   
@@ -202,7 +201,7 @@ const NutritionDashboard = () => {
             </Text>
 
             {mealTypes.map((meal, index) => (
-              <TouchableOpacity key={index} className="flex-row items-center justify-between py-3 border-b border-pink-300/50">
+              <View key={index} className="flex-row items-center justify-between py-3 border-b border-pink-300/50">
                 <View className="flex-row items-center">
                   <View className="w-12 h-12 bg-pink-medium rounded-full items-center justify-center mr-3">
                     <Text className="text-white text-xs font-medium">{meal.calories}</Text>
@@ -210,11 +209,14 @@ const NutritionDashboard = () => {
                   </View>
                   <Text className="text-gray-800 font-medium">{meal.name}</Text>
                 </View>
-                <Image 
+                
+                <TouchableOpacity onPress={()=>router.push('/nutrisi/add')}>           
+                    <Image 
                       source={require('../../../assets/images/plus.svg')} 
                       style={{width: 24, height: 24}} 
-                    />
-              </TouchableOpacity>
+                    /></TouchableOpacity>
+    
+              </View>
             ))}
           </View>
         </View>

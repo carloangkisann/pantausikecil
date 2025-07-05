@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, StatusBar, Image } from 'react-native';
+import  { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import Header from '../components/Header';
 

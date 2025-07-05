@@ -108,7 +108,7 @@ export default function Dashboard() {
               style={{ width: 48, height: 48 }}
             >
               <Image 
-                source={require('../../assets/images/calendar-search.png')}
+                source={require('../../assets/images/plus.svg')}
                 className="w-6 h-6"
                 resizeMode="contain"
               />

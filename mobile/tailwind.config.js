@@ -18,7 +18,15 @@ module.exports = {
         'gray-1': '#989898',
         'gray-2':'#00000047',
         'pink-gyj' : "#F99AB6CC"
-      }
+      },
+      fontFamily: {
+        'poppins-light': ['Poppins-Light'],
+        'poppins': ['Poppins-Regular'],
+        'poppins-medium': ['Poppins-Medium'],
+        'poppins-semibold': ['Poppins-SemiBold'],
+        'poppins-bold': ['Poppins-Bold'],
+        'poppins-lightitalic' : ['Poppins-LightItalic']
+      },
     }
   },
   plugins: [],

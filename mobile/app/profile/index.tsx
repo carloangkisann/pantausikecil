@@ -139,7 +139,7 @@ export default function ProfileIndex() {
       <View className="mx-4 mb-6">
         <TouchableOpacity 
           onPress={handleLogout}
-          className="bg-red-hard rounded-2xl py-4 items-center shadow-sm"
+          className="bg-red-hard rounded-2xl py-4 w-1/2 w-3/4 mx-auto items-center shadow-sm"
         >
           <Text className="text-white font-semibold text-lg">
             Keluar

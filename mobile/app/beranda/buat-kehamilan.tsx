@@ -48,7 +48,11 @@ export default function BuatKehamilan() {
       <Header 
       />
       
-      <ScrollView className="flex-1 px-6 py-4 items-center" showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        className="flex-1 px-6 py-4" 
+        contentContainerStyle={{ alignItems: 'center' }}
+        showsVerticalScrollIndicator={false}
+      >
             
         <View className="flex-row items-center justify-between mb-4">
             <TouchableOpacity 
@@ -63,7 +67,7 @@ export default function BuatKehamilan() {
                 />
             </TouchableOpacity>
             
-            <Text className="text-black-low text-xl font-semibold flex-1 text-center mx-auto">
+            <Text className="text-black-low text-xl font-semibold flex-1 text-center mx-auto font-poppins">
                 Data Kehamilan Baru
             </Text>
         </View>
@@ -74,7 +78,7 @@ export default function BuatKehamilan() {
             Kehamilan ke
           </Text>
           <TextInput
-            className="bg-white rounded-xl px-4 py-4 text-gray-700 shadow-sm border border-pink-semi-low text-base"
+            className="bg-white rounded-xl px-4 py-4  shadow-sm border border-pink-semi-low text-sm font-poppins text-gray-1" 
             style={{ width: 350, height: 52 }}
             placeholder="Masukkan ini kehamilan ke berapa kamu"
             value={formData.kehamilanKe}
@@ -89,7 +93,7 @@ export default function BuatKehamilan() {
             Usia Kehamilan
           </Text>
           <TextInput
-            className="bg-white rounded-xl px-4 py-4 text-gray-700 shadow-sm border border-pink-semi-low text-base"
+            className="bg-white rounded-xl px-4 py-4 text-gray-1 shadow-sm border border-pink-semi-low text-sm"
             style={{ width: 350, height: 52 }}
             placeholder="Masukkan usia kehamilan kamu"
             value={formData.usiaKehamilan}
@@ -107,7 +111,7 @@ export default function BuatKehamilan() {
               selectedValue={formData.jenisKelaminBayi}
               onValueChange={(itemValue) => setFormData({...formData, jenisKelaminBayi: itemValue})}
               style={{ height: 52 }}
-              className='rounded-xl'
+              className='rounded-xl text-sm font-poppins text-gray-1 px-4'
             >
               <Picker.Item label="Masukkan jenis kelamin bayi kamu" value="" />
               <Picker.Item label="Laki-laki" value="Laki-laki" />
@@ -127,7 +131,7 @@ export default function BuatKehamilan() {
               selectedValue={formData.komplikasiKehamilan}
               onValueChange={(itemValue) => setFormData({...formData, komplikasiKehamilan: itemValue})}
               style={{ height: 52 }}
-              className='rounded-xl'
+              className='rounded-xl text-sm font-poppins text-gray-1 px-4'
             >
               <Picker.Item label="Masukkan ada atau tidaknya komplikasi" value="" />
               <Picker.Item label="Ada komplikasi" value="Ada komplikasi" />
@@ -147,7 +151,7 @@ export default function BuatKehamilan() {
                 selectedValue={formData.jenisKomplikasi}
                 onValueChange={(itemValue) => setFormData({...formData, jenisKomplikasi: itemValue})}
                 style={{ height: 52 }}
-                className='rounded-xl'
+                className='rounded-xl  font-poppins text-gray-1 px-4'
               >
                 <Picker.Item label="Masukkan jenis komplikasi yang dialami" value="" />
                 <Picker.Item label="Diabetes gestasional" value="Diabetes gestasional" />

@@ -95,6 +95,7 @@ export default function RootLayout() {
     'Poppins-Medium': require('../assets/fonts/Poppins-Medium.ttf'),
     'Poppins-SemiBold': require('../assets/fonts/Poppins-SemiBold.ttf'),
     'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
+    'Inter' : require('../assets/fonts/Inter_18pt-Regular.ttf')
   });
 
   // Hide splash screen when fonts are loaded
@@ -111,13 +112,14 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor="#000"  className='font-poppins-medium'/>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
+        <Stack.Screen name="index"  />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="beranda" />
         <Stack.Screen name="profile" />
+
       </Stack>
     </>
   );

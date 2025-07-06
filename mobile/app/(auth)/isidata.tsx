@@ -219,7 +219,7 @@ export default function IsidataScreen() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" />
+      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" className='font-poppins' />
       <LinearGradient
         colors={['#FF9EBD', '#F2789F']}
         start={{ x: 0, y: 0 }}

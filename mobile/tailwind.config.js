@@ -26,7 +26,8 @@ module.exports = {
         'poppins-medium': ['Poppins-Medium'],
         'poppins-semibold': ['Poppins-SemiBold'],
         'poppins-bold': ['Poppins-Bold'],
-        'poppins-lightitalic' : ['Poppins-LightItalic']
+        'poppins-lightitalic' : ['Poppins-LightItalic'],
+        'inter' : ['Inter']
       },
     }
   },

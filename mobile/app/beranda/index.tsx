@@ -15,7 +15,7 @@ export default function BerandaIndex() {
   };
 
   return (
-    <View className="flex-1 bg-pink-low">
+    <View className="flex-1 bg-pink-low ">
       <StatusBar barStyle="light-content" backgroundColor="#F789AC" />
       
       {/* Header */}
@@ -30,10 +30,10 @@ export default function BerandaIndex() {
           
           {/* Text Header */}
           <View className="items-center mb-8">
-            <Text className="text-2xl font-bold text-gray-600 text-center leading-tight">
+            <Text className="text-2xl font-bold font-poppins text-gray-600 text-center leading-tight">
               PantauSiKecil butuh
             </Text>
-            <Text className="text-2xl font-bold text-gray-600 text-center leading-tight">
+            <Text className="text-2xl font-bold font-poppins text-gray-600 text-center leading-tight">
               informasi kehamilanmu!
             </Text>
           </View>
@@ -57,7 +57,7 @@ export default function BerandaIndex() {
             style={{ height: 56 }}
             activeOpacity={0.8}
           >
-            <Text className="text-white text-center text-base font-semibold">
+            <Text className="text-white text-center text-base font-semibold font-poppins">
               Buat Data Kehamilan Baru
             </Text>
           </TouchableOpacity>

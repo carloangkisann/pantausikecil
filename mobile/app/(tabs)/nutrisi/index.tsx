@@ -152,7 +152,7 @@ const NutritionDashboard = () => {
           <View className="bg-pink-semi-medium rounded-2xl p-4">
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-gray-800 text-lg font-semibold">Info Nutrisi</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/nutrisi/detail')}>
                 <Text className="text-gray-600 text-2xl">›</Text>
               </TouchableOpacity>
             </View>

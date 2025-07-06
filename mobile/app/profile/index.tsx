@@ -1,6 +1,6 @@
-
 import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { router } from 'expo-router';
+
 export default function ProfileIndex() {
   const handleEditProfile = () => {
     router.push('/profile/edit');
@@ -8,6 +8,13 @@ export default function ProfileIndex() {
 
   const handleGoBack = () => {
     router.back();
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    // For example: clear user data, tokens, etc.
+    console.log('Logout pressed');
+    router.replace('/login'); 
   };
 
   return (
@@ -106,7 +113,7 @@ export default function ProfileIndex() {
       </View>
 
       {/* Koneksi */}
-      <View className="mx-4 mb-6 bg-pink-low rounded-2xl p-4 shadow-sm">
+      <View className="mx-4 mb-4 bg-pink-low rounded-2xl p-4 shadow-sm">
         <Text className="text-black-low text-lg font-semibold mb-4">
           Koneksi
         </Text>
@@ -126,6 +133,18 @@ export default function ProfileIndex() {
             </Text>
           </View>
         </View>
+      </View>
+
+      {/* Logout Button */}
+      <View className="mx-4 mb-6">
+        <TouchableOpacity 
+          onPress={handleLogout}
+          className="bg-red-hard rounded-2xl py-4 items-center shadow-sm"
+        >
+          <Text className="text-white font-semibold text-lg">
+            Keluar
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

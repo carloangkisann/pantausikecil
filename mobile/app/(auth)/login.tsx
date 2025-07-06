@@ -94,7 +94,7 @@ export default function LoginScreen() {
           <TouchableOpacity 
             className="rounded-xl py-4 mb-4"
             style={{ backgroundColor: '#F278A0' }}
-            onPress={() => router.push('/(tabs)')}
+            onPress={() => router.push('/beranda')}
           >
             <Text className="text-white text-base font-bold text-center">
               Login

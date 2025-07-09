@@ -8,7 +8,6 @@ export interface UserProfile {
   financialStatus?: 'Rendah' | 'Menengah' | 'Tinggi';
   allergy?: string;
   medicalCondition?: string;
-  // kurang week pregnancy
 }
 
 export interface UpdateProfileRequest {
@@ -34,12 +33,13 @@ export interface UpdatePregnancyRequest {
 
 export interface PregnancyData {
   id: number;
+  userId?: number;
   pregnancyNumber: number;
   startDate: string;
-  endDate?: string;
+  endDate?: string | null;
   babyGender?: 'Laki-laki' | 'Perempuan' | 'Tidak Diketahui';
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: Date | string | null;
+  updatedAt?: Date | string | null;
 }
 
 export interface CreateConnectionRequest {

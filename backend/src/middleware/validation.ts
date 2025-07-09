@@ -117,13 +117,15 @@ export const activitySchemas = {
 };
 
 // Reminder validation
+const timeRegex = /^(?:2[0-3]|[01]?[0-9]):[0-5][0-9]:[0-5][0-9]$/; 
+
 export const reminderSchemas = {
   createReminder: z.object({
     title: z.string().min(1, 'Title is required'),
     description: z.string().optional(),
     reminderDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
-    startTime: z.string().optional(),
-    endTime: z.string().optional()
+    startTime: z.string().regex(timeRegex, 'Start time must be in HH:MM:SS format').optional(), 
+    endTime: z.string().regex(timeRegex, 'End time must be in HH:MM:SS format').optional()   
   })
 };
 

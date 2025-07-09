@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, integer, boolean, date, timestamp, text, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, integer, boolean, date, timestamp, time, text, pgEnum } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Enums
@@ -97,8 +97,8 @@ export const reminder = pgTable('reminder', {
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
   reminderDate: date('reminder_date'),
-  startTime: timestamp('start_time', { mode: 'string' }), // Drizzle uses timestamp for time-only if you need a specific type
-  endTime: timestamp('end_time', { mode: 'string' }),
+  startTime: time('start_time'),
+  endTime: time('end_time'),
 });
 
 export const nutritionalAndWaterNeeds = pgTable('nutritional_and_water_needs', {

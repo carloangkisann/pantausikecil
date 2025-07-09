@@ -14,12 +14,12 @@ export const validate = (schema: z.ZodSchema) => {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors
-          .map(err => `${err.path.join('.')}: ${err.message}`)
+          .map(err => err.message)
           .join(', ');
         
         res.status(400).json({
           success: false,
-          message: `Validation error: ${errorMessage}`
+          message: errorMessage
         });
         return;
       }
@@ -36,12 +36,12 @@ export const validateBody = (schema: z.ZodSchema) => {
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors
-          .map(err => `${err.path.join('.')}: ${err.message}`)
+          .map(err => err.message)
           .join(', ');
         
         res.status(400).json({
           success: false,
-          message: `Validation error: ${errorMessage}`
+          message: errorMessage
         });
         return;
       }

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
+import { priceCategoryEnum } from '../db/schema';
 
 export const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -103,7 +104,18 @@ export const nutritionSchemas = {
   
   addWater: z.object({
     amountMl: z.number().min(1, 'Amount must be greater than 0')
-  })
+  }),
+
+  getFoodByCategory: z.object({
+    category: z.enum(priceCategoryEnum.enumValues, { 
+      errorMap: (issue, ctx) => {
+        if (issue.code === z.ZodIssueCode.invalid_enum_value) {
+          return { message: `Category must be one of: ${priceCategoryEnum.enumValues.join(', ')}` };
+        }
+        return { message: ctx.defaultError };
+      },
+    }),
+  }),
 };
 
 // Activity validation

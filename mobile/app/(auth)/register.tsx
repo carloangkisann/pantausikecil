@@ -191,7 +191,7 @@ export default function RegisterScreen() {
           </TouchableOpacity>
 
           {/* Google Register Button */}
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             className="bg-white rounded-2xl flex-row items-center justify-center"
             style={{
               width: width * 0.8,
@@ -210,7 +210,7 @@ export default function RegisterScreen() {
             >
               Masuk dengan Google
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Login Link */}
           <View className="flex-row justify-center items-center">

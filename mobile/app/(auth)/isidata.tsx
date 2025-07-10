@@ -219,12 +219,13 @@ export default function IsidataScreen() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" className='font-poppins' />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#F99AB6" className='font-poppins' /> */}
       <LinearGradient
         colors={['#FF9EBD', '#F2789F']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{ flex: 1 }}
+    
+        className='flex-1 '
       >
         {/* Header */}
         <View 
@@ -258,7 +259,7 @@ export default function IsidataScreen() {
 
         {/* Data Form Card */}
         <View 
-          className="absolute bg-pink-low"
+          className="absolute bg-pink-low rounded-2xl"
           style={{
             width: width,
             height: height,

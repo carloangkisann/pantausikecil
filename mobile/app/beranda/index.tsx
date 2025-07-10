@@ -16,17 +16,17 @@ export default function BerandaIndex() {
 
   return (
     <View className="flex-1 bg-pink-low ">
-      <StatusBar barStyle="light-content" backgroundColor="#F789AC" />
+      {/* <StatusBar barStyle="light-content" backgroundColor="#F789AC" /> */}
       
       {/* Header */}
       <Header 
       />
       
       {/* Main Content */}
-      <View className="flex-1 bg-pink-low">
+      <View className="flex-1">
 
         {/* Main Content Container */}
-        <View className="items-center justify-center flex-1">
+        <View className="items-center justify-center"  style={{ flex: 0.8 }}>
           
           {/* Text Header */}
           <View className="items-center mb-8">
@@ -42,7 +42,7 @@ export default function BerandaIndex() {
           <View className="items-center ml-12">
             <Image 
               source={require('../../assets/images/ibuhamil.png')}
-              className="w-72 h-72"
+              className="w-1/2 h-1/2"
               resizeMode="contain"
             />
           </View>
@@ -57,7 +57,7 @@ export default function BerandaIndex() {
             style={{ height: 56 }}
             activeOpacity={0.8}
           >
-            <Text className="text-white text-center text-base font-semibold font-poppins">
+            <Text className="text-white text-center text-sm font-semibold font-poppins">
               Buat Data Kehamilan Baru
             </Text>
           </TouchableOpacity>
@@ -69,7 +69,7 @@ export default function BerandaIndex() {
             style={{ height: 56 }}
             activeOpacity={0.8}
           >
-            <Text className="text-gray-800 text-center text-base font-semibold">
+            <Text className="text-black-low text-center text-sm font-semibold font-poppins">
               Pakai Data Kehamilan yang Sudah Ada
             </Text>
           </TouchableOpacity>

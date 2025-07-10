@@ -87,46 +87,19 @@ const NutritionDashboard = () => {
           greeting="Selamat datang"
           userName="Bunda Matchaciz"
         />
-      <ScrollView style={{ flex: 1 }} className='bg-pink-low rounded-t-2xl'>
+      <ScrollView className='bg-pink-low rounded-t-2xl'>
   
 
-        {/* Date Tabs */}
-        <View className="px-4 py-4">
-          <View className="flex-row bg-pink-semi-low rounded-full p-1">
-            <TouchableOpacity
-              className={`flex-1 py-3 rounded-full ${
-                selectedTab === 'harian' ? 'bg-pink-medium' : 'bg-transparent'
-              }`}
-              onPress={() => setSelectedTab('harian')}
-            >
-              <Text className={`text-center font-medium ${
-                selectedTab === 'harian' ? 'text-white' : 'text-pink-600'
-              }`}>
-                Harian
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              className={`flex-1 py-3 rounded-full ${
-                selectedTab === 'pilih' ? 'bg-pink-medium' : 'bg-transparent'
-              }`}
+        
+        <View className='flex-row justify-end mt-2 mb-2'>
+          <Text className='text-sm p-2 mr-4 text-black-3 font-poppins font-semibold'>{formatDate(selectedDate)}</Text>
+            <TouchableOpacity className='rounded-full bg-pink-medium mr-4 p-2' 
               onPress={() => {
-                setSelectedTab('pilih');
                 setShowDatePicker(true);
-              }}
-            >
-              <Text className={`text-center font-medium ${
-                selectedTab === 'pilih' ? 'text-white' : 'text-pink-600'
-              }`}>
-                Pilih Tanggal
-              </Text>
-            </TouchableOpacity>
-          </View>
+              }}>
+            <Text className='text-white text-sm'> Pilih Tanggal</Text>
 
-          {/* Current Date */}
-          <Text className="text-center text-gray-700 text-lg font-medium mt-4">
-            {formatDate(selectedDate)}
-          </Text>
+            </TouchableOpacity>
         </View>
 
         {/* Water Intake */}

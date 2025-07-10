@@ -12,6 +12,7 @@ import profileRoutes from "./routes/profile";
 import nutritionRoutes from "./routes/nutrition";
 import activityRoutes from "./routes/activity";
 import emergencyRoutes from "./routes/emergency";
+import dashboardRoutes from "./routes/dashboard";
 
 const app = express();
 const PORT = ENV.PORT;
@@ -66,6 +67,7 @@ app.get("/api/health", (req: Request, res: Response) => {
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", profileRoutes);
+app.use("/api/users", dashboardRoutes);
 app.use("/api/users", nutritionRoutes);
 app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/users", activityRoutes);
@@ -96,6 +98,14 @@ app.get("/api/docs", (req: Request, res: Response) => {
         "POST /api/users/:user_id/connections": "Create user connection",
         "DELETE /api/users/:user_id/connections/:connection_id": "Delete user connection",
         "POST /api/users/:user_id/reminders": "Create reminder"
+      },
+      dashboard: {
+        "GET /api/users/:user_id/dashboard": "Get user dashboard data",
+        "GET /api/users/:user_id/dashboard/weekly": "Get weekly summary",
+        "GET /api/users/:user_id/dashboard/nutrition-progress": "Get nutrition progress",
+        "GET /api/users/:user_id/reminders/upcoming": "Get upcoming reminders (3 days from today)",
+        "GET /api/users/:user_id/reminders": "Get reminders by date",
+        "DELETE /api/users/:user_id/reminders/:reminder_id": "Delete reminder"
       },
       nutrition: {
         "GET /api/users/:user_id/nutrition/needs": "Get nutritional needs",

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
@@ -103,150 +103,162 @@ export default function ProfileIndex() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-pink-medium items-center justify-center">
-        <ActivityIndicator size="large" color="#ffffff" />
-        <Text className="text-white mt-2">Memuat profil...</Text>
-      </View>
+      <SafeAreaView className="flex-1 bg-pink-medium">
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#ffffff" />
+          <Text className="text-white mt-2">Memuat profil...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView className="flex-1 bg-pink-medium">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 pt-2 pb-4">
-        <TouchableOpacity 
-          onPress={handleGoBack}
-          className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
-        >
-        <Image source={require('../../assets/images/back-arrow.png')}></Image>
-        </TouchableOpacity>
-        
-        <Text className="text-white text-xl font-semibold">Profil Saya</Text>
-        
-        <View className="w-10" />
-      </View>
+    <SafeAreaView className="flex-1 bg-pink-medium">
+      <ScrollView 
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ 
+          paddingBottom: 40,
+          flexGrow: 1 
+        }}
+        bounces={false}
+      >
+        {/* Header */}
+        <View className="flex-row items-center justify-between px-4 pt-2 pb-4">
+          <TouchableOpacity 
+            onPress={handleGoBack}
+            className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
+          >
+            <Image source={require('../../assets/images/back-arrow.png')} />
+          </TouchableOpacity>
+          
+          <Text className="text-white text-xl font-semibold">Profil Saya</Text>
+          
+          <View className="w-10" />
+        </View>
 
-      {/* Profile Card */}
-      <View className="mx-4 mb-4 bg-pink-low rounded-2xl p-4 shadow-sm">
-        <View className="flex-row items-center mb-4">
-          <View className="w-16 h-16 bg-pink-semi-medium rounded-full mr-4 overflow-hidden">
-            <Image 
-              source={
-                profile?.profileImage 
-                  ? { uri: profile.profileImage }
-                  : require('../../assets/images/default-profile.png')
-              } 
-              className="w-full h-full mx-auto my-auto"
-              resizeMode="cover"
-            />
+        {/* Profile Card */}
+        <View className="mx-4 mb-4 bg-pink-low rounded-2xl p-4 shadow-sm">
+          <View className="flex-row items-center mb-4">
+            <View className="w-16 h-16 bg-pink-semi-medium rounded-full mr-4 overflow-hidden">
+              <Image 
+                source={
+                  profile?.profileImage 
+                    ? { uri: profile.profileImage }
+                    : require('../../assets/images/default-profile.png')
+                } 
+                className="w-full h-full"
+                resizeMode="cover"
+              />
+            </View>
+            
+            <View className="flex-1">
+              <Text className="text-black-low text-lg font-semibold mb-1">
+                {profile?.fullName || user?.email || 'Nama tidak tersedia'}
+              </Text>
+              <Text className="text-gray-600 text-sm mb-2">
+                {user?.email || 'Email tidak tersedia'}
+              </Text>
+              <Text className="text-pink-hard text-sm font-medium">
+                {getPregnancyStatus()}
+              </Text>
+            </View>
           </View>
           
-          <View className="flex-1">
-            <Text className="text-black-low text-lg font-semibold mb-1">
-              {profile?.fullName || user?.email || 'Nama tidak tersedia'}
+          <TouchableOpacity 
+            onPress={handleEditProfile}
+            className="bg-pink-medium rounded-3xl py-3 px-6 self-center"
+          >
+            <Text className="text-white font-semibold text-base">
+              Ubah Profil
             </Text>
-            <Text className="text-gray-600 text-sm mb-2">
-              {user?.email || 'Email tidak tersedia'}
-            </Text>
-            <Text className="text-pink-hard text-sm font-medium">
-              {getPregnancyStatus()}
-            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Detail Informasi */}
+        <View className="mx-4 mb-4 bg-pink-low rounded-2xl p-4 shadow-sm">
+          <Text className="text-black-low text-lg text-center font-semibold mb-4">
+            Detail Informasi
+          </Text>
+          
+          <View className="space-y-4">
+            {/* Usia */}
+            <View className="border-b border-gray-400 pb-3">
+              <Text className="text-black-low font-medium mb-1">Usia</Text>
+              <Text className="text-gray-1">{profile?.age ? `${profile.age} tahun` : 'Belum diisi'}</Text>
+            </View>
+            
+            {/* Usia Kehamilan */}
+            <View className="border-b border-gray-400 pb-3">
+              <Text className="text-black-low font-medium mb-1">Usia kehamilan</Text>
+              <Text className="text-gray-1">{calculatePregnancyWeeks()}</Text>
+            </View>
+            
+            {/* Vegetarian */}
+            <View className="border-b border-gray-400 pb-3">
+              <Text className="text-black-low font-medium mb-1">Vegetarian</Text>
+              <Text className="text-gray-1">{profile?.isVegetarian ? 'Ya' : 'Tidak'}</Text>
+            </View>
+            
+            {/* Kondisi Finansial */}
+            <View className="border-b border-gray-400 pb-3">
+              <Text className="text-black-low font-medium mb-1">Kondisi Finansial</Text>
+              <Text className="text-gray-1">{profile?.financialStatus || 'Belum diisi'}</Text>
+            </View>
+            
+            {/* Alergi */}
+            <View className="border-b border-gray-400 pb-3">
+              <Text className="text-black-low font-medium mb-1">Alergi</Text>
+              <Text className="text-gray-1">{profile?.allergy || 'Tidak ada'}</Text>
+            </View>
+            
+            {/* Kondisi Medis */}
+            <View>
+              <Text className="text-black-low font-medium mb-1">Kondisi Medis</Text>
+              <Text className="text-gray-1">{profile?.medicalCondition || 'Tidak ada'}</Text>
+            </View>
           </View>
         </View>
-        
-        <TouchableOpacity 
-          onPress={handleEditProfile}
-          className="bg-pink-medium rounded-3xl w-1/2 h-1/4 mx-auto p-1 items-center"
-        >
-          <Text className="text-white font-semibold text-base ">
-            Ubah Profil
-          </Text>
-        </TouchableOpacity>
-      </View>
 
-      {/* Detail Informasi */}
-      <View className="mx-4 mb-4 bg-pink-low rounded-2xl p-4 shadow-sm">
-        <Text className="text-black-low text-lg text-center font-semibold mb-4">
-          Detail Informasi
-        </Text>
-        
-        <View className="space-y-4">
-          {/* Usia */}
-          <View className="border-b border-gray-400 pb-3">
-            <Text className="text-black-low font-medium mb-1">Usia</Text>
-            <Text className="text-gray-1">{profile?.age ? `${profile.age} tahun` : 'Belum diisi'}</Text>
-          </View>
+        {/* Koneksi */}
+        <View className="mx-4 mb-4 bg-pink-low rounded-2xl p-4 shadow-sm">
+          <Text className="text-black-low text-lg font-semibold mb-4">
+            Koneksi
+          </Text>
           
-          {/* Usia Kehamilan */}
-          <View className="border-b border-gray-400 pb-3">
-            <Text className="text-black-low font-medium mb-1">Usia kehamilan</Text>
-            <Text className="text-gray-1">{calculatePregnancyWeeks()}</Text>
-          </View>
-          
-          {/* Vegetarian */}
-          <View className="border-b border-gray-400 pb-3">
-            <Text className="text-black-low font-medium mb-1">Vegetarian</Text>
-            <Text className="text-gray-1">{profile?.isVegetarian ? 'Ya' : 'Tidak'}</Text>
-          </View>
-          
-          {/* Kondisi Finansial */}
-          <View className="border-b border-gray-400 pb-3">
-            <Text className="text-black-low font-medium mb-1">Kondisi Finansial</Text>
-            <Text className="text-gray-1">{profile?.financialStatus || 'Belum diisi'}</Text>
-          </View>
-          
-          {/* Alergi */}
-          <View className="border-b border-gray-400 pb-3">
-            <Text className="text-black-low font-medium mb-1">Alergi</Text>
-            <Text className="text-gray-1">{profile?.allergy || 'Tidak ada'}</Text>
-          </View>
-          
-          {/* Kondisi Medis */}
-          <View>
-            <Text className="text-black-low font-medium mb-1">Kondisi Medis</Text>
-            <Text className="text-gray-1">{profile?.medicalCondition || 'Tidak ada'}</Text>
-          </View>
+          {connections.length > 0 ? (
+            <View className="space-y-3">
+              {connections.map((connection, index) => (
+                <View key={connection.id} className="flex-row items-center">
+                  <Text className="text-pink-hard font-medium mr-2">{index + 1}.</Text>
+                  <Text className="text-gray-1 underline">
+                    {connection.connectionEmail}
+                  </Text>
+                  <Text className="text-gray-1 ml-2">
+                    ({connection.relationshipType})
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <Text className="text-gray-1 text-center italic">
+              Belum ada koneksi
+            </Text>
+          )}
         </View>
-      </View>
 
-      {/* Koneksi */}
-      <View className="mx-4 mb-4 bg-pink-low rounded-2xl p-4 shadow-sm">
-        <Text className="text-black-low text-lg font-semibold mb-4">
-          Koneksi
-        </Text>
-        
-        {connections.length > 0 ? (
-          <View className="space-y-3">
-            {connections.map((connection, index) => (
-              <View key={connection.id} className="flex-row items-center">
-                <Text className="text-pink-hard font-medium mr-2">{index + 1}.</Text>
-                <Text className="text-gray-1 underline">
-                  {connection.connectionEmail}
-                </Text>
-                <Text className="text-gray-1 ml-2">
-                  ({connection.relationshipType})
-                </Text>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <Text className="text-gray-1 text-center italic">
-            Belum ada koneksi
-          </Text>
-        )}
-      </View>
-
-      {/* Logout Button */}
-      <View className="mx-4 mb-6">
-        <TouchableOpacity 
-          onPress={handleLogout}
-          className="bg-red-hard rounded-2xl py-4 w-1/2 w-3/4 mx-auto items-center shadow-sm"
-        >
-          <Text className="text-white font-semibold text-lg">
-            Keluar
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        {/* Logout Button */}
+        <View className="mx-4 mb-8">
+          <TouchableOpacity 
+            onPress={handleLogout}
+            className="bg-red-hard rounded-2xl py-4 px-8 self-center shadow-sm"
+          >
+            <Text className="text-white font-semibold text-lg">
+              Keluar
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

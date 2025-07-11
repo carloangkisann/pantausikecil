@@ -26,62 +26,38 @@ const AddAktivitas = () => {
 
   useEffect(() => {
     const fetchAllActivities = async () => {
-      if (!user?.id) return; // Early return if no user
+      if (!user?.id) return; 
       
       try {
         setLoading(true);
-        console.log('Fetching activities...');
+
         
         const response = await apiService.getAllActivities();
         const activitiesData = extractApiArrayData(response);
         
         if (activitiesData.length > 0) {
-          // Filter activities safe for pregnancy
+
           const pregnancySafeActivities = activitiesData.filter(
             activity => activity.level === 'Ringan' || activity.level === 'Sedang'
           );
           
-          // Convert to mock format to maintain existing styling
+
           const mockFormattedActivities = convertToMockFormat(pregnancySafeActivities);
           setAllActivities(mockFormattedActivities);
           setSearchResults(mockFormattedActivities);
           console.log('Activities loaded:', mockFormattedActivities.length);
-        } else {
-          // Fallback to mock data if API returns empty
-          console.log('No activities from API, using fallback data');
-          const mockActivityData = [
-            { id: 1, name: 'Yoga', calories: 180, duration: '30 menit', category: 'flexibility' },
-            { id: 2, name: 'Jalan Santai', calories: 200, duration: '30 menit', category: 'cardio' },
-            { id: 3, name: 'Berenang', calories: 250, duration: '30 menit', category: 'cardio' },
-            { id: 4, name: 'Pilates', calories: 200, duration: '30 menit', category: 'strength' },
-            { id: 5, name: 'Tai Chi', calories: 150, duration: '30 menit', category: 'flexibility' }
-          ];
-          setAllActivities(mockActivityData);
-          setSearchResults(mockActivityData);
-        }
+        } 
       } catch (error) {
         console.error('Error fetching activities:', error);
         
-        // Use mock data as fallback on error
-        console.log('API error, using fallback data');
-        const mockActivityData = [
-          { id: 1, name: 'Yoga', calories: 180, duration: '30 menit', category: 'flexibility' },
-          { id: 2, name: 'Jalan Santai', calories: 200, duration: '30 menit', category: 'cardio' },
-          { id: 3, name: 'Berenang', calories: 250, duration: '30 menit', category: 'cardio' },
-          { id: 4, name: 'Pilates', calories: 200, duration: '30 menit', category: 'strength' },
-          { id: 5, name: 'Tai Chi', calories: 150, duration: '30 menit', category: 'flexibility' }
-        ];
-        setAllActivities(mockActivityData);
-        setSearchResults(mockActivityData);
       } finally {
         setLoading(false);
       }
     };
 
     fetchAllActivities();
-  }, [user?.id]); // ✅ Only depends on user?.id
+  }, [user?.id]); 
 
-  // Filter results based on search query
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setSearchResults(allActivities);
@@ -94,14 +70,14 @@ const AddAktivitas = () => {
   }, [searchQuery, allActivities]);
 
   const handleAddActivity = (activity: any) => {
-    // Navigate to set timer instead of directly saving to DB
+
     router.push({
       pathname: '/aktivitas/set-timer',
       params: {
         activityId: activity.id,
         name: activity.name,
         calories: activity.calories,
-        duration: parseInt(activity.duration) || 30 // Extract minutes from "30 menit" format
+        duration: parseInt(activity.duration) || 30 
       }
     });
   };

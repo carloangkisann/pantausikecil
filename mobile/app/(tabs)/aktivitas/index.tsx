@@ -87,7 +87,7 @@ const AktivitasIndex = () => {
 
 
 
-  // Refresh data when screen comes into focus
+
   useFocusEffect(
     React.useCallback(() => {
       fetchData();
@@ -191,7 +191,7 @@ const AktivitasIndex = () => {
               </Text>
               <TouchableOpacity onPress={() => router.push('/aktivitas/add')}>
                 <Image 
-                  source={require('../../../assets/images/plus.svg')}
+                  source={require('../../../assets/images/plus.png')}
                   className="w-6 h-6"
                   resizeMode="contain"
                 />

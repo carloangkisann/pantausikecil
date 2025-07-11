@@ -1,7 +1,72 @@
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
+import { apiService } from '../../services/api';
+import { UserProfile, UserConnection, PregnancyData } from '../../types';
 
 export default function ProfileIndex() {
+  const { user, logout } = useAuth();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [connections, setConnections] = useState<UserConnection[]>([]);
+  const [pregnancies, setPregnancies] = useState<PregnancyData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadProfileData();
+  }, []);
+
+  const loadProfileData = async () => {
+    if (!user?.id) return;
+
+    try {
+      setLoading(true);
+      
+      // Load profile data
+      const profileResponse = await apiService.getUserProfile(user.id);
+      if (profileResponse.success && profileResponse.data) {
+        setProfile(profileResponse.data);
+      }
+
+      // Load connections
+      const connectionsResponse = await apiService.getUserConnections(user.id);
+      if (connectionsResponse.success) {
+        setConnections(connectionsResponse.data || []);
+      }
+
+      // Load pregnancies
+      const pregnanciesResponse = await apiService.getUserPregnancies(user.id);
+      if (pregnanciesResponse.success) {
+        setPregnancies(pregnanciesResponse.data || []);
+      }
+    } catch (error) {
+      console.error('Error loading profile data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculatePregnancyWeeks = () => {
+    if (!pregnancies.length) return 'Belum ada data kehamilan';
+    
+    const activePregnancy = pregnancies.find(p => !p.endDate);
+    if (!activePregnancy) return 'Belum Melahirkan';
+    
+    const startDate = new Date(activePregnancy.startDate);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - startDate.getTime());
+    const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+    
+    return `${diffWeeks} Minggu`;
+  };
+
+  const getPregnancyStatus = () => {
+    if (!pregnancies.length) return 'Belum ada data kehamilan';
+    
+    const activePregnancy = pregnancies.find(p => !p.endDate);
+    return activePregnancy ? 'Sedang Hamil' : 'Sudah Melahirkan';
+  };
+
   const handleEditProfile = () => {
     router.push('/profile/edit');
   };
@@ -10,12 +75,40 @@ export default function ProfileIndex() {
     router.back();
   };
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    // For example: clear user data, tokens, etc.
-    console.log('Logout pressed');
-    router.replace('/login'); 
+  const handleLogout = async () => {
+    Alert.alert(
+      'Konfirmasi Keluar',
+      'Apakah Anda yakin ingin keluar?',
+      [
+        { text: 'Batal', style: 'cancel' },
+        {
+          text: 'Keluar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await apiService.logout();
+              await logout();
+              router.replace('/login');
+            } catch (error) {
+              console.error('Logout error:', error);
+              // Force logout even if API call fails
+              await logout();
+              router.replace('/login');
+            }
+          }
+        }
+      ]
+    );
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-pink-medium items-center justify-center">
+        <ActivityIndicator size="large" color="#ffffff" />
+        <Text className="text-white mt-2">Memuat profil...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView className="flex-1 bg-pink-medium">
@@ -38,7 +131,11 @@ export default function ProfileIndex() {
         <View className="flex-row items-center mb-4">
           <View className="w-16 h-16 bg-pink-semi-medium rounded-full mr-4 overflow-hidden">
             <Image 
-              source={require('../../assets/images/default-profile.png')} 
+              source={
+                profile?.profileImage 
+                  ? { uri: profile.profileImage }
+                  : require('../../assets/images/default-profile.png')
+              } 
               className="w-full h-full mx-auto my-auto"
               resizeMode="cover"
             />
@@ -46,13 +143,13 @@ export default function ProfileIndex() {
           
           <View className="flex-1">
             <Text className="text-black-low text-lg font-semibold mb-1">
-              Lala Matchaciz
+              {profile?.fullName || user?.email || 'Nama tidak tersedia'}
             </Text>
             <Text className="text-gray-600 text-sm mb-2">
-              lalamatchaciz21@gmail.com
+              {user?.email || 'Email tidak tersedia'}
             </Text>
             <Text className="text-pink-hard text-sm font-medium">
-              Belum Melahirkan
+              {getPregnancyStatus()}
             </Text>
           </View>
         </View>
@@ -77,37 +174,37 @@ export default function ProfileIndex() {
           {/* Usia */}
           <View className="border-b border-gray-400 pb-3">
             <Text className="text-black-low font-medium mb-1">Usia</Text>
-            <Text className="text-gray-1">21 tahun</Text>
+            <Text className="text-gray-1">{profile?.age ? `${profile.age} tahun` : 'Belum diisi'}</Text>
           </View>
           
           {/* Usia Kehamilan */}
           <View className="border-b border-gray-400 pb-3">
             <Text className="text-black-low font-medium mb-1">Usia kehamilan</Text>
-            <Text className="text-gray-1">12 Minggu</Text>
+            <Text className="text-gray-1">{calculatePregnancyWeeks()}</Text>
           </View>
           
           {/* Vegetarian */}
           <View className="border-b border-gray-400 pb-3">
             <Text className="text-black-low font-medium mb-1">Vegetarian</Text>
-            <Text className="text-gray-1">Ya</Text>
+            <Text className="text-gray-1">{profile?.isVegetarian ? 'Ya' : 'Tidak'}</Text>
           </View>
           
           {/* Kondisi Finansial */}
           <View className="border-b border-gray-400 pb-3">
             <Text className="text-black-low font-medium mb-1">Kondisi Finansial</Text>
-            <Text className="text-gray-1">Menengah</Text>
+            <Text className="text-gray-1">{profile?.financialStatus || 'Belum diisi'}</Text>
           </View>
           
           {/* Alergi */}
           <View className="border-b border-gray-400 pb-3">
             <Text className="text-black-low font-medium mb-1">Alergi</Text>
-            <Text className="text-gray-1">Bulu kucing</Text>
+            <Text className="text-gray-1">{profile?.allergy || 'Tidak ada'}</Text>
           </View>
           
           {/* Kondisi Medis */}
           <View>
             <Text className="text-black-low font-medium mb-1">Kondisi Medis</Text>
-            <Text className="text-gray-1">Anemia</Text>
+            <Text className="text-gray-1">{profile?.medicalCondition || 'Tidak ada'}</Text>
           </View>
         </View>
       </View>
@@ -118,21 +215,25 @@ export default function ProfileIndex() {
           Koneksi
         </Text>
         
-        <View className="space-y-3">
-          <View className="flex-row items-center">
-            <Text className="text-pink-hard font-medium mr-2">1.</Text>
-            <Text className="text-gray-1 underline">
-              Fawwas59@gmail.com
-            </Text>
+        {connections.length > 0 ? (
+          <View className="space-y-3">
+            {connections.map((connection, index) => (
+              <View key={connection.id} className="flex-row items-center">
+                <Text className="text-pink-hard font-medium mr-2">{index + 1}.</Text>
+                <Text className="text-gray-1 underline">
+                  {connection.connectionEmail}
+                </Text>
+                <Text className="text-gray-1 ml-2">
+                  ({connection.relationshipType})
+                </Text>
+              </View>
+            ))}
           </View>
-          
-          <View className="flex-row items-center">
-            <Text className="text-pink-hard font-medium mr-2">2.</Text>
-            <Text className="text-gray-1 underline">
-              Dzaky77@gmail.com
-            </Text>
-          </View>
-        </View>
+        ) : (
+          <Text className="text-gray-1 text-center italic">
+            Belum ada koneksi
+          </Text>
+        )}
       </View>
 
       {/* Logout Button */}

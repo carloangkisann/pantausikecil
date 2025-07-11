@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
-import { ENV } from '../config/env';
-import { UserService } from './userService';
-import { AppError } from '../middleware/errorHandler';
+import { ENV } from '../config/env.js';
+import { UserService } from './userService.js';
+import { AppError } from '../middleware/errorHandler.js';
 
 export interface EmergencyEmailData {
   recipientEmail: string;

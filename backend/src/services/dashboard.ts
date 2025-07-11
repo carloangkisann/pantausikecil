@@ -1,13 +1,13 @@
 import { eq, and, sql, gte } from 'drizzle-orm';
-import { db } from '../config/db';
-import { reminder } from '../db/schema';
-import { UserService } from './userService';
-import { NutritionService } from './nutritionService';
-import { ActivityService } from './activityService';
-import { getToday, getDaysFromToday } from '../utils/helper';
-import { getPregnancyInfo } from '../utils/trimesterCalculator';
-import { UserReminder } from '../types/user';
-import { NutritionalNeeds, DailyNutritionSummary, UserActivitySummary } from '../types/api';
+import { db } from '../config/db.js';
+import { reminder } from '../db/schema.js';
+import { UserService } from './userService.js';
+import { NutritionService } from './nutritionService.js';
+import { ActivityService } from './activityService.js';
+import { getToday, getDaysFromToday } from '../utils/helper.js';
+import { getPregnancyInfo } from '../utils/trimesterCalculator.js';
+import { UserReminder } from '../types/user.js';
+import { NutritionalNeeds, DailyNutritionSummary, UserActivitySummary } from '../types/api.js';
 
 export interface DashboardData {
   pregnancyInfo?: {

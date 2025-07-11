@@ -3,16 +3,16 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import { ENV } from "./config/env";
-import { errorHandler, notFound } from "./middleware/errorHandler";
+import { ENV } from "./config/env.js";
+import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
 // Import routes
-import authRoutes from "./routes/auth";
-import profileRoutes from "./routes/profile";
-import nutritionRoutes from "./routes/nutrition";
-import activityRoutes from "./routes/activity";
-import emergencyRoutes from "./routes/emergency";
-import dashboardRoutes from "./routes/dashboard";
+import authRoutes from "./routes/auth.js";
+import profileRoutes from "./routes/profile.js";
+import nutritionRoutes from "./routes/nutrition.js";
+import activityRoutes from "./routes/activity.js";
+import emergencyRoutes from "./routes/emergency.js";
+import dashboardRoutes from "./routes/dashboard.js";
 
 const app = express();
 const PORT = ENV.PORT;
@@ -22,15 +22,22 @@ app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for API
 }));
 
-// // CORS configuration
-// app.use(cors({
-//   origin: process.env.NODE_ENV === 'production' 
-//     ? ['https://your-frontend-domain.com'] // Replace with your actual frontend domain(s)
-//     : ['http://localhost:3000', 'http://localhost:3001'], // Local development
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// }));
+// CORS configuration - FIXED: Uncommented and configured for mobile development
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-frontend-domain.com'] // Replace with your actual frontend domain(s)
+    : [
+        'http://localhost:3000', 
+        'http://localhost:3001',
+        'http://localhost:8081', // Expo development server
+        'exp://localhost:8081',  // Expo development server
+        'http://192.168.1.1:8081', // Replace with your actual IP
+        'exp://192.168.1.1:8081'   // Replace with your actual IP
+      ], // Local development including mobile
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));

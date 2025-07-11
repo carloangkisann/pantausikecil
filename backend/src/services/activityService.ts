@@ -1,14 +1,14 @@
 import { eq, and, sql } from 'drizzle-orm';
-import { db } from '../config/db';
-import { activity, userActivities } from '../db/schema';
-import { AppError } from '../middleware/errorHandler';
-import { UserService } from './userService';
-import { getToday } from '../utils/helper';
+import { db } from '../config/db.js';
+import { activity, userActivities } from '../db/schema.js';
+import { AppError } from '../middleware/errorHandler.js';
+import { UserService } from './userService.js';
+import { getToday } from '../utils/helper.js';
 import { 
   ActivityItem,
   AddUserActivityRequest,
   UserActivitySummary
-} from '../types/api';
+} from '../types/api.js';
 
 export class ActivityService {
   static async getActivityDetails(activityId: number): Promise<ActivityItem> {

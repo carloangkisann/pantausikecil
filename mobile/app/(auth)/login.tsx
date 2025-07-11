@@ -1,14 +1,64 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Dimensions } from 'react-native';
+import  { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-
-const { width, height } = Dimensions.get('window');
+import { useAuth } from '../../context/AuthContext';
+// import {apiService} from '../../services/api';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  // const [connectionStatus, setConnectionStatus] = useState<string>('Checking...');
+  
+  const { login, loading } = useAuth();
+
+  // useEffect(() => {
+  //   checkConnection();
+  // }, []);
+
+  // const checkConnection = async () => {
+  //   try {
+  //     const isConnected = await apiService.testConnection();
+  //     setConnectionStatus(isConnected ? 'Connected' : 'Disconnected');
+  //   } catch (error) {
+  //     setConnectionStatus('Error');
+  //   }
+  // };
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Mohon isi email dan password');
+      return;
+    }
+
+    try {
+      const result = await login(email, password);
+      
+      if (result.success) {
+        Alert.alert('Success', 'Login berhasil!');
+        
+        // Beri sedikit delay untuk AuthContext update
+        setTimeout(() => {
+          // if (isProfileComplete) {
+          //   router.push('/(tabs)'); // Ke main app jika profil sudah lengkap
+          // } else {
+          //   router.push('/isidata'); // Ke isidata jika profil belum lengkap
+          // }
+           router.push('/beranda'); 
+        }, 100);
+      } else {
+        Alert.alert('Login Gagal', `${result.message}\n\nCoba daftar terlebih dahulu jika belum punya akun.`);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Error', 'Terjadi kesalahan saat login');
+    }
+  };
+
+  const handleRegister = () => {
+    router.push('/register');
+  };
 
   return (
     <>
@@ -21,32 +71,34 @@ export default function LoginScreen() {
       >
         {/* Header */}
         <View className="flex-row items-center justify-center pt-12 pb-4 px-5">
-            <Image 
+          <Image 
             source={require('../../assets/images/pantausikecil.png')} 
             style={{ width: 100, height: 100 }}
             className="mx-auto"
             resizeMode="contain"
-            />
+          />
           <Text 
-            className="text-white text-lg font-medium font-poppins text-center mr-12"
-            style={{
-              fontFamily: 'Poppins',
+            className="text-white text-lg font-medium text-center mr-12"
+            style={{ 
               lineHeight: 18,
-              letterSpacing: 0,
+              fontFamily: 'Poppins-Medium'
             }}
           >
             Selamat datang kembali,{'\n'}calon Bunda hebat!
           </Text>
         </View>
 
+        {/* Connection Status */}
+        {/* <View className="mx-4 mb-2">
+          <Text className="text-white text-xs text-center">
+            Backend: {connectionStatus}
+          </Text>
+        </View> */}
+
         {/* Login Card */}
         <View 
-          className="rounded-[30px] mx-4 px-6 pt-8 pb-6"
-          style={{
-            backgroundColor: '#FBB1C6', // Same color as nutrition cards
-            height: height * 0.52,
-            marginTop: height * 0.02,
-          }}
+          className="rounded-[30px] mx-4 px-6 pt-8 pb-6 mt-2"
+          style={{ backgroundColor: '#FFF0F5' }}
         >
           <Text className="text-black text-2xl font-bold text-center mb-6">
             Login
@@ -65,6 +117,7 @@ export default function LoginScreen() {
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
+            editable={!loading}
           />
 
           {/* Password Input */}
@@ -80,8 +133,12 @@ export default function LoginScreen() {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               style={{ color: '#666' }}
+              editable={!loading}
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <TouchableOpacity 
+              onPress={() => setShowPassword(!showPassword)}
+              disabled={loading}
+            >
               <Image 
                 source={require('../../assets/images/eye.png')} 
                 className="w-5 h-5"
@@ -92,25 +149,21 @@ export default function LoginScreen() {
 
           {/* Login Button */}
           <TouchableOpacity 
-            className="rounded-xl py-4 mb-4"
-            style={{ backgroundColor: '#F278A0' }}
-            onPress={() => router.push('/beranda')}
+            className="rounded-xl py-4 mb-4 flex-row items-center justify-center"
+            style={{ 
+              backgroundColor: loading ? '#F99AB6' : '#F278A0',
+              opacity: loading ? 0.7 : 1 
+            }}
+            onPress={handleLogin}
+            disabled={loading}
           >
-            <Text className="text-white text-base font-bold text-center">
-              Login
-            </Text>
-          </TouchableOpacity>
-
-          {/* Google Login Button */}
-          <TouchableOpacity className="rounded-xl py-3 mb-4 flex-row items-center justify-center" style={{ backgroundColor: '#FFFFFF' }}>
-            <Image 
-              source={require('../../assets/images/google.png')} 
-              className="w-5 h-5 mr-2"
-              resizeMode="contain"
-            />
-            <Text className="text-black text-sm font-medium">
-              Masuk dengan Google
-            </Text>
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <Text className="text-white text-base font-bold text-center">
+                Login
+              </Text>
+            )}
           </TouchableOpacity>
 
           {/* Register Link */}
@@ -118,7 +171,10 @@ export default function LoginScreen() {
             <Text className="text-gray-600 text-xs">
               Belum punya akun? 
             </Text>
-            <TouchableOpacity onPress={() => router.push('/register')}>
+            <TouchableOpacity 
+              onPress={handleRegister}
+              disabled={loading}
+            >
               <Text className="text-xs font-semibold ml-1" style={{ color: '#F278A0' }}>
                 Registrasi
               </Text>

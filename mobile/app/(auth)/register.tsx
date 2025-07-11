@@ -124,26 +124,7 @@ export default function RegisterScreen() {
             Registrasi
           </Text>
 
-          {/* Username Input - Optional */}
-          <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Username (Opsional)
-          </Text>
-          <TextInput
-            className="bg-white rounded-xl px-4 text-gray-600"
-            style={{
-              width: width * 0.82,
-              height: height * 0.045,
-              fontSize: width * 0.04,
-              marginBottom: 15
-            }}
-            placeholder="Masukkan username kamu"
-            placeholderTextColor="#999"
-            value={username}
-            onChangeText={setUsername}
-            autoCapitalize="none"
-            editable={!loading}
-          />
-
+   
           {/* Email Input */}
           <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
             Email *

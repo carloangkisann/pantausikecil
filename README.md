@@ -46,13 +46,6 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
 
 ---
 
-## Struktur Direktori
-```bash
-Lorem Ipsum
-```
-
----
-
 ## Tech Stack
 
 | Layer | Technology |
@@ -112,7 +105,7 @@ Lorem Ipsum
 
 ---
 
-## 👥 Tim Developer
+## Tim Developer
 
 <div align="center">
   <table>
@@ -144,7 +137,7 @@ Lorem Ipsum
 ---
 
 
-## 🌐 Contact & Links
+## Contact & Links
 
 <div align="center">
   

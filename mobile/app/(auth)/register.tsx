@@ -43,9 +43,8 @@ export default function RegisterScreen() {
       const result = await register(email, password);
       
       if (result.success) {
-        Alert.alert('Success', 'Registrasi berhasil! Silakan login.', [
-          { text: 'OK', onPress: () => router.push('/login') }
-        ]);
+        router.push('/isidata') 
+    
       } else {
         Alert.alert('Registrasi Gagal', result.message);
       }

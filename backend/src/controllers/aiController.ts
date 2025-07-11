@@ -1,8 +1,8 @@
 import { Response } from "express";
-import { AuthRequest } from "../types/auth";
-import { sendSuccess, sendError } from "../utils/helper";
-import { asyncHandler } from "../middleware/errorHandler";
-import { ENV } from "../config/env";
+import { AuthRequest } from "../types/auth.js";
+import { sendSuccess, sendError } from "../utils/helper.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
+import { ENV } from "../config/env.js";
 
 export class AIController {
   static chatWithBot = asyncHandler(async (req: AuthRequest, res: Response) => {

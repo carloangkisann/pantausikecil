@@ -100,8 +100,8 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
   <table>
     <tr>
       <td align="center">
-        <img src="docs/img/home.png" alt="Home Page" width="200"/>
-        <br><b>Home</b>
+        <img src="docs/img/nutrisi.png" alt="Nutrisi" width="200"/>
+        <br><b>Nutrisi</b>
       </td>
       <td align="center">
         <img src="docs/img/medibot.png" alt="MediBot" width="200"/>

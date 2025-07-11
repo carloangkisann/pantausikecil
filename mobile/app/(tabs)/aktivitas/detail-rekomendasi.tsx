@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useAuth } from '../../../context/AuthContext';
 import { apiService } from '../../../services/api';
 import { extractApiData } from '../../../utils/apiHelpers';
 import { ActivityItem } from '../../../types';
 
 const DetailRekomendasiAktivitas = () => {
-  const { user } = useAuth();
   const params = useLocalSearchParams();
   const { activityId, name, calories, duration, level } = params;
 

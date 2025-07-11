@@ -1,80 +1,142 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useAuth } from '../../../context/AuthContext';
+import { apiService } from '../../../services/api';
 
 const AddFood = () => {
+  // Ambil meal type dari parameter URL
+  const { mealType } = useLocalSearchParams();
+  const { user } = useAuth();
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [allFoods, setAllFoods] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [addingFood, setAddingFood] = useState<number | null>(null);
 
-  // Mock data untuk search results
-  const mockFoodData = [
-    {
-      id: 1,
-      name: 'Bubur Kacang Hijau',
-      calories: 141,
-      portion: '1 mangkok',
-      category: 'bubur'
-    },
-    {
-      id: 2,
-      name: 'Bubur Ayam',
-      calories: 141,
-      portion: '1 mangkok',
-      category: 'bubur'
-    },
-    {
-      id: 3,
-      name: 'Bubur Sumsum',
-      calories: 141,
-      portion: '1 mangkok',
-      category: 'bubur'
-    },
-    {
-      id: 4,
-      name: 'Bubur Beras Merah',
-      calories: 120,
-      portion: '1 mangkok',
-      category: 'bubur'
-    },
-    {
-      id: 5,
-      name: 'Bubur Jagung',
-      calories: 110,
-      portion: '1 mangkok',
-      category: 'bubur'
+  // Function untuk mendapatkan nama meal type dalam bahasa Indonesia
+  const getMealTypeName = (type: string) => {
+    switch (type) {
+      case 'breakfast': return 'Sarapan';
+      case 'lunch': return 'Makan Siang';
+      case 'dinner': return 'Makan Malam';
+      case 'snack': return 'Cemilan';
+      default: return 'Makanan';
     }
-  ];
+  };
 
-  // Initialize with all foods on component mount
-  React.useEffect(() => {
-    setSearchResults(mockFoodData);
+  // Function untuk mendapatkan meal type dalam format API
+  const getMealTypeForAPI = (type: string): 'Sarapan' | 'Makan Siang' | 'Makan Malam' | 'Cemilan' => {
+    switch (type) {
+      case 'breakfast': return 'Sarapan';
+      case 'lunch': return 'Makan Siang';
+      case 'dinner': return 'Makan Malam';
+      case 'snack': return 'Cemilan';
+      default: return 'Sarapan';
+    }
+  };
+
+  // Load semua makanan dari API saat component mount
+  useEffect(() => {
+    loadAllFoods();
   }, []);
 
+  const loadAllFoods = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getAllFood();
+      
+      if (response.success && response.data) {
+
+        
+        setAllFoods(response.data);
+        setSearchResults(response.data);
+      } else {
+        Alert.alert('Error', 'Gagal memuat data makanan');
+      }
+    } catch (error) {
+      console.error('Error loading foods:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Filter results based on search query
-  React.useEffect(() => {
+  useEffect(() => {
     if (searchQuery.trim() === '') {
-      setSearchResults(mockFoodData); // Tampilkan semua makanan kalau tidak ada search
+      setSearchResults(allFoods);
     } else {
-      const filtered = mockFoodData.filter(food =>
+      const filtered = allFoods.filter(food =>
         food.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setSearchResults(filtered);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allFoods]);
 
-  const handleAddFood = (food: any) => {
-    // Logic untuk menambah makanan dari database ke catatan harian
-    console.log('Menambah makanan ke catatan hari ini:', food);
-    // Nanti simpan ke state management / local storage untuk catatan harian
-    // Misalnya: tambahkan ke food log untuk tanggal hari ini
-    router.push('/nutrisi'); // Kembali ke dashboard
+  const handleAddFood = async (food: any) => {
+    if (!user) {
+      Alert.alert('Error', 'User tidak ditemukan');
+      return;
+    }
+
+    try {
+      setAddingFood(food.id);
+      
+ 
+      const mealData = {
+        foodId: food.id,
+        mealCategory: getMealTypeForAPI(mealType as string), 
+        portion: 1, 
+        consumptionDate: new Date().toISOString().split('T')[0] 
+      };
+
+
+      const response = await apiService.addMeal(user.id, mealData);
+
+      if (response.success) {
+        Alert.alert(
+          'Berhasil!', 
+          `${food.name} berhasil ditambahkan ke ${getMealTypeName(mealType as string)}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => router.push('/nutrisi')
+            }
+          ]
+        );
+      } else {
+        Alert.alert('Error', response.message || 'Gagal menambahkan makanan');
+      }
+    } catch (error) {
+      console.error('Error adding meal:', error);
+      Alert.alert('Error', `Terjadi kesalahan: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setAddingFood(null);
+    }
   };
 
   const clearSearch = () => {
     setSearchQuery('');
-    setSearchResults(mockFoodData);
+    setSearchResults(allFoods);
   };
+
+  if (loading) {
+    return (
+      <LinearGradient
+        colors={['#FF9EBD', '#F2789F']}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
+        style={{ flex: 1 }}
+      >
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#FFFFFF" />
+          <Text className="text-white mt-4">Memuat data makanan...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient
@@ -92,9 +154,11 @@ const AddFood = () => {
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <Text className="text-white text-xl font-semibold ml-4">
-          Tambah Makanan
-        </Text>
+        <View className="ml-4 flex-1">
+          <Text className="text-white text-xl font-semibold">
+            Tambah Makanan
+          </Text>
+        </View>
       </View>
 
       <ScrollView 
@@ -105,6 +169,15 @@ const AddFood = () => {
           borderTopRightRadius: 16,
         }}
       >
+        {/* Meal Type Indicator */}
+        <View className="px-4 pt-4">
+          <View className="bg-pink-medium/20 rounded-lg px-3 py-2 self-start">
+            <Text className="text-pink-hard font-medium">
+              Menambah ke {getMealTypeName(mealType as string)}
+            </Text>
+          </View>
+        </View>
+
         {/* Search Bar */}
         <View className="px-4 py-6">
           <View className="flex-row items-center bg-white rounded-2xl px-4 py-3">
@@ -142,27 +215,45 @@ const AddFood = () => {
                 key={food.id}
                 className="bg-pink-medium rounded-2xl p-4 mb-3 flex-row items-center"
                 onPress={() => handleAddFood(food)}
+                disabled={addingFood === food.id}
+                style={{ opacity: addingFood === food.id ? 0.7 : 1 }}
               >
-                {/* Plus Icon */}
-                <View className="mr-4">
+                {/* Plus Icon or Loading */}
+                <View className="mr-4 w-5 h-5 items-center justify-center">
+                  {addingFood === food.id ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
                     <Image   
-                    source={require('../../../assets/images/plus.svg')}
-                    className="w-5 h-5 "
-                    resizeMode="contain">
-
-                    </Image>
-                  {/* <Text className="text-white text-4xl">+</Text> */}
+                      source={require('../../../assets/images/plus.png')}
+                      className="w-5 h-5"
+                      resizeMode="contain"
+                    />
+                  )}
                 </View>
                 
                 {/* Food Info */}
                 <View className="flex-1">
-                  <Text className="text-white text-lg font-semibold mb-1">
+                  <Text className="text-white text-smfont-semibold mb-1">
                     {food.name}
                   </Text>
                   <Text className="text-white text-sm opacity-90">
-                    {food.calories} Kalori, {food.portion}
+                    {food.calories || 0} Kalori per {food.servingSize || '1 porsi'}
                   </Text>
+                  {food.protein && food.carbs && food.fat && (
+                    <Text className="text-white text-xs opacity-75 mt-1">
+                      P: {food.protein}g | K: {food.carbs}g | L: {food.fat}g
+                    </Text>
+                  )}
                 </View>
+
+                {/* Category Badge */}
+                {food.category && (
+                  <View className="bg-white/20 rounded-full px-3 py-1">
+                    <Text className="text-white text-xs capitalize">
+                      {food.category}
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
             ))}
           </View>
@@ -180,23 +271,6 @@ const AddFood = () => {
           </View>
         )}
 
-        {/* Add Custom Food Button */}
-        {/* <View className="px-4 py-6">
-          <TouchableOpacity 
-            className="bg-pink-medium rounded-2xl py-4 px-6 border-2 border-pink-hard"
-            onPress={() => {
-              // Navigate to form untuk input makanan custom yang belum ada di database
-              console.log('Input makanan custom');
-            }}
-          >
-            <View className="flex-row items-center justify-center">
-              <Text className="text-white text-xl mr-2">+</Text>
-              <Text className="text-white text-center text-lg font-semibold">
-                Input Makanan Custom
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View> */}
 
         {/* Bottom Navigation Spacer */}
         <View className="h-20" />

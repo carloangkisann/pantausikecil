@@ -20,21 +20,21 @@ const RekomendasiAktivitas = () => {
       setLoading(true);
       
       // Try to get user-specific recommendations first
-      const recommendedResponse = await apiService.getRecommendedActivities(user.id);
+      const recommendedResponse = await apiService.getAllActivities(); 
       const recommendedData = extractApiArrayData(recommendedResponse);
       
       if (recommendedData.length > 0) {
         setRecommendedActivities(recommendedData);
       } else {
-        // Fallback to all activities if no specific recommendations
+    
         const allActivitiesResponse = await apiService.getAllActivities();
         const allActivitiesData = extractApiArrayData(allActivitiesResponse);
         
         // Filter activities suitable for pregnancy (level: Ringan or Sedang)
-        const pregnancySafeActivities = allActivitiesData.filter(
-          activity => activity.level === 'Ringan' || activity.level === 'Sedang'
-        );
-        setRecommendedActivities(pregnancySafeActivities);
+        // const pregnancySafeActivities = allActivitiesData.filter(
+        //   activity => activity.level === 'Ringan' || activity.level === 'Sedang'
+        // );
+        setRecommendedActivities(allActivitiesData);
       }
     } catch (error) {
       console.error('Error fetching recommended activities:', error);

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediBot Chat</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .chat-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+        height: 700px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+      }
+
+      .chat-header h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #4caf50;
+        display: inline-block;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .token-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        font-size: 0.9em;
+        backdrop-filter: blur(10px);
+      }
+
+      .token-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .token-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      #chat {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #f8f9fa;
+      }
+
+      .message {
+        margin-bottom: 20px;
+        animation: fadeIn 0.3s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .user {
+        text-align: right;
+      }
+
+      .bot {
+        text-align: left;
+      }
+
+      .message-info {
+        font-size: 0.7em;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .user .message-info {
+        text-align: right;
+      }
+
+      .bubble {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 20px;
+        max-width: 80%;
+        word-wrap: break-word;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .user .bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-bottom-right-radius: 5px;
+      }
+
+      .bot .bubble {
+        background: white;
+        color: #333;
+        border: 1px solid #e9ecef;
+        border-bottom-left-radius: 5px;
+        line-height: 1.5;
+      }
+
+      .bot .bubble ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+
+      .bot .bubble li {
+        margin: 5px 0;
+        list-style-type: disc;
+      }
+
+      .bot .bubble strong {
+        font-weight: 600;
+        color: #667eea;
+      }
+
+      .bot .bubble p {
+        margin: 8px 0;
+      }
+
+      .bot .bubble br {
+        line-height: 1.8;
+      }
+
+      .typing-indicator {
+        background: white !important;
+        color: #666 !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 3px;
+      }
+
+      .typing-dots span {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #667eea;
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dots span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-dots span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .input-container {
+        padding: 20px;
+        background: white;
+        border-top: 1px solid #e9ecef;
+      }
+
+      .input-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      #message {
+        flex: 1;
+        padding: 12px 18px;
+        border: 1px solid #e9ecef;
+        border-radius: 25px;
+        font-size: 1em;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      #message:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      #sendBtn {
+        padding: 12px 20px;
+        font-size: 1em;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 60px;
+      }
+
+      #sendBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      #sendBtn:active {
+        transform: translateY(0);
+      }
+
+      .clear-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 0.8em;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .clear-btn:hover {
+        background: #c82333;
+        transform: scale(1.05);
+      }
+
+      .chat-history {
+        font-size: 0.8em;
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: 5px;
+      }
+
+      /* Scrollbar styling */
+      #chat::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #chat::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      #chat::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+      }
+
+      #chat::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+
+      /* Responsive design */
+      @media (max-width: 480px) {
+        .chat-container {
+          height: 100vh;
+          border-radius: 0;
+          max-width: 100%;
+        }
+
+        .bubble {
+          max-width: 90%;
+        }
+
+        .input-form {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        #message {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        <button class="clear-btn" onclick="clearChat()">🗑️ Clear</button>
+        <h2>
+          💬 MediBot Chat
+          <span class="status-indicator"></span>
+        </h2>
+        <input
+          type="text"
+          class="token-input"
+          id="token"
+          placeholder="Bearer token..."
+        />
+        <div class="chat-history">
+          <span id="messageCount">0</span> pesan tersimpan
+        </div>
+      </div>
+
+      <div id="chat"></div>
+
+      <div class="input-container">
+        <div class="input-form">
+          <input
+            type="text"
+            id="message"
+            placeholder="Ketik pertanyaan Anda..."
+          />
+          <button id="sendBtn" onclick="sendMessage()">Kirim</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const chatBox = document.getElementById("chat");
+      const messageInput = document.getElementById("message");
+      const messageCountElement = document.getElementById("messageCount");
+      let chatHistory = [];
+      let messageCount = 0;
+
+      // Format message with proper HTML rendering
+      function formatMessage(text) {
+        // Handle line breaks
+        let formatted = text.replace(/\n/g, "<br>");
+
+        // Handle bold text with ** or *
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        // formatted = formatted.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+
+        // Handle bullet points with * or •
+        formatted = formatted.replace(/^\s*[\*•]\s*(.+)$/gm, "<li>$1</li>");
+
+        // Wrap consecutive <li> elements in <ul>
+        formatted = formatted.replace(
+          /(<li>.*?<\/li>\s*)+/gs,
+          "<ul>// Load chat history from localStorage</ul>"
+        );
+
+        // Handle numbered lists
+        formatted = formatted.replace(/^\s*(\d+\.)\s*(.+)$/gm, "<li>$2</li>");
+
+        return formatted;
+      }
+
+      // Load chat history from localStorage
+      function loadChatHistory() {
+        const savedHistory = JSON.parse(
+          localStorage.getItem("medibot_chat_history") || "[]"
+        );
+        const savedCount = parseInt(
+          localStorage.getItem("medibot_message_count") || "0"
+        );
+
+        chatHistory = savedHistory;
+        messageCount = savedCount;
+
+        // Display saved messages
+        chatHistory.forEach((msg) => {
+          appendMessageFromHistory(msg.sender, msg.text, msg.timestamp);
+        });
+
+        updateMessageCount();
+      }
+
+      // Save chat history to localStorage
+      function saveChatHistory() {
+        localStorage.setItem(
+          "medibot_chat_history",
+          JSON.stringify(chatHistory)
+        );
+        localStorage.setItem("medibot_message_count", messageCount.toString());
+      }
+
+      // Clear chat history
+      function clearChat() {
+        if (confirm("Apakah Anda yakin ingin menghapus semua riwayat chat?")) {
+          chatHistory = [];
+          messageCount = 0;
+          chatBox.innerHTML = "";
+          localStorage.removeItem("medibot_chat_history");
+          localStorage.removeItem("medibot_message_count");
+          updateMessageCount();
+        }
+      }
+
+      // Update message count display
+      function updateMessageCount() {
+        messageCountElement.textContent = messageCount;
+      }
+
+      // Format timestamp
+      function formatTime(date) {
+        return date.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      // Append message from history (without saving again)
+      function appendMessageFromHistory(sender, text, timestamp) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "message " + sender;
+
+        const messageInfo = document.createElement("div");
+        messageInfo.className = "message-info";
+        const time = new Date(timestamp);
+        messageInfo.textContent = `${
+          sender === "user" ? "Anda" : "MediBot"
+        } • ${formatTime(time)}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+
+        // Format text with proper HTML rendering
+        if (text.includes("*") || text.includes("\n") || text.includes("•")) {
+          bubble.innerHTML = formatMessage(text);
+        } else {
+          bubble.textContent = text;
+        }
+
+        msgDiv.appendChild(messageInfo);
+        msgDiv.appendChild(bubble);
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function appendMessage(
+        sender,
+        text,
+        timestamp = null,
+        saveToHistory = true
+      ) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "message " + sender;
+
+        const messageInfo = document.createElement("div");
+        messageInfo.className = "message-info";
+        const time = timestamp ? new Date(timestamp) : new Date();
+        messageInfo.textContent = `${
+          sender === "user" ? "Anda" : "MediBot"
+        } • ${formatTime(time)}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        // Format text with proper HTML rendering
+        if (text.includes("*") || text.includes("\n") || text.includes("•")) {
+          bubble.innerHTML = formatMessage(text);
+        } else {
+          bubble.textContent = text;
+        }
+
+        msgDiv.appendChild(messageInfo);
+        msgDiv.appendChild(bubble);
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Save to history if not loading from storage
+        if (saveToHistory) {
+          chatHistory.push({
+            sender: sender,
+            text: text,
+            timestamp: time.toISOString(),
+          });
+          messageCount++;
+          saveChatHistory();
+          updateMessageCount();
+        }
+      }
+
+      function showTypingIndicator() {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "message bot";
+        msgDiv.id = "typing-indicator";
+
+        const messageInfo = document.createElement("div");
+        messageInfo.className = "message-info";
+        messageInfo.textContent = `MediBot • ${formatTime(new Date())}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble typing-indicator";
+        bubble.innerHTML = `
+    <span>Mengetik</span>
+    <div class="typing-dots">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  `;
+
+        msgDiv.appendChild(messageInfo);
+        msgDiv.appendChild(bubble);
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function removeTypingIndicator() {
+        const typingIndicator = document.getElementById("typing-indicator");
+        if (typingIndicator) {
+          typingIndicator.remove();
+        }
+      }
+
+      async function sendMessage() {
+        const token = document.getElementById("token").value.trim();
+        const message = messageInput.value.trim();
+
+        if (!message) return;
+
+        // Add user message
+        appendMessage("user", message);
+        messageInput.value = "";
+
+        // Show typing indicator
+        showTypingIndicator();
+
+        try {
+          const res = await fetch("http://localhost:8000/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ message }),
+          });
+
+          const data = await res.json();
+
+          // Remove typing indicator
+          removeTypingIndicator();
+
+          // Add bot response
+          const responseText = res.ok
+            ? data.reply
+            : `❌ ${data.detail || "Error"}`;
+
+          appendMessage("bot", responseText);
+        } catch (err) {
+          removeTypingIndicator();
+          appendMessage("bot", "❌ Gagal menghubungi server");
+        }
+      }
+
+      // Enter key to send message
+      messageInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+
+      // Load chat history when page loads
+      window.addEventListener("load", function () {
+        loadChatHistory();
+        messageInput.focus();
+      });
+    </script>
+  </body>
+</html>

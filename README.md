@@ -1,13 +1,19 @@
 <div align="center">
-    <h1 align="center">PantauSiKecil</h1>
-    <h3>Ekosistem Cerdas Berbasis AI untuk Mendampingi Ibu Hamil di Era Digital</h3>
-    <p><em>Proyek ini dikembangkan untuk <strong>Gunadarma Code Week 2025</strong></em></p>
-    <img src="docs/img/PantauSiKecil.png" alt="PantauSiKecil"/>
+  <h1>PantauSiKecil</h1>
+  <h3>Ekosistem Cerdas Berbasis AI untuk Mendampingi Ibu Hamil di Era Digital</h3>
+  <p><em>Proyek ini dikembangkan untuk <strong>Gunadarma Code Week 2025</strong></em></p>
+  <p>
+    <img src="https://img.shields.io/badge/Status-Development-orange?style=flat-square" alt="Status"/>
+    <img src="https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React Native"/>
+    <img src="https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi" alt="FastAPI"/>
+    <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
+  </p>
+  <img src="docs/img/PantauSiKecil.png" alt="PantauSiKecil"/>
 </div>
 
 ---
 
-## Overview
+## 📖 Overview
 
 **PantauSiKecil** adalah sebuah aplikasi mobile berbasis AI yang dirancang untuk mendampingi ibu hamil secara cerdas dan menyeluruh. Aplikasi ini menghadirkan fitur pengingat konsultasi, rekomendasi nutrisi dan aktivitas fisik berbasis kondisi kehamilan, chatbot medis 24/7, hingga tombol darurat yang terhubung ke fasilitas kesehatan dan keluarga.
 
@@ -46,18 +52,49 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Frontend** | React Native, NativeWind |
-| **Backend** | Express.js |
-| **Database** | PostgreSQL, Redis |
-| **AI Service** | FastAPI, Python |
+<div align="center">
+  <table>
+    <tr>
+      <th>Layer</th>
+      <th>Technology</th>
+      <th>Purpose</th>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="https://img.shields.io/badge/Frontend-4CAF50?style=for-the-badge" alt="Frontend"/>
+      </td>
+      <td><strong>React Native</strong><br>NativeWind</td>
+      <td>Cross-platform mobile development dengan styling yang efisien</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="https://img.shields.io/badge/Backend-2196F3?style=for-the-badge" alt="Backend"/>
+      </td>
+      <td><strong>Express.js</strong><br>Node.js</td>
+      <td>RESTful API dan server-side logic</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="https://img.shields.io/badge/Database-FF9800?style=for-the-badge" alt="Database"/>
+      </td>
+      <td><strong>PostgreSQL</strong><br>Redis</td>
+      <td>Data storage dan caching untuk performa optimal</td>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="https://img.shields.io/badge/AI%20Service-9C27B0?style=for-the-badge" alt="AI Service"/>
+      </td>
+      <td><strong>FastAPI</strong><br>Python</td>
+      <td>Machine learning dan AI processing</td>
+    </tr>
+  </table>
+</div>
 
 ---
 
-## Screenshots
+## 📱 Screenshots
 
 <div align="center">
   <table>
@@ -80,7 +117,7 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
 
 ---
 
-## Installation & Setup
+## 🧑‍💻 Installation & Setup
 
 ### Prerequisites
 - Lorem Ipsum
@@ -105,7 +142,7 @@ Lorem Ipsum
 
 ---
 
-## Tim Developer
+## 👥 Tim Developer
 
 <div align="center">
   <table>
@@ -137,17 +174,18 @@ Lorem Ipsum
 ---
 
 
-## Contact & Links
+## 🌐 Contact & Links
 
-<div align="center">
-  
-  [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:pantausikecilofficial@gmail.com)
-  [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/carllix/pantausikecil)
+<div align="left">
+
+  **📧 Email**: pantausikecilofficial@gmail.com  
+  **📱 Demo**: [Try our demo](https://)
   
 </div>
 
 ---
 
 <div align="center">
-  <p><i>Dibuat oleh Tim PantauSiKecil © 2025</i></p>
+  <p><strong>Dibuat oleh Tim PantauSiKecil © 2025</strong></p>
+  <p><em>Untuk masa depan yang lebih sehat bagi ibu dan bayi Indonesia</em></p>
 </div>

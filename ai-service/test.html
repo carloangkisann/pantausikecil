@@ -153,6 +153,30 @@
         color: #333;
         border: 1px solid #e9ecef;
         border-bottom-left-radius: 5px;
+        line-height: 1.5;
+      }
+
+      .bot .bubble ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+
+      .bot .bubble li {
+        margin: 5px 0;
+        list-style-type: disc;
+      }
+
+      .bot .bubble strong {
+        font-weight: 600;
+        color: #667eea;
+      }
+
+      .bot .bubble p {
+        margin: 8px 0;
+      }
+
+      .bot .bubble br {
+        line-height: 1.8;
       }
 
       .typing-indicator {
@@ -350,6 +374,30 @@
       let chatHistory = [];
       let messageCount = 0;
 
+      // Format message with proper HTML rendering
+      function formatMessage(text) {
+        // Handle line breaks
+        let formatted = text.replace(/\n/g, "<br>");
+
+        // Handle bold text with ** or *
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        // formatted = formatted.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+
+        // Handle bullet points with * or •
+        formatted = formatted.replace(/^\s*[\*•]\s*(.+)$/gm, "<li>$1</li>");
+
+        // Wrap consecutive <li> elements in <ul>
+        formatted = formatted.replace(
+          /(<li>.*?<\/li>\s*)+/gs,
+          "<ul>// Load chat history from localStorage</ul>"
+        );
+
+        // Handle numbered lists
+        formatted = formatted.replace(/^\s*(\d+\.)\s*(.+)$/gm, "<li>$2</li>");
+
+        return formatted;
+      }
+
       // Load chat history from localStorage
       function loadChatHistory() {
         const savedHistory = JSON.parse(
@@ -364,7 +412,7 @@
 
         // Display saved messages
         chatHistory.forEach((msg) => {
-          appendMessage(msg.sender, msg.text, msg.timestamp, false);
+          appendMessageFromHistory(msg.sender, msg.text, msg.timestamp);
         });
 
         updateMessageCount();
@@ -404,6 +452,34 @@
         });
       }
 
+      // Append message from history (without saving again)
+      function appendMessageFromHistory(sender, text, timestamp) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "message " + sender;
+
+        const messageInfo = document.createElement("div");
+        messageInfo.className = "message-info";
+        const time = new Date(timestamp);
+        messageInfo.textContent = `${
+          sender === "user" ? "Anda" : "MediBot"
+        } • ${formatTime(time)}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+
+        // Format text with proper HTML rendering
+        if (text.includes("*") || text.includes("\n") || text.includes("•")) {
+          bubble.innerHTML = formatMessage(text);
+        } else {
+          bubble.textContent = text;
+        }
+
+        msgDiv.appendChild(messageInfo);
+        msgDiv.appendChild(bubble);
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
       function appendMessage(
         sender,
         text,
@@ -422,7 +498,12 @@
 
         const bubble = document.createElement("div");
         bubble.className = "bubble";
-        bubble.textContent = text;
+        // Format text with proper HTML rendering
+        if (text.includes("*") || text.includes("\n") || text.includes("•")) {
+          bubble.innerHTML = formatMessage(text);
+        } else {
+          bubble.textContent = text;
+        }
 
         msgDiv.appendChild(messageInfo);
         msgDiv.appendChild(bubble);

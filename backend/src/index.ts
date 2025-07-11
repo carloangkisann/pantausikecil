@@ -3,16 +3,16 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import { ENV } from "./config/env";
-import { errorHandler, notFound } from "./middleware/errorHandler";
+import { ENV } from "./config/env.js";
+import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
 // Import routes
-import authRoutes from "./routes/auth";
-import profileRoutes from "./routes/profile";
-import nutritionRoutes from "./routes/nutrition";
-import activityRoutes from "./routes/activity";
-import emergencyRoutes from "./routes/emergency";
-import dashboardRoutes from "./routes/dashboard";
+import authRoutes from "./routes/auth.js";
+import profileRoutes from "./routes/profile.js";
+import nutritionRoutes from "./routes/nutrition.js";
+import activityRoutes from "./routes/activity.js";
+import emergencyRoutes from "./routes/emergency.js";
+import dashboardRoutes from "./routes/dashboard.js";
 
 const app = express();
 const PORT = ENV.PORT;

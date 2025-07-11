@@ -1,23 +1,23 @@
 import { eq, and, sql } from 'drizzle-orm';
-import { db } from '../config/db';
+import { db } from '../config/db.js';
 import { 
   nutritionalAndWaterNeeds, 
   userMeal, 
   userWaterLogs, 
   food,
   priceCategoryEnum,
-} from '../db/schema';
-import { AppError } from '../middleware/errorHandler';
-import { UserService } from './userService';
-import { calculateTrimester } from '../utils/trimesterCalculator';
-import { getToday } from '../utils/helper';
+} from '../db/schema.js';
+import { AppError } from '../middleware/errorHandler.js';
+import { UserService } from './userService.js';
+import { calculateTrimester } from '../utils/trimesterCalculator.js';
+import { getToday } from '../utils/helper.js';
 import { 
   NutritionalNeeds, 
   DailyNutritionSummary, 
   FoodItem,
   AddMealRequest,
   AddWaterRequest 
-} from '../types/api';
+} from '../types/api.js';
 
 type FoodPriceCategory = typeof priceCategoryEnum.enumValues[number];
 

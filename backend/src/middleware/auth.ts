@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthRequest, JWTPayload } from '../types/auth';
-import { ENV } from '../config/env';
+import { AuthRequest, JWTPayload } from '../types/auth.js';
+import { ENV } from '../config/env.js';
 
 export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers['authorization'];

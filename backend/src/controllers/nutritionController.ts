@@ -1,11 +1,11 @@
 import { Response } from 'express';
-import { AuthRequest } from '../types/auth';
-import { AddMealRequest, AddWaterRequest } from '../types/api';
-import { NutritionService } from '../services/nutritionService';
-import { sendSuccess, sendError } from '../utils/helper';
-import { asyncHandler } from '../middleware/errorHandler';
-import { AppError } from '../middleware/errorHandler';
-import { nutritionSchemas } from '../middleware/validation';
+import { AuthRequest } from '../types/auth.js';
+import { AddMealRequest, AddWaterRequest } from '../types/api.js';
+import { NutritionService } from '../services/nutritionService.js';
+import { sendSuccess, sendError } from '../utils/helper.js';
+import { asyncHandler } from '../middleware/errorHandler.js';
+import { AppError } from '../middleware/errorHandler.js';
+import { nutritionSchemas } from '../middleware/validation.js';
 
 export class NutritionController {
   static getNutritionalNeeds = asyncHandler(async (req: AuthRequest, res: Response) => {

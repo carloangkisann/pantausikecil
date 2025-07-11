@@ -3,9 +3,9 @@ import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 
-const MulaiAktivitas = () => {
+const SetTimer = () => {
   const params = useLocalSearchParams();
-  const { name, calories, duration } = params;
+  const { activityId, name, calories, duration } = params;
   
   const [selectedHours, setSelectedHours] = useState(0);
   const [selectedMinutes, setSelectedMinutes] = useState(parseInt(duration as string) || 30);
@@ -60,8 +60,9 @@ const MulaiAktivitas = () => {
     router.push({
       pathname: '/aktivitas/aktivitas-berjalan',
       params: { 
-        name,
-        calories,
+        activityId: activityId,
+        name: name,
+        calories: calories,
         targetDuration: totalSeconds,
         targetMinutes: selectedMinutes,
         targetHours: selectedHours
@@ -156,4 +157,4 @@ const MulaiAktivitas = () => {
   );
 };
 
-export default MulaiAktivitas;
+export default SetTimer;

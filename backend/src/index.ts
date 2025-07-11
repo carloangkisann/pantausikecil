@@ -22,15 +22,22 @@ app.use(helmet({
   contentSecurityPolicy: false, // Disable CSP for API
 }));
 
-// // CORS configuration
-// app.use(cors({
-//   origin: process.env.NODE_ENV === 'production' 
-//     ? ['https://your-frontend-domain.com'] // Replace with your actual frontend domain(s)
-//     : ['http://localhost:3000', 'http://localhost:3001'], // Local development
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// }));
+// CORS configuration - FIXED: Uncommented and configured for mobile development
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-frontend-domain.com'] // Replace with your actual frontend domain(s)
+    : [
+        'http://localhost:3000', 
+        'http://localhost:3001',
+        'http://localhost:8081', // Expo development server
+        'exp://localhost:8081',  // Expo development server
+        'http://192.168.1.1:8081', // Replace with your actual IP
+        'exp://192.168.1.1:8081'   // Replace with your actual IP
+      ], // Local development including mobile
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));

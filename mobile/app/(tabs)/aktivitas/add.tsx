@@ -1,100 +1,145 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { useAuth } from '../../../context/AuthContext';
+import { apiService } from '../../../services/api';
+import { extractApiArrayData } from '../../../utils/apiHelpers';
+import { ActivityItem } from '../../../types';
 
 const AddAktivitas = () => {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [allActivities, setAllActivities] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data untuk search results aktivitas
-  const mockActivityData = [
-    {
-      id: 1,
-      name: 'Jogging',
-      calories: 440,
-      duration: '1 jam',
-      category: 'cardio'
-    },
-    {
-      id: 2,
-      name: 'Yoga',
-      calories: 180,
-      duration: '1 jam',
-      category: 'flexibility'
-    },
-    {
-      id: 3,
-      name: 'Berenang',
-      calories: 400,
-      duration: '1 jam',
-      category: 'cardio'
-    },
-    {
-      id: 4,
-      name: 'Bersepeda',
-      calories: 300,
-      duration: '1 jam',
-      category: 'cardio'
-    },
-    {
-      id: 5,
-      name: 'Pilates',
-      calories: 250,
-      duration: '1 jam',
-      category: 'strength'
-    },
-    {
-      id: 6,
-      name: 'Jalan Santai',
-      calories: 200,
-      duration: '1 jam',
-      category: 'cardio'
-    },
-    {
-      id: 7,
-      name: 'Senam Aerobik',
-      calories: 350,
-      duration: '1 jam',
-      category: 'cardio'
-    },
-    {
-      id: 8,
-      name: 'Tai Chi',
-      calories: 150,
-      duration: '1 jam',
-      category: 'flexibility'
-    }
-  ];
+  const convertToMockFormat = (activities: ActivityItem[]) => {
+    return activities.map(activity => ({
+      id: activity.id,
+      name: activity.activityName,
+      calories: activity.caloriesPerHour,
+      duration: `${activity.estimatedDuration} menit`,
+      category: activity.level.toLowerCase()
+    }));
+  };
 
-  // Initialize with all activities on component mount
-  React.useEffect(() => {
-    setSearchResults(mockActivityData);
-  }, []);
+  useEffect(() => {
+    const fetchAllActivities = async () => {
+      if (!user?.id) return; // Early return if no user
+      
+      try {
+        setLoading(true);
+        console.log('Fetching activities...');
+        
+        const response = await apiService.getAllActivities();
+        const activitiesData = extractApiArrayData(response);
+        
+        if (activitiesData.length > 0) {
+          // Filter activities safe for pregnancy
+          const pregnancySafeActivities = activitiesData.filter(
+            activity => activity.level === 'Ringan' || activity.level === 'Sedang'
+          );
+          
+          // Convert to mock format to maintain existing styling
+          const mockFormattedActivities = convertToMockFormat(pregnancySafeActivities);
+          setAllActivities(mockFormattedActivities);
+          setSearchResults(mockFormattedActivities);
+          console.log('Activities loaded:', mockFormattedActivities.length);
+        } else {
+          // Fallback to mock data if API returns empty
+          console.log('No activities from API, using fallback data');
+          const mockActivityData = [
+            { id: 1, name: 'Yoga', calories: 180, duration: '30 menit', category: 'flexibility' },
+            { id: 2, name: 'Jalan Santai', calories: 200, duration: '30 menit', category: 'cardio' },
+            { id: 3, name: 'Berenang', calories: 250, duration: '30 menit', category: 'cardio' },
+            { id: 4, name: 'Pilates', calories: 200, duration: '30 menit', category: 'strength' },
+            { id: 5, name: 'Tai Chi', calories: 150, duration: '30 menit', category: 'flexibility' }
+          ];
+          setAllActivities(mockActivityData);
+          setSearchResults(mockActivityData);
+        }
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+        
+        // Use mock data as fallback on error
+        console.log('API error, using fallback data');
+        const mockActivityData = [
+          { id: 1, name: 'Yoga', calories: 180, duration: '30 menit', category: 'flexibility' },
+          { id: 2, name: 'Jalan Santai', calories: 200, duration: '30 menit', category: 'cardio' },
+          { id: 3, name: 'Berenang', calories: 250, duration: '30 menit', category: 'cardio' },
+          { id: 4, name: 'Pilates', calories: 200, duration: '30 menit', category: 'strength' },
+          { id: 5, name: 'Tai Chi', calories: 150, duration: '30 menit', category: 'flexibility' }
+        ];
+        setAllActivities(mockActivityData);
+        setSearchResults(mockActivityData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllActivities();
+  }, [user?.id]); // ✅ Only depends on user?.id
 
   // Filter results based on search query
-  React.useEffect(() => {
+  useEffect(() => {
     if (searchQuery.trim() === '') {
-      setSearchResults(mockActivityData);
+      setSearchResults(allActivities);
     } else {
-      const filtered = mockActivityData.filter(activity =>
+      const filtered = allActivities.filter(activity =>
         activity.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setSearchResults(filtered);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allActivities]);
 
   const handleAddActivity = (activity: any) => {
-    // Logic untuk menambah aktivitas ke catatan harian
-    console.log('Menambah aktivitas ke catatan hari ini:', activity);
-    // Nanti simpan ke state management / local storage untuk catatan harian
-    router.push('/aktivitas'); // Kembali ke dashboard aktivitas
+    // Navigate to set timer instead of directly saving to DB
+    router.push({
+      pathname: '/aktivitas/set-timer',
+      params: {
+        activityId: activity.id,
+        name: activity.name,
+        calories: activity.calories,
+        duration: parseInt(activity.duration) || 30 // Extract minutes from "30 menit" format
+      }
+    });
   };
 
   const clearSearch = () => {
     setSearchQuery('');
-    setSearchResults(mockActivityData);
+    setSearchResults(allActivities);
   };
+
+  if (loading) {
+    return (
+      <LinearGradient
+        colors={['#FF9EBD', '#F2789F']}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
+        style={{ flex: 1 }}
+      >
+        {/* Header */}
+        <View className="flex-row items-center px-4 py-6 pt-12">
+          <TouchableOpacity onPress={() => router.push('/aktivitas')}>
+            <Image 
+              source={require('../../../assets/images/back-arrow.png')}
+              className="w-6 h-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <Text className="text-white text-xl font-semibold ml-4">
+            Tambah Aktivitas
+          </Text>
+        </View>
+
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#FFFFFF" />
+          <Text className="text-white mt-4">Memuat daftar aktivitas...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient
@@ -127,6 +172,16 @@ const AddAktivitas = () => {
       >
         {/* Search Bar */}
         <View className="px-4 py-6">
+          {/* Instructions */}
+          <View className="bg-blue-100 rounded-2xl p-4 mb-4">
+            <Text className="text-blue-800 text-sm font-semibold mb-1">
+              💡 Cara Menambah Aktivitas
+            </Text>
+            <Text className="text-blue-700 text-xs leading-4">
+              Pilih aktivitas → Set timer → Lakukan aktivitas → Otomatis tersimpan
+            </Text>
+          </View>
+          
           <View className="flex-row items-center bg-white rounded-2xl px-4 py-3">
             <Image 
               source={require('../../../assets/images/search.png')}
@@ -178,7 +233,7 @@ const AddAktivitas = () => {
                     {activity.name}
                   </Text>
                   <Text className="text-white text-sm opacity-90">
-                    {activity.calories} Kalori, {activity.duration}
+                    {activity.calories} Kalori/jam, {activity.duration}
                   </Text>
                 </View>
               </TouchableOpacity>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -12,6 +13,47 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  const { register, loading } = useAuth();
+
+  const handleRegister = async () => {
+    // Validasi input
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Mohon isi semua field yang diperlukan');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Password tidak cocok');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password minimal 6 karakter');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Error', 'Format email tidak valid');
+      return;
+    }
+
+    try {
+      const result = await register(email, password);
+      
+      if (result.success) {
+        Alert.alert('Success', 'Registrasi berhasil! Silakan login.', [
+          { text: 'OK', onPress: () => router.push('/login') }
+        ]);
+      } else {
+        Alert.alert('Registrasi Gagal', result.message);
+      }
+    } catch (error) {
+      console.error('Register error:', error);
+      Alert.alert('Error', 'Terjadi kesalahan saat registrasi');
+    }
+  };
 
   return (
     <>
@@ -33,6 +75,17 @@ export default function RegisterScreen() {
             paddingRight: width * 0.025,
           }}
         >
+          <TouchableOpacity 
+            onPress={() => router.back()}
+            style={{ position: 'absolute', left: width * 0.05, zIndex: 1 }}
+          >
+            <Image 
+              source={require('../../assets/images/back-arrow.png')} 
+              className="w-6 h-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          
           <Image 
             source={require('../../assets/images/pantausikecil.png')} 
             style={{
@@ -57,13 +110,13 @@ export default function RegisterScreen() {
           className="absolute bg-pink-low"
           style={{
             width: width,
-            height: height, // full height instead of 0.91
-            top: height * 0.18, // slightly higher
+            height: height,
+            top: height * 0.18,
             backgroundColor: '#FFE3EC',
             borderTopLeftRadius: 40,
             borderTopRightRadius: 40,
-            borderBottomLeftRadius: 0, // no bottom radius
-            borderBottomRightRadius: 0, // no bottom radius
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
             paddingHorizontal: width * 0.06,
             paddingTop: height * 0.05,
           }}
@@ -72,9 +125,9 @@ export default function RegisterScreen() {
             Registrasi
           </Text>
 
-          {/* Username Input */}
+          {/* Username Input - Optional */}
           <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Username
+            Username (Opsional)
           </Text>
           <TextInput
             className="bg-white rounded-xl px-4 text-gray-600"
@@ -89,11 +142,12 @@ export default function RegisterScreen() {
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none"
+            editable={!loading}
           />
 
           {/* Email Input */}
           <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Email
+            Email *
           </Text>
           <TextInput
             className="bg-white rounded-xl px-4 text-gray-600"
@@ -109,11 +163,12 @@ export default function RegisterScreen() {
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
+            editable={!loading}
           />
 
           {/* Password Input */}
           <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Password
+            Password *
           </Text>
           <View 
             className="bg-white rounded-xl px-4 flex-row items-center"
@@ -131,8 +186,12 @@ export default function RegisterScreen() {
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
+              editable={!loading}
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <TouchableOpacity 
+              onPress={() => setShowPassword(!showPassword)}
+              disabled={loading}
+            >
               <Image 
                 source={require('../../assets/images/eye.png')} 
                 className="w-6 h-6"
@@ -143,7 +202,7 @@ export default function RegisterScreen() {
 
           {/* Confirm Password Input */}
           <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Konfirmasi Password
+            Konfirmasi Password *
           </Text>
           <View 
             className="bg-white rounded-xl px-4 flex-row items-center"
@@ -161,8 +220,12 @@ export default function RegisterScreen() {
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry={!showConfirmPassword}
+              editable={!loading}
             />
-            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+            <TouchableOpacity 
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              disabled={loading}
+            >
               <Image 
                 source={require('../../assets/images/eye.png')} 
                 className="w-6 h-6"
@@ -177,40 +240,24 @@ export default function RegisterScreen() {
             style={{
               width: width * 0.8,
               height: height * 0.06,
-              backgroundColor: '#F789AC',
-              marginBottom: height * 0.025
+              backgroundColor: loading ? '#F99AB6' : '#F789AC',
+              marginBottom: height * 0.025,
+              opacity: loading ? 0.7 : 1
             }}
-            onPress={() => router.push('/login')}
+            onPress={handleRegister}
+            disabled={loading}
           >
-            <Text 
-              className="text-white font-bold"
-              style={{ fontSize: width * 0.045 }}
-            >
-              Registrasi
-            </Text>
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <Text 
+                className="text-white font-bold"
+                style={{ fontSize: width * 0.045 }}
+              >
+                Registrasi
+              </Text>
+            )}
           </TouchableOpacity>
-
-          {/* Google Register Button */}
-          {/* <TouchableOpacity 
-            className="bg-white rounded-2xl flex-row items-center justify-center"
-            style={{
-              width: width * 0.8,
-              height: height * 0.06,
-              marginBottom: height * 0.025
-            }}
-          >
-            <Image 
-              source={require('../../assets/images/google.png')} 
-              className="w-5 h-5 mr-3"
-              resizeMode="contain"
-            />
-            <Text 
-              className="text-black font-medium"
-              style={{ fontSize: width * 0.04 }}
-            >
-              Masuk dengan Google
-            </Text>
-          </TouchableOpacity> */}
 
           {/* Login Link */}
           <View className="flex-row justify-center items-center">
@@ -220,7 +267,10 @@ export default function RegisterScreen() {
             >
               Sudah punya akun? 
             </Text>
-            <TouchableOpacity onPress={() => router.push('/login')}>
+            <TouchableOpacity 
+              onPress={() => router.push('/login')}
+              disabled={loading}
+            >
               <Text 
                 className="font-semibold ml-1"
                 style={{ 

@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../types/auth';
-import { DashboardService } from '../services/dashboard';
-import { sendSuccess } from '../utils/helper';
-import { asyncHandler } from '../middleware/errorHandler';
+import { AuthRequest } from '../types/auth.js';
+import { DashboardService } from '../services/dashboard.js';
+import { sendSuccess } from '../utils/helper.js';
+import { asyncHandler } from '../middleware/errorHandler.js';
 
 export class DashboardController {
   static getDashboard = asyncHandler(async (req: AuthRequest, res: Response) => {

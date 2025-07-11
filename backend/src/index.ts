@@ -3,45 +3,50 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import { ENV } from "./config/env";
-import { errorHandler, notFound } from "./middleware/errorHandler";
+import { ENV } from "./config/env.js";
+import { errorHandler, notFound } from "./middleware/errorHandler.js";
 
 // Import routes
-import authRoutes from "./routes/auth";
-import profileRoutes from "./routes/profile";
-import nutritionRoutes from "./routes/nutrition";
-import activityRoutes from "./routes/activity";
-import emergencyRoutes from "./routes/emergency";
-import dashboardRoutes from "./routes/dashboard";
-
+import authRoutes from "./routes/auth.js";
+import profileRoutes from "./routes/profile.js";
+import nutritionRoutes from "./routes/nutrition.js";
+import activityRoutes from "./routes/activity.js";
+import emergencyRoutes from "./routes/emergency.js";
+import dashboardRoutes from "./routes/dashboard.js";
+import aiRoutes from "./routes/ai.js";
 const app = express();
 const PORT = ENV.PORT;
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: false, // Disable CSP for API
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Disable CSP for API
+  })
+);
 
 // CORS configuration - FIXED: Uncommented and configured for mobile development
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.com'] // Replace with your actual frontend domain(s)
-    : [
-        'http://localhost:3000', 
-        'http://localhost:3001',
-        'http://localhost:8081', // Expo development server
-        'exp://localhost:8081',  // Expo development server
-        'http://192.168.1.1:8081', // Replace with your actual IP
-        'exp://192.168.1.1:8081'   // Replace with your actual IP
-      ], // Local development including mobile
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://your-frontend-domain.com"] // Replace with your actual frontend domain(s)
+        : [
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "http://localhost:8081", // Expo development server
+            "exp://localhost:8081", // Expo development server
+            "http://192.168.1.1:8081", // Replace with your actual IP
+            "exp://192.168.1.1:8081", // Replace with your actual IP
+          ], // Local development including mobile
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -49,7 +54,7 @@ const limiter = rateLimit({
   max: ENV.RATE_LIMIT_MAX, // limit each IP to 100 requests per windowMs
   message: {
     success: false,
-    message: 'Too many requests from this IP, please try again later.',
+    message: "Too many requests from this IP, please try again later.",
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -63,11 +68,11 @@ app.use(compression());
 
 // Health check endpoint
 app.get("/api/health", (req: Request, res: Response) => {
-  res.status(200).json({ 
+  res.status(200).json({
     success: true,
     message: "PantauSiKecil API is running",
     timestamp: new Date().toISOString(),
-    environment: ENV.NODE_ENV
+    environment: ENV.NODE_ENV,
   });
 });
 
@@ -81,6 +86,8 @@ app.use("/api/users", activityRoutes);
 app.use("/api/activities", activityRoutes);
 app.use("/api/users", emergencyRoutes);
 app.use("/api/emergency", emergencyRoutes);
+app.use("/api/ai", aiRoutes);
+console.log("✔️  /api/ai routes registered");
 
 // API documentation endpoint
 app.get("/api/docs", (req: Request, res: Response) => {
@@ -93,54 +100,63 @@ app.get("/api/docs", (req: Request, res: Response) => {
         "POST /api/auth/register": "Register new user",
         "POST /api/auth/login": "Login user",
         "GET /api/auth/me": "Get current user info",
-        "POST /api/auth/logout": "Logout user"
+        "POST /api/auth/logout": "Logout user",
       },
       profile: {
         "GET /api/users/:user_id/profile": "Get user profile",
         "PUT /api/users/:user_id/profile": "Update user profile",
         "POST /api/users/:user_id/pregnancies": "Create pregnancy record",
         "GET /api/users/:user_id/pregnancies": "Get user pregnancies",
-        "PUT /api/users/:user_id/pregnancies/:pregnancy_id": "Update pregnancy record",
+        "PUT /api/users/:user_id/pregnancies/:pregnancy_id":
+          "Update pregnancy record",
         "GET /api/users/:user_id/connections": "Get user connections",
         "POST /api/users/:user_id/connections": "Create user connection",
-        "DELETE /api/users/:user_id/connections/:connection_id": "Delete user connection",
-        "POST /api/users/:user_id/reminders": "Create reminder"
+        "DELETE /api/users/:user_id/connections/:connection_id":
+          "Delete user connection",
+        "POST /api/users/:user_id/reminders": "Create reminder",
       },
       dashboard: {
         "GET /api/users/:user_id/dashboard": "Get user dashboard data",
         "GET /api/users/:user_id/dashboard/weekly": "Get weekly summary",
-        "GET /api/users/:user_id/dashboard/nutrition-progress": "Get nutrition progress",
-        "GET /api/users/:user_id/reminders/upcoming": "Get upcoming reminders (3 days from today)",
+        "GET /api/users/:user_id/dashboard/nutrition-progress":
+          "Get nutrition progress",
+        "GET /api/users/:user_id/reminders/upcoming":
+          "Get upcoming reminders (3 days from today)",
         "GET /api/users/:user_id/reminders": "Get reminders by date",
-        "DELETE /api/users/:user_id/reminders/:reminder_id": "Delete reminder"
+        "DELETE /api/users/:user_id/reminders/:reminder_id": "Delete reminder",
       },
       nutrition: {
         "GET /api/users/:user_id/nutrition/needs": "Get nutritional needs",
         "GET /api/users/:user_id/nutrition/today": "Get today's nutrition",
-        "GET /api/users/:user_id/nutrition/summary": "Get nutrition summary by date",
+        "GET /api/users/:user_id/nutrition/summary":
+          "Get nutrition summary by date",
         "GET /api/users/:user_id/nutrition/meals": "Get user meals by date",
         "POST /api/users/:user_id/nutrition/meals": "Add meal entry",
-        "DELETE /api/users/:user_id/nutrition/meals/:meal_id": "Remove meal entry",
+        "DELETE /api/users/:user_id/nutrition/meals/:meal_id":
+          "Remove meal entry",
         "POST /api/users/:user_id/nutrition/water": "Add water intake",
         "GET /api/nutrition/food/:food_id": "Get food details",
-        "GET /api/nutrition/food": "Get all food items"
+        "GET /api/nutrition/food": "Get all food items",
       },
       activity: {
         "GET /api/users/:user_id/activities/today": "Get today's activities",
-        "GET /api/users/:user_id/activities/summary": "Get activity summary by date",
-        "GET /api/users/:user_id/activities/recommended": "Get recommended activities",
+        "GET /api/users/:user_id/activities/summary":
+          "Get activity summary by date",
+        "GET /api/users/:user_id/activities/recommended":
+          "Get recommended activities",
         "GET /api/users/:user_id/activities/history": "Get activity history",
         "POST /api/users/:user_id/activities": "Add user activity",
-        "DELETE /api/users/:user_id/activities/:activity_id": "Remove user activity",
+        "DELETE /api/users/:user_id/activities/:activity_id":
+          "Remove user activity",
         "GET /api/activities/:activity_id": "Get activity details",
         "GET /api/activities": "Get all activities",
-        "POST /api/activities/calculate-calories": "Calculate calories"
+        "POST /api/activities/calculate-calories": "Calculate calories",
       },
       emergency: {
         "POST /api/users/:user_id/emergency": "Send emergency notification",
-        "GET /api/emergency/test-email": "Test email configuration"
-      }
-    }
+        "GET /api/emergency/test-email": "Test email configuration",
+      },
+    },
   });
 });
 

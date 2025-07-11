@@ -1,9 +1,9 @@
 import { Response } from 'express';
-import { AuthRequest } from '../types/auth';
-import { AddUserActivityRequest } from '../types/api';
-import { ActivityService } from '../services/activityService';
-import { sendSuccess, sendError } from '../utils/helper';
-import { asyncHandler } from '../middleware/errorHandler';
+import { AuthRequest } from '../types/auth.js';
+import { AddUserActivityRequest } from '../types/api.js';
+import { ActivityService } from '../services/activityService.js';
+import { sendSuccess, sendError } from '../utils/helper.js';
+import { asyncHandler } from '../middleware/errorHandler.js';
 
 export class ActivityController {
   static getTodayActivity = asyncHandler(async (req: AuthRequest, res: Response) => {

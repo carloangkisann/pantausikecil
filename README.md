@@ -109,7 +109,7 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
       </td>
       <td align="center">
         <img src="docs/img/recommendation.png" alt="Recommendation" width="200"/>
-        <br><b>Rekomendasi Nutrisi</b>
+        <br><b>Rekomendasi Makanan</b>
       </td>
     </tr>
   </table>

@@ -8,7 +8,7 @@
     <img src="https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi" alt="FastAPI"/>
     <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
   </p>
-  <img src="docs/img/PantauSiKecil.png" alt="PantauSiKecil"/>
+  <img src="docs/img/PantauSiKecil.png" alt="PantauSiKecil" width="200"/>
 </div>
 
 ---

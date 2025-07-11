@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext", // ⭐ UBAH: Gunakan NodeNext untuk resolusi modul Node.js ESM
+    "target": "ES2022", // ⭐ UBAH: Lebih baik target versi ES yang lebih baru yang kompatibel dengan NodeNext
+    "moduleResolution": "NodeNext", // ⭐ UBAH: Ini sangat krusial untuk menambahkan .js pada import
+    "esModuleInterop": true,
+    // "allowSyntheticDefaultImports": true, // Bisa dihapus jika esModuleInterop true
+    "outDir": "./dist",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    // "isolatedModules": true, // Tidak mutlak diperlukan jika module dan moduleResolution sudah NodeNext
+    "baseUrl": "./src", // ⭐ UBAH: Setel baseUrl ke src jika impor absolut Anda dari src
+    "paths": {
+      // ⭐ HAPUS/SESUAIKAN: Jika Anda tidak menggunakan alias custom, ini bisa dihapus atau disesuaikan
+      // Jika Anda ingin alias seperti "@config/*": ["src/config/*"], tambahkan di sini
+      // Contoh jika ingin absolut import dari src:
+      "@config/*": ["./src/config/*"],
+      "@errors/*": ["./src/errors/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@controllers/*": ["./src/controllers/*"]
+      // ... dan alias lainnya untuk folder src Anda
+    }
+  },
+  "include": [
+    "src/**/*" // ⭐ UBAH: Cukup ini, karena src/types dan src/config/env.ts sudah tercakup
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

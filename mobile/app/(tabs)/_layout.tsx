@@ -1,11 +1,13 @@
 import { Tabs } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import BottomNavigation from '../components/BottomNavigation';
+import Header from '../components/Header';
 
 export default function TabsLayout() {
   return (
     <View style={styles.container}>
       <Tabs
+
         screenOptions={{
           headerShown: false,
           tabBarStyle: { display: 'none' },

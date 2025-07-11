@@ -37,8 +37,7 @@ class ApiService {
   // ===== TOKEN MANAGEMENT =====
   private async getToken(): Promise<string | null> {
     try {
-      // return await AsyncStorage.getItem("auth_token");
-      return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiYXBpLXRlc0BnbWFpbC5jb20iLCJpYXQiOjE3NTIxNTI1ODYsImV4cCI6MTc1MjIzODk4Nn0.26JGPi5jweq_T60owXRLVh4QTd_lbIZOr0Lfyf_kk_g";
+      return await AsyncStorage.getItem("auth_token");
     } catch (error) {
       console.error("Error getting token:", error);
       return null;

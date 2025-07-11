@@ -1,35 +1,60 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Switch } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TouchableOpacity, Alert, Switch, ActivityIndicator } from 'react-native';
 import Header from '../../components/Header';
+import { useAuth } from '../../../context/AuthContext';
+import { apiService } from '../../../services/api';
+
+interface EmergencyRequest {
+  message?: string;
+}
 
 export default function Bantuan() {
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth(); // Assuming you have user context
 
-  const handleSOSPress = () => {
-    Alert.alert(
-      'Emergency SOS',
-      'Apakah Anda yakin ingin mengirim sinyal darurat?',
-      [
-        {
-          text: 'Batal',
-          style: 'cancel',
-        },
-        {
-          text: 'Kirim SOS',
-          style: 'destructive',
-          onPress: () => {
-            // Logic untuk mengirim SOS
-            Alert.alert('SOS Terkirim!', 'Bantuan darurat telah dihubungi.');
-          },
-        },
-      ]
-    );
+
+  const handleSOSPress = async () => {
+     sendEmergencyAlert()
+  };
+
+  const sendEmergencyAlert = async () => {
+    if (!user?.id) {
+      Alert.alert('Error', 'User tidak ditemukan. Silakan login ulang.');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const emergencyData: EmergencyRequest = {
+        message: 'DARURAT: Ibu hamil memerlukan bantuan medis segera!'
+      };
+
+      const response = await apiService.sendEmergencyNotification(user.id, emergencyData);
+      
+      if (response.success) {
+        Alert.alert(
+          'SOS Terkirim!', 
+          'Bantuan darurat telah dihubungi. Tim medis akan segera menghubungi Anda.'
+        );
+      } else {
+        throw new Error(response.message || 'Gagal mengirim notifikasi darurat');
+      }
+    } catch (error) {
+      console.error('Emergency notification error:', error);
+
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleNotification = () => {
     setIsNotificationEnabled(!isNotificationEnabled);
     if (!isNotificationEnabled) {
-      Alert.alert('Notifikasi Diaktifkan', 'Anda akan menerima notifikasi darurat.');
+      Alert.alert('Notifikasi Diaktifkan', 'Keluarga akan diberitahu saat tombol SOS ditekan.');
+    } else {
+      Alert.alert('Notifikasi Dinonaktifkan', 'Keluarga tidak akan diberitahu saat tombol SOS ditekan.');
     }
   };
 
@@ -87,14 +112,19 @@ export default function Bantuan() {
               {/* Inner SOS Button */}
               <TouchableOpacity
                 onPress={handleSOSPress}
+                disabled={isLoading}
                 className="rounded-full items-center justify-center"
                 style={{
                   width: 180,
                   height: 180,
-                  backgroundColor: '#FF4444',
+                  backgroundColor: isLoading ? '#FF8888' : '#FF4444',
                 }}
               >
-                <Text className="text-white text-4xl font-bold">SOS</Text>
+                {isLoading ? (
+                  <ActivityIndicator size="large" color="white" />
+                ) : (
+                  <Text className="text-white text-4xl font-bold">SOS</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -113,7 +143,16 @@ export default function Bantuan() {
               ios_backgroundColor="#D1D5DB"
               onValueChange={toggleNotification}
               value={isNotificationEnabled}
+              disabled={isLoading}
             />
+          </View>
+          
+          {/* Emergency Contact Info */}
+          <View className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200">
+  
+            <Text className="text-red-900 font-bold text-center mt-1">
+              Ambulans: 119 | Polisi: 110 | Pemadam: 113
+            </Text>
           </View>
         </View>
       </View>

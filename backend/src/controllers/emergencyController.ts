@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthRequest } from '../types/auth';
-import { EmailService } from '../services/emailService';
-import { sendSuccess, sendError } from '../utils/helper';
-import { asyncHandler } from '../middleware/errorHandler';
+import { AuthRequest } from '../types/auth.js';
+import { EmailService } from '../services/emailService.js';
+import { sendSuccess, sendError } from '../utils/helper.js';
+import { asyncHandler } from '../middleware/errorHandler.js';
 
 export class EmergencyController {
   static sendEmergencyNotification = asyncHandler(async (req: AuthRequest, res: Response) => {

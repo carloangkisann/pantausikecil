@@ -1,0 +1,91 @@
+---
+## 🩺 MediBot - FastAPI Chatbot Backend
+
+Proyek ini adalah backend chatbot AI berbasis **FastAPI** yang terintegrasi dengan **Google Gemini API** dan **API backend pengguna** untuk memberikan respons berbasis data personal pengguna.
+---
+
+### ⚙️ Langkah Menjalankan
+
+#### 1. Buat dan Aktifkan Virtual Environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate.bat  # Windows
+```
+
+#### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+**Contoh `requirements.txt`:**
+
+```
+fastapi
+uvicorn
+python-dotenv
+requests
+google-generativeai
+```
+
+#### 3. Buat File `.env`
+
+Di dalam root proyek, buat file `.env`:
+
+```
+GEMINI_API_KEY=your_gemini_api_key
+BACKEND_URL=http://localhost:3000
+```
+
+> Gantilah `your_gemini_api_key` dengan API key dari [Google AI Studio](https://makersuite.google.com/app/apikey)
+
+#### 4. Jalankan Server FastAPI
+
+```bash
+uvicorn src.main:app --reload
+```
+
+#### 5. Akses Endpoint
+
+- Swagger Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+- Chat Endpoint: `POST http://localhost:8000/chat`
+
+---
+
+### 🛡️ Authorization
+
+Gunakan header berikut saat melakukan request:
+
+```
+Authorization: Bearer <token>
+```
+
+Contoh dengan `curl`:
+
+```bash
+curl -X POST http://localhost:8000/chat \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Halo MediBot!"}'
+```
+
+---
+
+### 📁 Struktur Folder
+
+```
+src/
+├── main.py                      # Entry point FastAPI
+├── config.py                    # Load variabel lingkungan
+├── routes/
+│   └── chat.py                  # Endpoint chat
+├── services/
+│   ├── gemini_service.py        # Interaksi dengan Gemini API
+│   └── user_data.py             # Pengambilan data pengguna dari backend
+├── models/
+│   └── request.py               # Schema input user
+├── utils/
+    └── auth.py                  # Ekstraksi token Authorization
+```

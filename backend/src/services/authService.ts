@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
-import { db } from '../config/db';
-import { users } from '../db/schema';
-import { generateToken } from '../middleware/auth';
-import { AppError } from '../middleware/errorHandler';
-import { AuthUser, LoginRequest, RegisterRequest } from '../types/auth';
+import { db } from '../config/db.js';
+import { users } from '../db/schema.js';
+import { generateToken } from '../middleware/auth.js';
+import { AppError } from '../middleware/errorHandler.js';
+import { AuthUser, LoginRequest, RegisterRequest } from '../types/auth.js';
 
 export class AuthService {
   static async hashPassword(password: string): Promise<string> {

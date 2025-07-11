@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { NutritionController } from '../controllers/nutritionController';
-import { validate, validateBody, nutritionSchemas, paramSchemas } from '../middleware/validation';
-import { authenticateToken } from '../middleware/auth';
+import { NutritionController } from '../controllers/nutritionController.js';
+import { validate, validateBody, nutritionSchemas, paramSchemas } from '../middleware/validation.js';
+import { authenticateToken } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const router = Router();

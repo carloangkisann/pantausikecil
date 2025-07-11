@@ -1,15 +1,15 @@
 import { Response } from 'express';
-import { AuthRequest } from '../types/auth';
+import { AuthRequest } from '../types/auth.js';
 import { 
   UpdateProfileRequest, 
   CreatePregnancyRequest, 
   UpdatePregnancyRequest,
   CreateConnectionRequest,
   CreateReminderRequest
-} from '../types/user';
-import { UserService } from '../services/userService';
-import { sendSuccess, sendError } from '../utils/helper';
-import { asyncHandler } from '../middleware/errorHandler';
+} from '../types/user.js';
+import { UserService } from '../services/userService.js';
+import { sendSuccess, sendError } from '../utils/helper.js';
+import { asyncHandler } from '../middleware/errorHandler.js';
 
 export class ProfileController {
   static getProfile = asyncHandler(async (req: AuthRequest, res: Response): Promise<void> => {

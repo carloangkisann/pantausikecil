@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { EmergencyController } from '../controllers/emergencyController';
-import { validate, paramSchemas } from '../middleware/validation';
-import { authenticateToken } from '../middleware/auth';
+import { EmergencyController } from '../controllers/emergencyController.js';
+import { validate, paramSchemas } from '../middleware/validation.js';
+import { authenticateToken } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const router = Router();

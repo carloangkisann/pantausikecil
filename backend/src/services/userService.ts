@@ -1,7 +1,7 @@
 import { eq, and, isNull } from 'drizzle-orm';
-import { db } from '../config/db';
-import { users, pregnancies, userConnections, reminder } from '../db/schema';
-import { AppError } from '../middleware/errorHandler';
+import { db } from '../config/db.js';
+import { users, pregnancies, userConnections, reminder } from '../db/schema.js';
+import { AppError } from '../middleware/errorHandler.js';
 import { 
   UserProfile, 
   UpdateProfileRequest, 
@@ -12,7 +12,7 @@ import {
   UserConnection,
   CreateReminderRequest,
   UserReminder
-} from '../types/user';
+} from '../types/user.js';
 
 export class UserService {
   static async getUserProfile(userId: number): Promise<UserProfile> {

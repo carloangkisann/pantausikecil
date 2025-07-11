@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AIController } from "../controllers/aiController";
-import { authenticateToken } from "../middleware/auth";
-import { validate } from "../middleware/validation";
+import { AIController } from "../controllers/aiController.js";
+import { authenticateToken } from "../middleware/auth.js";
+import { validate } from "../middleware/validation.js";
 import { z } from "zod";
 
 const router = Router();

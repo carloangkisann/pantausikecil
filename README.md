@@ -8,7 +8,7 @@
     <img src="https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi" alt="FastAPI"/>
     <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
   </p>
-  <img src="docs/img/PantauSiKecil.png" alt="PantauSiKecil"/>
+  <img src="docs/img/PantauSiKecil.png" alt="PantauSiKecil" width="200"/>
 </div>
 
 ---
@@ -100,8 +100,8 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
   <table>
     <tr>
       <td align="center">
-        <img src="docs/img/home.png" alt="Home Page" width="200"/>
-        <br><b>Home</b>
+        <img src="docs/img/nutrisi.png" alt="Nutrisi" width="200"/>
+        <br><b>Nutrisi</b>
       </td>
       <td align="center">
         <img src="docs/img/medibot.png" alt="MediBot" width="200"/>
@@ -109,7 +109,7 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
       </td>
       <td align="center">
         <img src="docs/img/recommendation.png" alt="Recommendation" width="200"/>
-        <br><b>Rekomendasi Nutrisi</b>
+        <br><b>Rekomendasi Makanan</b>
       </td>
     </tr>
   </table>
@@ -120,24 +120,88 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
 ## 🧑‍💻 Installation & Setup
 
 ### Prerequisites
-- Lorem Ipsum
+- Node.js (v16 or higher)
+- Python 3.8+
+- PostgreSQL database
+- Expo CLI (for mobile development)
+
+### Mobile Setup
+
+```bash
+# Masuk ke folder mobile
+cd mobile
+
+# Install dependencies
+npm install
+
+# Jalankan Expo
+npx expo start
+```
 
 ### Backend Setup
 
 ```bash
-Lorem Ipsum
+# Masuk ke folder backend
+cd backend
+
+# Install dependencies
+npm install
+
+# Buat file .env dan isi sesuai contoh di bawah
+# Jalankan server
+npm run dev
+```
+
+#### Environment Variables (.env)
+```bash
+# Server Configuration
+PORT = 5001
+NODE_ENV = development
+
+# Database Configuration
+DATABASE_URL = postgresql://postgres:pantauSiKecik@db.qaqfiuhagxhmkvysisrg.supabase.co:5432/postgres
+
+# JWT Configuration
+JWT_SECRET = 13dca519dfc53b07014e086dbc357838a4a91d02f6072071aa9b688400c1d128
+JWT_EXPIRES_IN = 24h
+
+# Email Configuration
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=pantausikecilofficial@gmail.com
+EMAIL_PASS=sjdt sccn esat fnpe
+EMAIL_FROM=noreply@pantausikecil.com
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX=100
+
+CHATBOT_API_URL=https://pantausikecil-ai-service.up.railway.app
 ```
 
 ### AI Service Setup
 
 ```bash
-Lorem Ipsum
+# Masuk ke folder AI service
+cd ai-service
+
+# Buat dan aktifkan virtual environment
+python -m venv venv
+source venv/bin/activate  # Untuk Mac/Linux
+# atau
+venv\Scripts\activate     # Untuk Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Buat file .env dan isi sesuai contoh di bawah
+# Jalankan server FastAPI
+uvicorn main:app --reload --app-dir src
 ```
-
-### Frontend Setup
-
+#### Environment Variables (.env)
 ```bash
-Lorem Ipsum
+GEMINI_API_KEY=AIzaSyAGATZArJvH-qQ-JSfgdlq4wOOKyX7y29s
+BACKEND_URL=https://pantausikecil-backend.up.railway.app
 ```
 
 ---

@@ -1,21 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
+import { useAuth } from '../../../context/AuthContext';
+import { apiService } from '../../../services/api';
+import { extractApiData } from '../../../utils/apiHelpers';
+import { ActivityItem } from '../../../types';
 
 const DetailRekomendasiAktivitas = () => {
+  const { user } = useAuth();
   const params = useLocalSearchParams();
   const { activityId, name, calories, duration, level } = params;
+
+  const [activityDetails, setActivityDetails] = useState<ActivityItem | null>(null);
+
+  // Fetch activity details if needed
+  useEffect(() => {
+    const fetchActivityDetails = async () => {
+      if (!activityId) return;
+
+      try {
+        const response = await apiService.getActivityDetails(parseInt(activityId as string));
+        const activityData = extractApiData(response);
+        if (activityData) {
+          setActivityDetails(activityData);
+        }
+      } catch (error) {
+        console.error('Error fetching activity details:', error);
+      }
+    };
+
+    fetchActivityDetails();
+  }, [activityId]);
+
+  // Use either fetched details or params data
+  const displayData = activityDetails || {
+    activityName: name as string,
+    caloriesPerHour: parseInt(calories as string) || 100,
+    estimatedDuration: parseInt(duration as string) || 30,
+    level: level as string,
+    description: '',
+    tips: ''
+  };
 
   // Mock video placeholder
   const VideoPlaceholder = () => (
     <View className="bg-black rounded-2xl h-48 justify-center items-center mb-6">
-      {/* <Image 
-        source={require('../../../assets/images/buburkacangijo.png')}
-        className="w-full h-full rounded-2xl"
-        resizeMode="cover"
-      />
-       */}
       {/* Video Controls Overlay */}
       <View className="absolute bottom-4 left-4 right-4">
         <View className="flex-row items-center justify-between">
@@ -60,9 +90,10 @@ const DetailRekomendasiAktivitas = () => {
     router.push({
       pathname: '/aktivitas/set-timer',
       params: { 
-        name,
-        calories,
-        duration
+        activityId: activityId,
+        name: displayData.activityName,
+        calories: displayData.caloriesPerHour,
+        duration: displayData.estimatedDuration
       }
     });
   };
@@ -84,7 +115,7 @@ const DetailRekomendasiAktivitas = () => {
           />
         </TouchableOpacity>
         <Text className="text-white text-xl font-semibold ml-4">
-          {name}
+          {displayData.activityName}
         </Text>
       </View>
 
@@ -106,14 +137,16 @@ const DetailRekomendasiAktivitas = () => {
               Deskripsi
             </Text>
             <Text className="text-white text-sm opacity-90 leading-5">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+              {displayData.description || 
+                'Aktivitas ini baik untuk kesehatan ibu hamil. Lakukan dengan durasi yang sesuai dan jangan memaksakan diri.'
+              }
             </Text>
           </View>
 
           {/* Calories Info */}
           <View className="bg-pink-medium rounded-2xl p-4 mb-4">
             <Text className="text-white text-lg font-semibold">
-              Kalori: {calories} kal/jam
+              Kalori: {displayData.caloriesPerHour} kal/jam
             </Text>
           </View>
 
@@ -130,7 +163,9 @@ const DetailRekomendasiAktivitas = () => {
               </Text>
             </View>
             <Text className="text-white text-sm opacity-90 leading-5">
-              Tambahkan sedikit gula kelapa, hindari susu kental manis berlebihan
+              {displayData.tips || 
+                'Lakukan dengan perlahan dan dengarkan tubuh Anda. Hentikan jika merasa tidak nyaman.'
+              }
             </Text>
           </View>
 

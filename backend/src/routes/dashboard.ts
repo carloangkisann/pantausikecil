@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { DashboardController } from '../controllers/dashboard';
-import { validate, paramSchemas } from '../middleware/validation';
-import { authenticateToken } from '../middleware/auth';
+import { DashboardController } from '../controllers/dashboard.js';
+import { validate, paramSchemas } from '../middleware/validation.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
 

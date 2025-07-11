@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { ProfileController } from '../controllers/profileController';
-import { validate, validateBody, profileSchemas, paramSchemas, reminderSchemas } from '../middleware/validation';
-import { authenticateToken } from '../middleware/auth';
+import { ProfileController } from '../controllers/profileController.js';
+import { validate, validateBody, profileSchemas, paramSchemas, reminderSchemas } from '../middleware/validation.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
 

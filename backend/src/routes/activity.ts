@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { ActivityController } from '../controllers/activityController';
-import { validate, activitySchemas, paramSchemas, validateBody } from '../middleware/validation';
-import { authenticateToken } from '../middleware/auth';
+import { ActivityController } from '../controllers/activityController.js';
+import { validate, activitySchemas, paramSchemas, validateBody } from '../middleware/validation.js';
+import { authenticateToken } from '../middleware/auth.js';
 import { z } from 'zod';
 
 const router = Router();

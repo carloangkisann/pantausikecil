@@ -1,49 +1,50 @@
-import  { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, Image } from 'react-native';
+import  { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Alert, Image, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
+import {apiService} from '../../services/api';
+import { PregnancyData } from '../../types';
 import Header from '../components/Header';
-
-interface KehamilanData {
-  id: string;
-  kehamilanKe: string;
-  usiaKehamilan: string;
-  jenisKelaminBayi: string;
-  komplikasiKehamilan: string;
-  jenisKomplikasi: string;
-  createdAt: string;
-}
 
 export default function PilihKehamilan() {
   const router = useRouter();
-  
+  const { user } = useAuth();
+  const [kehamilanList, setKehamilanList] = useState<PregnancyData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const mockKehamilanList: KehamilanData[] = [
-    {
-      id: '1',
-      kehamilanKe: '2',
-      usiaKehamilan: 'Mei 2023 - Jan 2024',
-      jenisKelaminBayi: 'Laki-Laki',
-      komplikasiKehamilan: 'Tidak ada komplikasi',
-      jenisKomplikasi: '',
-      createdAt: '2023-05-01T00:00:00.000Z'
-    },
-    {
-      id: '2',
-      kehamilanKe: '3',
-      usiaKehamilan: 'Juni 2024 - Feb 2025',
-      jenisKelaminBayi: 'Perempuan',
-      komplikasiKehamilan: 'Ada komplikasi',
-      jenisKomplikasi: 'Diabetes gestasional',
-      createdAt: '2024-06-01T00:00:00.000Z'
+  useEffect(() => {
+    loadPregnancies();
+  },[]);
+
+  const loadPregnancies = async () => {
+    if (!user) {
+      Alert.alert('Error', 'User tidak ditemukan. Silakan login kembali.');
+      return;
     }
-  ];
 
-  const [kehamilanList, setKehamilanList] = useState<KehamilanData[]>(mockKehamilanList);
-  const [loading, setLoading] = useState(false);
-
-  const selectKehamilan = async (kehamilan: KehamilanData) => {
     try {
-      // Mock selection - langsung redirect ke tabs
+      setLoading(true);
+      const response = await apiService.getUserPregnancies(user.id);
+      
+      if (response.success && response.data) {
+        setKehamilanList(response.data);
+      } else {
+        console.error('Failed to load pregnancies:', response.message);
+        setKehamilanList([]);
+      }
+    } catch (error) {
+      console.error('Error loading pregnancies:', error);
+      Alert.alert('Error', 'Gagal memuat data kehamilan');
+      setKehamilanList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectKehamilan = async (kehamilan: PregnancyData) => {
+    try {
+
+      console.log('Selected pregnancy:', kehamilan);
       router.replace('/(tabs)');
     } catch (error) {
       Alert.alert('Error', 'Gagal memilih data kehamilan');
@@ -59,46 +60,59 @@ export default function PilihKehamilan() {
     });
   };
 
-  const getPeriodeKehamilan = (usiaKehamilan: string) => {
-    // Contoh logika untuk menentukan periode berdasarkan usia kehamilan
-    const usia = parseInt(usiaKehamilan.split(' ')[0]);
-    if (usia <= 12) return 'Trimester 1';
-    if (usia <= 24) return 'Trimester 2';
-    return 'Trimester 3';
+  const calculateWeeksPregnant = (startDate: string, endDate?: string | null) => {
+    const start = new Date(startDate);
+    const end = endDate ? new Date(endDate) : new Date();
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffWeeks = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7));
+    return diffWeeks;
+  };
+
+  const getPeriodeKehamilan = (startDate: string, endDate?: string | null) => {
+    if (endDate) {
+      return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+    }
+    
+    const weeks = calculateWeeksPregnant(startDate);
+    let trimester = 'Trimester 1';
+    if (weeks > 12 && weeks <= 27) trimester = 'Trimester 2';
+    else if (weeks > 27) trimester = 'Trimester 3';
+    
+    return `${formatDate(startDate)} (${trimester})`;
   };
 
   if (loading) {
     return (
       <View className="flex-1 bg-pink-low justify-center items-center">
-        <Text className="text-gray-600">Memuat data kehamilan...</Text>
+        <ActivityIndicator size="large" color="#F789AC" />
+        <Text className="text-gray-600 mt-4">Memuat data kehamilan...</Text>
       </View>
     );
   }
 
   return (
     <View className="flex-1 bg-pink-low">
-      <Header></Header>
+      <Header />
       
       <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
     
         <View className="flex-row items-center justify-between mb-4">
-            <TouchableOpacity 
-                onPress={() => router.back()}
-                className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mr-1"
-                activeOpacity={0.8}
-            >
-                <Image 
-                source={require('../../assets/images/back-arrow-black.png')}
-                className="w-5 h-5"
-                resizeMode="contain"
-                />
-            </TouchableOpacity>
-            
-            <Text className="text-black-low text-xl font-semibold flex-1 text-center mx-auto">
-                Data Kehamilan yang Sudah Ada
-            </Text>
+          <TouchableOpacity 
+            onPress={() => router.back()}
+            className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mr-1"
+            activeOpacity={0.8}
+          >
+            <Image 
+              source={require('../../assets/images/back-arrow-black.png')}
+              className="w-5 h-5"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          
+          <Text className="text-black-low text-xl font-semibold flex-1 text-center mx-auto">
+            Data Kehamilan yang Sudah Ada
+          </Text>
         </View>
-  
         
         {kehamilanList.length === 0 ? (
           <View className="flex-1 justify-center items-center py-20">
@@ -142,26 +156,26 @@ export default function PilihKehamilan() {
               >
                 <View className="flex-row justify-between items-center">
                   <Text className="font-semibold text-gray-800 flex-1 text-center text-base">
-                    {kehamilan.kehamilanKe}
+                    {kehamilan.pregnancyNumber}
                   </Text>
                   <Text className="text-gray-600 flex-1 text-center text-sm">
-                    {kehamilan.usiaKehamilan}
+                    {getPeriodeKehamilan(kehamilan.startDate, kehamilan.endDate)}
                   </Text>
                   <Text className="text-gray-600 flex-1 text-center text-sm">
-                    {kehamilan.jenisKelaminBayi}
+                    {kehamilan.babyGender || 'Tidak Diketahui'}
                   </Text>
                 </View>
-                {/* {kehamilan.komplikasiKehamilan === 'Ada komplikasi' && (
-                  <View className="mt-2 pt-2 border-t border-pink-semi-low">
-                    <Text className="text-sm text-red-500 text-center">
-                      Komplikasi: {kehamilan.jenisKomplikasi}
-                    </Text>
-                  </View>
-                )} */}
+                
+                {/* Additional Info */}
+                <View className="mt-2 pt-2 border-t border-pink-semi-low">
+                  <Text className="text-xs text-gray-500 text-center">
+                    Dibuat: {formatDate(kehamilan.createdAt?.toString() || '')}
+                  </Text>
+                </View>
               </TouchableOpacity>
             ))}
 
-            {/* Simpan Button */}
+            {/* Tambah Data Baru Button */}
             <TouchableOpacity
               onPress={() => router.push('/beranda/buat-kehamilan')}
               className="bg-pink-medium rounded-3xl py-4 px-6 shadow-sm mb-8 mt-4 mx-auto"

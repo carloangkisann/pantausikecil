@@ -1,14 +1,17 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
-
-
+import { useAuth } from '../../context/AuthContext';
+import { apiService } from '../../services/api';
 
 export default function AddKoneksi() {
+  const { user } = useAuth();
+  const [saving, setSaving] = useState(false);
+  
   const [formData, setFormData] = useState({
     nama: '',
-    hubungan: 'Suami',
+    hubungan: 'Suami' as 'Suami' | 'Lainnya',
     email: ''
   });
 
@@ -16,7 +19,7 @@ export default function AddKoneksi() {
     router.back();
   };
 
-  const handleSimpan = () => {
+  const handleSimpan = async () => {
     // Validation
     if (!formData.nama.trim()) {
       Alert.alert('Error', 'Nama koneksi harus diisi');
@@ -35,17 +38,42 @@ export default function AddKoneksi() {
       return;
     }
 
-    // Save logic here
-    Alert.alert(
-      'Berhasil', 
-      'Koneksi berhasil ditambahkan',
-      [
-        {
-          text: 'OK',
-          onPress: () => router.back()
-        }
-      ]
-    );
+    if (!user?.id) {
+      Alert.alert('Error', 'User tidak ditemukan');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      
+      const connectionData = {
+        connectionEmail: formData.email.trim(),
+        connectionName: formData.nama.trim(),
+        relationshipType: formData.hubungan
+      };
+
+      const response = await apiService.createConnection(user.id, connectionData);
+      
+      if (response.success) {
+        Alert.alert(
+          'Berhasil', 
+          'Koneksi berhasil ditambahkan',
+          [
+            {
+              text: 'OK',
+              onPress: () => router.back()
+            }
+          ]
+        );
+      } else {
+        Alert.alert('Error', response.message || 'Gagal menambahkan koneksi');
+      }
+    } catch (error) {
+      console.error('Error creating connection:', error);
+      Alert.alert('Error', 'Gagal menambahkan koneksi');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -99,8 +127,7 @@ export default function AddKoneksi() {
                 className='bg-pink-low'
               >
                 <Picker.Item label="Suami" value="Suami" />
-                <Picker.Item label="Keluarga" value="Keluarga" />
-                <Picker.Item label="Kontak Lainnya" value="Kontak Lainnya" />
+                <Picker.Item label="Lainnya" value="Lainnya" />
               </Picker>
             </View>
           </View>
@@ -128,11 +155,17 @@ export default function AddKoneksi() {
       <View className="mx-4 mb-4">
         <TouchableOpacity 
           onPress={handleSimpan}
+          disabled={saving}
           className="bg-pink-low rounded-xl py-3 items-center shadow-sm"
+          style={{ opacity: saving ? 0.7 : 1 }}
         >
-          <Text className="text-black-low font-medium text-base">
-            Simpan
-          </Text>
+          {saving ? (
+            <ActivityIndicator size="small" color="#000000" />
+          ) : (
+            <Text className="text-black-low font-medium text-base">
+              Simpan
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>

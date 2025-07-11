@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -7,7 +7,6 @@ import { useAuth } from '../../context/AuthContext';
 const { width, height } = Dimensions.get('window');
 
 export default function RegisterScreen() {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -43,9 +42,8 @@ export default function RegisterScreen() {
       const result = await register(email, password);
       
       if (result.success) {
-        Alert.alert('Success', 'Registrasi berhasil! Silakan login.', [
-          { text: 'OK', onPress: () => router.push('/login') }
-        ]);
+        router.push('/isidata') 
+    
       } else {
         Alert.alert('Registrasi Gagal', result.message);
       }
@@ -125,26 +123,7 @@ export default function RegisterScreen() {
             Registrasi
           </Text>
 
-          {/* Username Input - Optional */}
-          <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Username (Opsional)
-          </Text>
-          <TextInput
-            className="bg-white rounded-xl px-4 text-gray-600"
-            style={{
-              width: width * 0.82,
-              height: height * 0.045,
-              fontSize: width * 0.04,
-              marginBottom: 15
-            }}
-            placeholder="Masukkan username kamu"
-            placeholderTextColor="#999"
-            value={username}
-            onChangeText={setUsername}
-            autoCapitalize="none"
-            editable={!loading}
-          />
-
+   
           {/* Email Input */}
           <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
             Email *

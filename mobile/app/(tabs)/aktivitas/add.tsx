@@ -221,7 +221,7 @@ const AddAktivitas = () => {
                 {/* Plus Icon */}
                 <View className="mr-4">
                   <Image   
-                    source={require('../../../assets/images/plus.svg')}
+                    source={require('../../../assets/images/plus.png')}
                     className="w-5 h-5"
                     resizeMode="contain"
                   />

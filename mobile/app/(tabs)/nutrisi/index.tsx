@@ -22,6 +22,7 @@ interface MealType {
   name: string;
   calories: number;
   category: 'Sarapan' | 'Makan Siang' | 'Makan Malam' | 'Cemilan';
+  routeParam: string; 
 }
 
 const NutritionDashboard = () => {
@@ -35,11 +36,11 @@ const NutritionDashboard = () => {
   const [nutritionData, setNutritionData] = useState<NutritionItem[]>([]);
   const [waterIntake, setWaterIntake] = useState({ current: 0, target: 2000 });
   const [mealTypes, setMealTypes] = useState<MealType[]>([
-    { name: 'Sarapan', calories: 0, category: 'Sarapan' },
-    { name: 'Makan Siang', calories: 0, category: 'Makan Siang' },
-    { name: 'Makan Malam', calories: 0, category: 'Makan Malam' },
-    { name: 'Cemilan Pagi', calories: 0, category: 'Cemilan' },
-    { name: 'Cemilan Sore', calories: 0, category: 'Cemilan' }
+    { name: 'Sarapan', calories: 0, category: 'Sarapan', routeParam: 'breakfast' },
+    { name: 'Makan Siang', calories: 0, category: 'Makan Siang', routeParam: 'lunch' },
+    { name: 'Makan Malam', calories: 0, category: 'Makan Malam', routeParam: 'dinner' },
+    { name: 'Cemilan Pagi', calories: 0, category: 'Cemilan', routeParam: 'snack' },
+    { name: 'Cemilan Sore', calories: 0, category: 'Cemilan', routeParam: 'snack' }
   ]);
 
   useEffect(() => {
@@ -65,6 +66,7 @@ const NutritionDashboard = () => {
       const meals = extractApiData(mealsResponse) || [];
 
       if (needs) {
+        // Map nutrition data dengan data real dari API
         const mappedNutrition: NutritionItem[] = [
           {
             name: 'Asam Folat',
@@ -104,15 +106,20 @@ const NutritionDashboard = () => {
           target: needs.waterNeedsMl
         });
 
-        // Calculate calories per meal category (simplified)
-        // Note: API tidak mengembalikan kalori per meal, jadi ini estimasi
+        // Calculate calories per meal category dengan data real
         const updatedMealTypes = mealTypes.map(meal => {
-          const mealCount = meals.filter((m: any) => 
-            m.mealCategory === meal.category
-          ).length;
+          const categoryMeals = meals.filter((m: any) => 
+            m.mealCategory === meal.category || m.mealType === meal.category
+          );
+          
+          // Calculate total calories for this meal category
+          const totalCalories = categoryMeals.reduce((sum: number, m: any) => {
+            return sum + ((m.food?.calories || 0) * (m.portion || 1));
+          }, 0);
+          
           return {
             ...meal,
-            calories: mealCount * 150 // Estimasi 150 kalori per item makanan
+            calories: totalCalories
           };
         });
 
@@ -129,14 +136,25 @@ const NutritionDashboard = () => {
   const handleAddWater = async () => {
     try {
       setWaterLoading(true);
-      const response = await apiService.addWaterIntake(user!.id, { amountMl: 250 }); // 1 gelas = 250ml
+      
+      const waterData = {
+        amountMl: 250, 
+        date: selectedDate.toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString('id-ID', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        })
+      };
+
+      const response = await apiService.addWaterIntake(user!.id, waterData);
       
       if (response.success) {
         setWaterIntake(prev => ({
           ...prev,
-          current: prev.current + 250
+          current: prev.current + 100
         }));
-        Alert.alert('Berhasil', 'Konsumsi air berhasil ditambahkan');
+        // Refresh data untuk update yang akurat
+        await fetchNutritionData();
       } else {
         Alert.alert('Error', response.message || 'Gagal menambahkan konsumsi air');
       }
@@ -146,6 +164,11 @@ const NutritionDashboard = () => {
     } finally {
       setWaterLoading(false);
     }
+  };
+
+
+  const navigateToAddFood = (mealType: string) => {
+    router.push(`/nutrisi/add?mealType=${mealType}`);
   };
 
   const formatDate = (date: Date) => {
@@ -189,8 +212,7 @@ const NutritionDashboard = () => {
         style={{ flex: 1 }}
       >
         <Header 
-          greeting="Selamat datang"
-          userName={user?.fullName || "Bunda"}
+
         />
         <View className="flex-1 bg-pink-low rounded-t-2xl items-center justify-center">
           <ActivityIndicator size="large" color="#F2789F" />
@@ -208,8 +230,7 @@ const NutritionDashboard = () => {
       style={{ flex: 1 }}
     >
       <Header 
-        greeting="Selamat datang"
-        userName={user?.fullName || "Bunda"}
+
       />
       <ScrollView className='bg-pink-low rounded-t-2xl'>
         
@@ -248,7 +269,7 @@ const NutritionDashboard = () => {
                 {waterLoading ? (
                   <ActivityIndicator size="small" color="#666" />
                 ) : (
-                  <Text className="text-gray-700 font-medium">Minum</Text>
+                  <Text className="text-gray-700 font-medium">+100ml</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -322,9 +343,11 @@ const NutritionDashboard = () => {
                   <Text className="text-gray-800 font-medium">{meal.name}</Text>
                 </View>
                 
-                <TouchableOpacity onPress={() => router.push('/nutrisi/add')}>           
+                <TouchableOpacity 
+                  onPress={() => navigateToAddFood(meal.routeParam)}
+                >           
                   <Image 
-                    source={require('../../../assets/images/plus.svg')} 
+                    source={require('../../../assets/images/plus.png')} 
                     style={{width: 24, height: 24}} 
                   />
                 </TouchableOpacity>

@@ -16,7 +16,7 @@ const AktivitasBerjalan = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Calculate calories per second based on activity calories per hour
+
   const caloriesPerSecond = (parseInt(calories as string) || 100) / 3600;
   const targetTimeInSeconds = parseInt(targetDuration as string) || 1800;
 

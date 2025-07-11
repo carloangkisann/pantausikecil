@@ -50,11 +50,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
         if (!isPublicRoute && !isAuthRoute) {
           router.replace('/(auth)/login');
         }
-      } else {
-        if (isAuthRoute) {
-          router.replace('/(tabs)');
-        }
-      }
+      } 
     }, 50); 
     return () => clearTimeout(navigationTimeout);
   }, [isAuthenticated, loading, segments, router, isNavigationReady]);

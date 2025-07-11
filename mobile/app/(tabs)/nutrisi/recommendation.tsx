@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
+import { apiService } from '../../../services/api';
+import { extractApiArrayData } from '../../../utils/apiHelpers';
+import { FoodItem } from '../../../types';
+
 const FoodRecommendation = () => {
+
   const [selectedCategory, setSelectedCategory] = useState<'sarapan' | 'makan-siang' | 'makan-malam' | 'cemilan'>('sarapan');
+  const [loading, setLoading] = useState(true);
+  const [allFoods, setAllFoods] = useState<FoodItem[]>([]);
 
   const categories = [
     { id: 'sarapan', name: 'Sarapan' },
@@ -13,95 +20,82 @@ const FoodRecommendation = () => {
     { id: 'cemilan', name: 'Cemilan' }
   ];
 
-  // Mock data - nanti dari API
-  const foodData = {
-    sarapan: [
-      { 
-        id: 1, 
-        name: 'Bubur Kacang Hijau', 
-        calories: 500, 
-        nutrition: { kalsium: 5 },
-        image: require('../../../assets/images/default.png') // placeholder
-      },
-      { 
-        id: 2, 
-        name: 'Roti Gandum dengan Alpukat', 
-        calories: 350, 
-        nutrition: { folat: 80 },
-        image: require('../../../assets/images/default.png') // placeholder
-      },
-      { 
-        id: 3, 
-        name: 'Smoothie Pisang Bayam', 
-        calories: 280, 
-        nutrition: { zat_besi: 3 },
-        image: require('../../../assets/images/default.png') // placeholder
-      },
-      { 
-        id: 4, 
-        name: 'Oatmeal dengan Kacang', 
-        calories: 420, 
-        nutrition: { protein: 15 },
-        image: require('../../../assets/images/default.png') // placeholder
-      },
-      { 
-        id: 5, 
-        name: 'Telur Rebus dengan Roti', 
-        calories: 380, 
-        nutrition: { protein: 20 },
-        image: require('../../../assets/images/default.png') // placeholder
-      },
-      { 
-        id: 6, 
-        name: 'Yogurt dengan Granola', 
-        calories: 320, 
-        nutrition: { kalsium: 8 },
-        image: require('../../../assets/images/default.png') // placeholder
-      }
-    ],
-    'makan-siang': [
-      { 
-        id: 7, 
-        name: 'Nasi Merah dengan Ayam', 
-        calories: 650, 
-        nutrition: { protein: 35 },
-        image: require('../../../assets/images/default.png') // placeholder
-      },
-      { 
-        id: 8, 
-        name: 'Salmon Panggang', 
-        calories: 580, 
-        nutrition: { omega3: 2 },
-        image: require('../../../assets/images/default.png') // placeholder
-      }
-    ],
-    'makan-malam': [
-      { 
-        id: 9, 
-        name: 'Sup Bayam Jagung', 
-        calories: 320, 
-        nutrition: { folat: 120 },
-        image: require('../../../assets/images/default.png') // placeholder
-      }
-    ],
-    cemilan: [
-      { 
-        id: 10, 
-        name: 'Kacang Almond', 
-        calories: 200, 
-        nutrition: { kalsium: 4 },
-        image: require('../../../assets/images/default.png') // placeholder
-      }
-    ]
+  useEffect(() => {
+    fetchFoods();
+  }, []);
+
+  const fetchFoods = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getAllFood();
+      const foods = extractApiArrayData<FoodItem>(response);
+      setAllFoods(foods);
+    } catch (error) {
+      console.error('Error fetching foods:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const currentFoods = foodData[selectedCategory] || [];
-    const handleFoodPress = (foodId: number) => {
+  const getCurrentFoods = () => {
+    return allFoods.filter((food, index) => {
+      const categoryIndex = categories.findIndex(cat => cat.id === selectedCategory);
+      return index % 4 === categoryIndex;
+    }); 
+  };
+
+  const currentFoods = getCurrentFoods();
+
+  const handleFoodPress = (foodId: number) => {
     router.push({
-        pathname: '/nutrisi/[foodId]',
-        params: { foodId: foodId.toString() }
+      pathname: '/nutrisi/[foodId]',
+      params: { foodId: foodId.toString() }
     });
-    };
+  };
+
+
+  const estimateCalories = (food: FoodItem) => {
+    return Math.round((food.protein * 4) + (food.fat * 9) + 100);
+  };
+
+
+  const getMainNutrition = (food: FoodItem) => {
+    if (food.protein > 10) return { name: 'protein', value: food.protein };
+    if (food.folicAcid > 50) return { name: 'folat', value: food.folicAcid };
+    if (food.iron > 3) return { name: 'zat_besi', value: food.iron };
+    if (food.calcium > 100) return { name: 'kalsium', value: food.calcium };
+    return { name: 'protein', value: food.protein };
+  };
+
+  if (loading) {
+    return (
+      <LinearGradient
+        colors={['#FF9EBD', '#F2789F']}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
+        style={{ flex: 1 }}
+      >
+        <View className="flex-row items-center px-4 py-6 pt-4">
+          <TouchableOpacity onPress={() => router.back()}>
+            <Image 
+              source={require('../../../assets/images/back-arrow.png')}
+              className="w-6 h-6"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <Text className="text-white text-xl font-semibold ml-4">
+            Rekomendasi Makanan
+          </Text>
+        </View>
+
+        <View className="flex-1 bg-pink-low rounded-t-2xl items-center justify-center">
+          <ActivityIndicator size="large" color="#F2789F" />
+          <Text className="text-gray-600 mt-4">Memuat rekomendasi...</Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
   return (
     <LinearGradient
       colors={['#FF9EBD', '#F2789F']}
@@ -166,53 +160,45 @@ const FoodRecommendation = () => {
 
           {/* Food Grid */}
           <View className="flex-row flex-wrap justify-between">
-            {currentFoods.map((food) => (
-              <TouchableOpacity
-                key={food.id}
-                className="w-[48%] bg-pink-medium rounded-2xl p-4 mb-4"
-                onPress={() => handleFoodPress(food.id)}
-              >
-                {/* Food Image Placeholder */}
-                <View className="w-full h-24 bg-pink-semi-low rounded-xl mb-3 items-center justify-center overflow-hidden">
-                    {food.image ? (
-                        <Image 
-                        source={{ uri: food.image }}
-                        className="w-full h-full"
-                        resizeMode="cover"
-                        onError={() => {
-                            // Kalau image gagal load, akan fallback ke emoji
-                            console.log('Image failed to load, using emoji fallback');
-                        }}
-                        />
-                    ) : (
-                        <Text className="text-4xl">🍲</Text>
-                    )}
-                    </View>
-                {/* Food Info */}
-                <Text className="text-white font-semibold text-sm mb-2 text-center mx-auto w-3/4" numberOfLines={2}>
-                  {food.name}
-                </Text>
-                
-                <View className="border-t border-white/20 pt-2">
-                  <View className="flex-row justify-between">   
-                    <Text className="text-white text-xs">Kalori</Text>
-                    <Text className="text-white text-xs font-medoum">{food.calories} Cal</Text>
+            {currentFoods.map((food) => {
+              const calories = estimateCalories(food);
+              const mainNutrition = getMainNutrition(food);
+              
+              return (
+                <TouchableOpacity
+                  key={food.id}
+                  className="w-[48%] bg-pink-medium rounded-2xl p-4 mb-4"
+                  onPress={() => handleFoodPress(food.id)}
+                >
+                  {/* Food Image Placeholder */}
+                  <View className="w-full h-24 bg-pink-semi-low rounded-xl mb-3 items-center justify-center overflow-hidden">
+                    <Text className="text-4xl">🍲</Text>
                   </View>
+
+                  {/* Food Info */}
+                  <Text className="text-white font-semibold text-sm mb-2 text-center mx-auto w-3/4" numberOfLines={2}>
+                    {food.foodName}
+                  </Text>
                   
-                  {/* Nutrition info */}
-                  {Object.entries(food.nutrition).map(([key, value]) => (
-                    <View key={key} className="flex-row justify-between mt-1">
+                  <View className="border-t border-white/20 pt-2">
+                    <View className="flex-row justify-between">   
+                      <Text className="text-white text-xs">Kalori</Text>
+                      <Text className="text-white text-xs font-medium">{calories} Cal</Text>
+                    </View>
+                    
+                    {/* Nutrition info */}
+                    <View className="flex-row justify-between mt-1">
                       <Text className="text-white text-xs capitalize">
-                        {key.replace('_', ' ')}
+                        {mainNutrition.name.replace('_', ' ')}
                       </Text>
                       <Text className="text-white text-xs font-medium">
-                        {value} {key.includes('kalori') ? 'Cal' : 'g'}
+                        {mainNutrition.value} {mainNutrition.name.includes('kalori') ? 'Cal' : 'g'}
                       </Text>
                     </View>
-                  ))}
-                </View>
-              </TouchableOpacity>
-            ))}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* Empty State */}

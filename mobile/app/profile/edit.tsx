@@ -1,26 +1,73 @@
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, TextInput, Alert, Dimensions } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, TextInput, Alert, Dimensions, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
+import { useAuth } from '../../context/AuthContext';
+import { apiService } from '../../services/api';
+import { UserConnection, PregnancyData } from '../../types';
 
 const { width } = Dimensions.get('window');
 
 export default function ProfileEdit() {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  
   const [formData, setFormData] = useState({
-    nama: 'Lala Matchaciz',
-    usia: '21',
-    usiaKehamilan: '12',
-    vegetarian: true,
-    kondisiFinansial: 'Menengah',
-    alergi: 'Bulu kucing',
-    kondisiMedis: 'Anemia'
+    nama: '',
+    usia: '',
+    vegetarian: false,
+    kondisiFinansial: 'Menengah' as 'Rendah' | 'Menengah' | 'Tinggi',
+    alergi: '',
+    kondisiMedis: ''
   });
 
-  const [koneksi, setKoneksi] = useState([
-    'Fawwas69@gmail.com',
-    'Dzaky77@gmail.com'
-  ]);
+  const [koneksi, setKoneksi] = useState<UserConnection[]>([]);
+  const [pregnancies, setPregnancies] = useState<PregnancyData[]>([]);
+
+  useEffect(() => {
+    loadProfileData();
+  }, []);
+
+  const loadProfileData = async () => {
+    if (!user?.id) return;
+
+    try {
+      setLoading(true);
+      
+      // Load profile data
+      const profileResponse = await apiService.getUserProfile(user.id);
+      if (profileResponse.success && profileResponse.data) {
+        const profile = profileResponse.data;
+        setFormData({
+          nama: profile.fullName || '',
+          usia: profile.age?.toString() || '',
+          vegetarian: profile.isVegetarian || false,
+          kondisiFinansial: profile.financialStatus || 'Menengah',
+          alergi: profile.allergy || '',
+          kondisiMedis: profile.medicalCondition || ''
+        });
+      }
+
+      // Load connections
+      const connectionsResponse = await apiService.getUserConnections(user.id);
+      if (connectionsResponse.success) {
+        setKoneksi(connectionsResponse.data || []);
+      }
+
+      // Load pregnancies
+      const pregnanciesResponse = await apiService.getUserPregnancies(user.id);
+      if (pregnanciesResponse.success) {
+        setPregnancies(pregnanciesResponse.data || []);
+      }
+    } catch (error) {
+      console.error('Error loading profile data:', error);
+      Alert.alert('Error', 'Gagal memuat data profil');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoBack = () => {
     router.back();
@@ -31,52 +78,129 @@ export default function ProfileEdit() {
   };
 
   const handleTambahKoneksi = () => {
-    Alert.prompt(
-      'Tambah Koneksi',
-      'Masukkan email koneksi baru:',
-      (email) => {
-        if (email && email.includes('@')) {
-          setKoneksi([...koneksi, email]);
-        }
-      }
-    );
+    router.push('/profile/add-koneksi');
   };
 
-  const handleHapusKoneksi = (index: number) => {
+  const handleHapusKoneksi = async (connection: UserConnection) => {
     Alert.alert(
       'Hapus Koneksi',
-      'Yakin ingin menghapus koneksi ini?',
+      `Yakin ingin menghapus koneksi ${connection.connectionName}?`,
       [
         { text: 'Batal', style: 'cancel' },
         { 
           text: 'Hapus', 
           style: 'destructive',
-          onPress: () => {
-            const newKoneksi = koneksi.filter((_, i) => i !== index);
-            setKoneksi(newKoneksi);
+          onPress: async () => {
+            try {
+              if (!user?.id) return;
+              
+              const response = await apiService.deleteConnection(user.id, connection.id);
+              if (response.success) {
+                setKoneksi(koneksi.filter(k => k.id !== connection.id));
+                Alert.alert('Berhasil', 'Koneksi berhasil dihapus');
+              } else {
+                Alert.alert('Error', response.message || 'Gagal menghapus koneksi');
+              }
+            } catch (error) {
+              console.error('Error deleting connection:', error);
+              Alert.alert('Error', 'Gagal menghapus koneksi');
+            }
           }
         }
       ]
     );
   };
 
-  const handleSelesaiKehamilan = () => {
+  const handleSelesaiKehamilan = async () => {
+    const activePregnancy = pregnancies.find(p => !p.endDate);
+    if (!activePregnancy) {
+      Alert.alert('Info', 'Tidak ada kehamilan aktif');
+      return;
+    }
+
     Alert.alert(
       'Selesai Kehamilan',
       'Apakah Anda yakin ingin menandai kehamilan sebagai selesai?',
       [
         { text: 'Batal', style: 'cancel' },
-        { text: 'Ya', onPress: () => {
-          Alert.alert('Berhasil', 'Status kehamilan berhasil diubah');
-        }}
+        { 
+          text: 'Ya', 
+          onPress: async () => {
+            try {
+              if (!user?.id) return;
+              
+              const response = await apiService.updatePregnancy(
+                user.id, 
+                activePregnancy.id, 
+                { endDate: new Date().toISOString().split('T')[0] }
+              );
+              
+              if (response.success) {
+                Alert.alert('Berhasil', 'Status kehamilan berhasil diubah');
+                loadProfileData(); // Reload data
+              } else {
+                Alert.alert('Error', response.message || 'Gagal mengubah status kehamilan');
+              }
+            } catch (error) {
+              console.error('Error updating pregnancy:', error);
+              Alert.alert('Error', 'Gagal mengubah status kehamilan');
+            }
+          }
+        }
       ]
     );
   };
 
-  const handleSaveProfile = () => {
-    Alert.alert('Berhasil', 'Profile berhasil disimpan');
-    router.back();
+  const handleSaveProfile = async () => {
+    if (!user?.id) return;
+
+    // Validation
+    if (!formData.nama.trim()) {
+      Alert.alert('Error', 'Nama harus diisi');
+      return;
+    }
+
+    if (formData.usia && isNaN(Number(formData.usia))) {
+      Alert.alert('Error', 'Usia harus berupa angka');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      
+      const updateData = {
+        fullName: formData.nama,
+        age: formData.usia ? Number(formData.usia) : undefined,
+        isVegetarian: formData.vegetarian,
+        financialStatus: formData.kondisiFinansial,
+        allergy: formData.alergi || undefined,
+        medicalCondition: formData.kondisiMedis || undefined
+      };
+
+      const response = await apiService.updateUserProfile(user.id, updateData);
+      
+      if (response.success) {
+        Alert.alert('Berhasil', 'Profile berhasil disimpan');
+        router.back();
+      } else {
+        Alert.alert('Error', response.message || 'Gagal menyimpan profile');
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      Alert.alert('Error', 'Gagal menyimpan profile');
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-pink-medium items-center justify-center">
+        <ActivityIndicator size="large" color="#ffffff" />
+        <Text className="text-white mt-2">Memuat data...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView className="flex-1 bg-pink-medium" showsVerticalScrollIndicator={false}>
@@ -128,9 +252,10 @@ export default function ProfileEdit() {
             <TextInput
               value={formData.nama}
               onChangeText={(text) => setFormData({...formData, nama: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border text-gray-1"
+              className="bg-pink-low rounded-lg px-3 py-1 border border-black text-gray-1"
               placeholder="Masukkan nama"
-              style={{ fontSize: 12, height: 32 }}
+              placeholderTextColor="#666666"
+              style={{ fontSize: 12, height: 32, color: '#666666' }}
             />
           </View>
 
@@ -143,22 +268,9 @@ export default function ProfileEdit() {
               onChangeText={(text) => setFormData({...formData, usia: text})}
               className="bg-pink-low rounded-lg px-3 py-1 border border-black text-gray-1"
               placeholder="Masukkan usia"
+              placeholderTextColor="#666666"
               keyboardType="numeric"
-              style={{ fontSize: 12, height: 32 }}
-            />
-          </View>
-
-          <View className="mb-2">
-            <Text className="text-black-low font-medium mb-1 text-xs">
-              Usia Kehamilan
-            </Text>
-            <TextInput
-              value={formData.usiaKehamilan}
-              onChangeText={(text) => setFormData({...formData, usiaKehamilan: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border border-black text-gray-1"
-              placeholder="Masukkan usia kehamilan"
-              keyboardType="numeric"
-              style={{ fontSize: 12, height: 32 }}
+              style={{ fontSize: 12, height: 32, color: '#666666' }}
             />
           </View>
 
@@ -206,8 +318,8 @@ export default function ProfileEdit() {
               <Picker
                 selectedValue={formData.kondisiFinansial}
                 onValueChange={(itemValue) => setFormData({...formData, kondisiFinansial: itemValue})}
-                style={{ height: 32, fontSize: 12 }}
-                className='bg-pink-low text-gray-1'
+                style={{ height: 32, fontSize: 12, color: '#666666' }}
+                className='bg-pink-low'
               >
                 <Picker.Item label="Rendah" value="Rendah" />
                 <Picker.Item label="Menengah" value="Menengah" />
@@ -223,7 +335,7 @@ export default function ProfileEdit() {
             <TextInput
               value={formData.alergi}
               onChangeText={(text) => setFormData({...formData, alergi: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border  text-gray-1 border-black shadow-sm"
+              className="bg-pink-low rounded-lg px-3 py-1 border border-black shadow-sm"
               placeholder="Masukkan alergi"
               placeholderTextColor="#666666"
               style={{ fontSize: 12, height: 32, color: '#666666' }}
@@ -248,15 +360,21 @@ export default function ProfileEdit() {
           <View className="mt-3 items-center justify-center">
             <TouchableOpacity 
               onPress={handleSaveProfile}
+              disabled={saving}
               className="rounded-lg items-center justify-center bg-pink-medium"
               style={{ 
                 width: width * 0.4,
                 height: 36,
+                opacity: saving ? 0.7 : 1
               }}
             >
-              <Text className="font-medium text-sm text-white">
-                Simpan Profile
-              </Text>
+              {saving ? (
+                <ActivityIndicator size="small" color="#ffffff" />
+              ) : (
+                <Text className="font-medium text-sm text-white">
+                  Simpan Profile
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
 
@@ -297,20 +415,29 @@ export default function ProfileEdit() {
         </View>
         
         <View className="space-y-2">
-          {koneksi.map((email, index) => (
-            <View key={index} className="flex-row items-center justify-between py-1">
-              <View className="flex-row items-center flex-1">
-                <Text className="text-gray-1 font-medium mr-2 text-xs">{index + 1}.</Text>
-                <Text className="text-gray-1 underline flex-1 text-xs">{email}</Text>
+          {koneksi.length > 0 ? (
+            koneksi.map((connection, index) => (
+              <View key={connection.id} className="flex-row items-center justify-between py-1">
+                <View className="flex-row items-center flex-1">
+                  <Text className="text-gray-1 font-medium mr-2 text-xs">{index + 1}.</Text>
+                  <View className="flex-1">
+                    <Text className="text-gray-1 underline text-xs">{connection.connectionEmail}</Text>
+                    <Text className="text-gray-1 text-xs">({connection.relationshipType})</Text>
+                  </View>
+                </View>
+                <TouchableOpacity 
+                  onPress={() => handleHapusKoneksi(connection)}
+                  className="bg-pink-medium rounded-lg px-2 py-1"
+                >
+                  <Text className="text-white text-xs">Hapus</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity 
-                onPress={() => handleHapusKoneksi(index)}
-                className="bg-pink-medium rounded-lg px-2 py-1"
-              >
-                <Text className="text-white text-xs">Hapus</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+            ))
+          ) : (
+            <Text className="text-gray-1 text-center italic text-xs">
+              Belum ada koneksi
+            </Text>
+          )}
         </View>
       </View>
     </ScrollView>

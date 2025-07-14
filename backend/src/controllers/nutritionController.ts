@@ -6,7 +6,7 @@ import { sendSuccess, sendError } from '../utils/helper.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { nutritionSchemas } from '../middleware/validation.js';
-import { mealCategoryEnum } from 'db/schema.js';
+import { mealCategoryEnum } from '../db/schema.js';
 
 type MealCategory = typeof mealCategoryEnum.enumValues[number];
 

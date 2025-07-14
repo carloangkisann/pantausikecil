@@ -3,11 +3,19 @@ import { ENV } from '../config/env.js';
 import { UserService } from './userService.js';
 import { AppError } from '../middleware/errorHandler.js';
 
+export interface LocationData {
+  latitude: number;
+  longitude: number;
+  address?: string;
+  timestamp?: Date;
+}
+
 export interface EmergencyEmailData {
   recipientEmail: string;
   recipientName: string;
   motherName: string;
   customMessage?: string;
+  location?: LocationData;
 }
 
 export class EmailService {
@@ -21,7 +29,11 @@ export class EmailService {
     },
   });
 
-  static async sendEmergencyNotification(userId: number, customMessage?: string): Promise<void> {
+  static async sendEmergencyNotification(
+    userId: number, 
+    customMessage?: string, 
+    location?: LocationData
+  ): Promise<void> {
     const userProfile = await UserService.getUserProfile(userId);
     
     const connections = await UserService.getUserConnections(userId);
@@ -38,6 +50,7 @@ export class EmailService {
         recipientName: connection.connectionName,
         motherName,
         customMessage,
+        location,
       })
     );
 
@@ -49,10 +62,56 @@ export class EmailService {
     }
   }
 
+  private static generateGoogleMapsLink(latitude: number, longitude: number): string {
+    return `https://www.google.com/maps?q=${latitude},${longitude}`;
+  }
+
+  private static formatLocationText(location: LocationData): string {
+    const coords = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
+    if (location.address) {
+      return `${location.address}\nKoordinat: ${coords}`;
+    }
+    return `Koordinat: ${coords}`;
+  }
+
   static async sendEmergencyEmail(emailData: EmergencyEmailData): Promise<void> {
-    const { recipientEmail, recipientName, motherName, customMessage } = emailData;
+    const { recipientEmail, recipientName, motherName, customMessage, location } = emailData;
 
     const subject = '🚨 PEMBERITAHUAN DARURAT - PantauSiKecil';
+    
+    const locationHtmlSection = location ? `
+      <div style="background-color: #e3f2fd; border: 1px solid #2196f3; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <h4 style="margin-top: 0; color: #1976d2;">📍 Lokasi Terakhir Diketahui:</h4>
+        <p style="margin: 5px 0; color: #1976d2;">
+          ${location.address ? `<strong>Alamat:</strong> ${location.address}<br>` : ''}
+          <strong>Koordinat:</strong> ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}
+        </p>
+        <div style="margin-top: 15px;">
+          <a href="${this.generateGoogleMapsLink(location.latitude, location.longitude)}" 
+             style="background-color: #4CAF50; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-right: 10px; font-size: 14px;">
+            Buka di Google Maps
+          </a>
+        </div>
+        ${location.timestamp ? `
+          <p style="font-size: 12px; color: #666; margin-top: 10px; margin-bottom: 0;">
+            Lokasi terakhir diperbarui: ${location.timestamp.toLocaleString('id-ID', { 
+              timeZone: 'Asia/Jakarta',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })} WIB
+          </p>
+        ` : ''}
+      </div>
+    ` : `
+      <div style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <p style="margin: 0; font-weight: bold; color: #856404;">
+          ⚠️ Lokasi tidak tersedia - pastikan untuk segera menghubungi ${motherName}
+        </p>
+      </div>
+    `;
     
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
@@ -72,6 +131,8 @@ export class EmailService {
               ⚠️ ${motherName} mungkin sedang dalam keadaan darurat dan membutuhkan bantuan segera.
             </p>
           </div>
+
+          ${locationHtmlSection}
           
           ${customMessage ? `
             <div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 15px; margin: 20px 0;">
@@ -84,6 +145,7 @@ export class EmailService {
             <h4 style="margin-top: 0; color: #155724;">Yang Perlu Anda Lakukan:</h4>
             <ul style="color: #155724; margin-bottom: 0;">
               <li>Segera hubungi ${motherName} melalui telepon atau pesan</li>
+              ${location ? '<li>Gunakan informasi lokasi di atas untuk menemukan keberadaannya</li>' : ''}
               <li>Jika tidak dapat dihubungi, pertimbangkan untuk datang langsung</li>
               <li>Jika diperlukan, hubungi layanan darurat (119/112)</li>
               <li>Pastikan kondisi kehamilan dan kesehatannya</li>
@@ -109,6 +171,16 @@ export class EmailService {
       </div>
     `;
 
+    // Generate location section for text email
+    const locationTextSection = location ? `
+Lokasi terakhir diketahui:
+${this.formatLocationText(location)}
+
+Link Google Maps: ${this.generateGoogleMapsLink(location.latitude, location.longitude)}
+
+${location.timestamp ? `Lokasi terakhir diperbarui: ${location.timestamp.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })} WIB` : ''}
+` : `⚠️ Lokasi tidak tersedia - pastikan untuk segera menghubungi ${motherName}`;
+
     const textBody = `
 PEMBERITAHUAN DARURAT - PantauSiKecil
 
@@ -118,10 +190,13 @@ Kami mengirimkan pesan darurat ini atas nama ${motherName} yang menggunakan apli
 
 ⚠️ ${motherName} mungkin sedang dalam keadaan darurat dan membutuhkan bantuan segera.
 
+${locationTextSection}
+
 ${customMessage ? `Pesan tambahan: "${customMessage}"` : ''}
 
 Yang perlu Anda lakukan:
 - Segera hubungi ${motherName} melalui telepon atau pesan
+${location ? '- Gunakan informasi lokasi di atas untuk menemukan keberadaannya' : ''}
 - Jika tidak dapat dihubungi, pertimbangkan untuk datang langsung
 - Jika diperlukan, hubungi layanan darurat (119/112)
 - Pastikan kondisi kehamilan dan kesehatannya
@@ -175,7 +250,7 @@ PantauSiKecil - Aplikasi Pemantauan Ibu Hamil
             <li>🏃‍♀️ Monitor aktivitas fisik</li>
             <li>⏰ Pengingat penting</li>
             <li>👥 Koneksi dengan keluarga</li>
-            <li>🆘 Notifikasi darurat</li>
+            <li>🆘 Notifikasi darurat dengan lokasi</li>
           </ul>
           
           <p>Jangan lupa untuk melengkapi profil dan data kehamilan Anda untuk mendapatkan pengalaman yang optimal!</p>

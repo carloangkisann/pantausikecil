@@ -110,11 +110,13 @@ export class NutritionService {
       );
 
     const totalWaterMl = waterResult[0]?.totalWater || 0;
+    // console.log('Type of totalWaterMl:', typeof totalWaterMl);
+    const finalTotalWaterMl = Number(totalWaterMl)
 
     return {
       date,
       ...totalNutrition,
-      totalWaterMl,
+      totalWaterMl: finalTotalWaterMl,
     };
   }
 

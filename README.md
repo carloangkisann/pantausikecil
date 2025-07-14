@@ -213,11 +213,11 @@ BACKEND_URL=https://pantausikecil-backend.up.railway.app
     <tr>
       <td align="center">
         <b>Alfian Hanif</b>
-        <br>Backend Developer
+        <br>AI Engineer
       </td>
       <td align="center">
         <b>Carlo Angkisan</b>
-        <br>AI Engineer
+        <br>Backend Developer
       </td>
       <td align="center">
         <b>Dzaky Aurelia</b>

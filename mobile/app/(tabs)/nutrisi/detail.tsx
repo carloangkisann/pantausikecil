@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const DetailNutrisi = () => {
   const nutritionData = [
@@ -48,6 +49,7 @@ const DetailNutrisi = () => {
       percentage: 56
     }
   ];
+  const width = Dimensions.get('window').width;
 
   return (
     <LinearGradient
@@ -63,10 +65,11 @@ const DetailNutrisi = () => {
             onPress={() => router.back()}
             className="w-10 h-10 bg-white/20 rounded-full items-center justify-center"
           >
-            <Image 
+            {/* <Image 
               source={require('../../../assets/images/back-arrow.png')} 
               className="w-6 h-6"
-            />
+            /> */}
+              <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
           </TouchableOpacity>
           
           <Text className="text-white text-xl font-semibold">

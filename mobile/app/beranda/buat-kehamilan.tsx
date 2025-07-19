@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, StatusBar, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, StatusBar, Image, ActivityIndicator, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { useAuth } from '../../context/AuthContext';
 import {apiService} from '../../services/api';
 import { CreatePregnancyRequest } from '../../types';
 import Header from '../components/Header';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 
 export default function BuatKehamilan() {
@@ -124,15 +125,17 @@ export default function BuatKehamilan() {
     const today = new Date();
     return today.toISOString().split('T')[0];
   };
+  const width = Dimensions.get('window').width;
 
   return (
-    <View className="flex-1 bg-pink-low">
+    <View className="flex-1 bg-pink-medium">
       <StatusBar barStyle="light-content" backgroundColor="#F789AC" />
-      
-      <Header />
-      
+        
+        <Header />
+      <View className='rounded-2xl flex-1 bg-pink-low'>
       <ScrollView 
-        className="flex-1 px-6 py-4" 
+        className="px-6 py-4 " 
+    
         contentContainerStyle={{ alignItems: 'center' }}
         showsVerticalScrollIndicator={false}
       >
@@ -140,15 +143,17 @@ export default function BuatKehamilan() {
         <View className="flex-row items-center justify-between mb-4">
           <TouchableOpacity 
             onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mr-1"
+            className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mr-1 -left-14"
             activeOpacity={0.8}
             disabled={loading}
           >
-            <Image 
+            {/* <Image 
               source={require('../../assets/images/back-arrow-black.png')}
               className="w-5 h-5"
               resizeMode="contain"
-            />
+            /> */}
+
+              <FontAwesome5 name ='arrow-circle-left' color='#656565' size={0.074*width}></FontAwesome5>
           </TouchableOpacity>
           
           <Text className="text-black-low text-xl font-semibold flex-1 text-center mx-auto font-poppins">
@@ -157,13 +162,13 @@ export default function BuatKehamilan() {
         </View>
         
         {/* Kehamilan ke */}
-        <View className="mb-6">
-          <Text className="text-lg font-semibold text-gray-800 mb-3">
+        <View className="mb-6 w-full">
+          <Text className="text-base   font-semibold text-black font-poppins mb-3 ">
             Kehamilan ke *
           </Text>
           <TextInput
-            className="bg-white rounded-xl px-4 py-4 shadow-sm border border-pink-semi-low text-sm font-poppins text-gray-1" 
-            style={{ width: 350, height: 52 }}
+            className="bg-white rounded-xl px-4  w p-2 border border-pink-semi-low text-sm font-poppins text-gray-1" 
+    
             placeholder="Masukkan ini kehamilan ke berapa kamu"
             value={formData.kehamilanKe}
             onChangeText={(text) => setFormData({...formData, kehamilanKe: text})}
@@ -173,13 +178,12 @@ export default function BuatKehamilan() {
         </View>
 
         {/* Usia Kehamilan */}
-        <View className="mb-6">
-          <Text className="text-lg font-semibold text-gray-800 mb-3">
+        <View className="mb-6 w-full">
+          <Text className="text-base   font-semibold text-black font-poppins mb-3">
             Usia Kehamilan atau Tanggal Mulai *
           </Text>
           <TextInput
-            className="bg-white rounded-xl px-4 py-4 text-gray-1 shadow-sm border border-pink-semi-low text-sm"
-            style={{ width: 350, height: 52 }}
+            className="bg-white rounded-xl px-4  w p-2 border border-pink-semi-low text-sm font-poppins text-gray-1"
             placeholder="Contoh: 12 minggu atau 15/01/2024"
             value={formData.usiaKehamilan}
             onChangeText={(text) => setFormData({...formData, usiaKehamilan: text})}
@@ -191,16 +195,15 @@ export default function BuatKehamilan() {
         </View>
 
         {/* Jenis Kelamin Bayi */}
-        <View className="mb-6">
+        <View className="mb-6 w-full">
           <Text className="text-lg font-semibold text-gray-800 mb-3">
             Jenis Kelamin Bayi *
           </Text>
-          <View className="bg-white rounded-xl shadow-sm border border-pink-semi-low" style={{ width: 350, height: 52 }}>
+          <View className="bg-white rounded-xl border border-pink-semi-low  px-4   p-2" >
             <Picker
               selectedValue={formData.jenisKelaminBayi}
               onValueChange={(itemValue) => setFormData({...formData, jenisKelaminBayi: itemValue})}
-              style={{ height: 52 }}
-              className='rounded-xl text-sm font-poppins text-gray-1 px-4'
+              className='rounded-xl text-sm font-poppins text-gray-1'
               enabled={!loading}
             >
               <Picker.Item label="Masukkan jenis kelamin bayi kamu" value="" />
@@ -212,16 +215,16 @@ export default function BuatKehamilan() {
         </View>
 
         {/* Komplikasi Kehamilan (Optional) */}
-        <View className="mb-6">
+        <View className="mb-6 w-full">
           <Text className="text-lg font-semibold text-gray-800 mb-3">
             Komplikasi Kehamilan (Opsional)
           </Text>
-          <View className="bg-white rounded-xl shadow-sm border border-pink-semi-low" style={{ width: 350, height: 52 }}>
+          <View className="bg-white rounded-xl border border-pink-semi-low  px-4 p-2" >
             <Picker
               selectedValue={formData.komplikasiKehamilan}
               onValueChange={(itemValue) => setFormData({...formData, komplikasiKehamilan: itemValue})}
-              style={{ height: 52 }}
-              className='rounded-xl text-sm font-poppins text-gray-1 px-4'
+            
+              className='rounded-xl text-sm font-poppins text-gray-1'
               enabled={!loading}
             >
               <Picker.Item label="Masukkan ada atau tidaknya komplikasi" value="" />
@@ -259,7 +262,7 @@ export default function BuatKehamilan() {
         {/* Simpan Button */}
         <TouchableOpacity
           onPress={saveKehamilan}
-          className="bg-pink-medium rounded-3xl py-4 px-6 shadow-sm mb-8 mx-auto"
+          className="bg-pink-medium rounded-3xl py-4 px-6 shadow-sm mb-8 mx-auto mt-24"
           style={{ 
             width: 350, 
             height: 56,
@@ -277,6 +280,7 @@ export default function BuatKehamilan() {
           )}
         </TouchableOpacity>
       </ScrollView>
+      </View>
     </View>
   );
 }

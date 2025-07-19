@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { router } from "expo-router";
+import { FontAwesome5 } from "@expo/vector-icons";
 import {
   View,
   Text,
@@ -8,6 +10,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { apiService } from "../../../services/api";
@@ -67,17 +70,19 @@ const ChatBot = () => {
       setMessages((prev) => [...prev, botMessage]);
     }
   };
+  const width = Dimensions.get('window').width;
 
   return (
     <SafeAreaView className="flex-1 bg-pink-medium">
       {/* Header */}
       <View className="bg-pink-medium px-4 py-3 flex-row items-center">
-        <TouchableOpacity className="mr-3">
-          <Image
+        <TouchableOpacity className="mr-3" onPress={() =>router.back()}>
+          {/* <Image
             source={require("../../../assets/images/back-arrow.png")}
             className="w-6 h-6"
             style={{ tintColor: "white" }}
-          />
+          /> */}
+          <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
         </TouchableOpacity>
 
         <View className="flex-row items-center flex-1 ml-4">
@@ -88,7 +93,7 @@ const ChatBot = () => {
             resizeMode="contain"
           />
           <Text className="font-bold font-poppins text-white text-lg">
-            MediRobot
+            MediRobot 
           </Text>
         </View>
       </View>
@@ -100,7 +105,7 @@ const ChatBot = () => {
       >
         <ScrollView
           ref={scrollViewRef}
-          className="flex-1 bg-pink-low px-4 py-4"
+          className="flex-1 bg-pink-low rounded-t-xl px-4 py-4"
           showsVerticalScrollIndicator={false}
         >
           {messages.map((message) => (

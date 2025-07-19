@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../../context/AuthContext';
 import { apiService } from '../../../services/api';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
 const AddFood = () => {
   // Ambil meal type dari parameter URL
@@ -137,6 +138,7 @@ const AddFood = () => {
       </LinearGradient>
     );
   }
+  const width = Dimensions.get('window').width;
 
   return (
     <LinearGradient
@@ -146,19 +148,21 @@ const AddFood = () => {
       style={{ flex: 1 }}
     >
       {/* Header */}
-      <View className="flex-row items-center px-4 py-6 pt-12">
+      <View className="flex-row items-center px-4 py-6 ">
         <TouchableOpacity onPress={() => router.push('/nutrisi')}>
-          <Image 
+          {/* <Image 
             source={require('../../../assets/images/back-arrow.png')}
             className="w-6 h-6"
             resizeMode="contain"
-          />
+          /> */}
+
+          <FontAwesome5 name ='arrow-circle-left' color='white' size={0.074*width}></FontAwesome5>
         </TouchableOpacity>
-        <View className="ml-4 flex-1">
-          <Text className="text-white text-xl font-semibold">
+  
+          <Text className="text-white mx-auto text-xl font-semibold font-poppins">
             Tambah Makanan
           </Text>
-        </View>
+   
       </View>
 
       <ScrollView 
@@ -223,17 +227,18 @@ const AddFood = () => {
                   {addingFood === food.id ? (
                     <ActivityIndicator size="small" color="#FFFFFF" />
                   ) : (
-                    <Image   
-                      source={require('../../../assets/images/plus.png')}
-                      className="w-5 h-5"
-                      resizeMode="contain"
-                    />
+                    // <Image   
+                    //   source={require('../../../assets/images/plus.png')}
+                    //   className="w-5 h-5"
+                    //   resizeMode="contain"
+                    // />
+                    <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
                   )}
                 </View>
                 
                 {/* Food Info */}
                 <View className="flex-1">
-                  <Text className="text-white text-smfont-semibold mb-1">
+                  <Text className="text-white text-sm font-semibold mb-1 ">
                     {food.name}
                   </Text>
                   <Text className="text-white text-sm opacity-90">

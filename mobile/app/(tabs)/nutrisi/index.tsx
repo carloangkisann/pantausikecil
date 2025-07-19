@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, Platform, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, Platform, Image, ActivityIndicator, Alert,Dimensions} from 'react-native';
 import { CircularProgress } from 'react-native-circular-progress';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,6 +9,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { apiService } from '../../../services/api';
 import { extractApiData } from '../../../utils/apiHelpers';
 import { NutritionalNeeds, DailyNutritionSummary } from '../../../types';
+import { AntDesign,Entypo } from '@expo/vector-icons';
 
 interface NutritionItem {
   name: string;
@@ -80,21 +81,21 @@ const NutritionDashboard = () => {
             current: summary?.totalIron || 0,
             target: needs.ironNeeds,
             unit: 'mg',
-            color: '#A855F7'
+            color: '#87533C'
           },
           {
             name: 'Kalsium',
             current: summary?.totalCalcium || 0,
             target: needs.calciumNeeds,
             unit: 'mg',
-            color: '#3B82F6'
+            color: '#8851B2'
           },
           {
             name: 'Vitamin D',
             current: summary?.totalVitaminD || 0,
             target: needs.vitaminDNeeds,
             unit: 'IU',
-            color: '#F59E0B'
+            color: '#E36811'
           }
         ];
 
@@ -221,6 +222,7 @@ const NutritionDashboard = () => {
       </LinearGradient>
     );
   }
+  const width = Dimensions.get('window').width;
 
   return (
     <LinearGradient
@@ -242,7 +244,7 @@ const NutritionDashboard = () => {
             className='rounded-full bg-pink-medium mr-4 p-2' 
             onPress={() => setShowDatePicker(true)}
           >
-            <Text className='text-white text-sm'>Pilih Tanggal</Text>
+            <Text className='text-white text-sm font-poppins'>Pilih Tanggal</Text>
           </TouchableOpacity>
         </View>
 
@@ -253,10 +255,10 @@ const NutritionDashboard = () => {
               <View className="flex-row items-center">
                 <Image source={require('../../../assets/images/water.png')} />
                 <View>
-                  <Text className="text-gray-800 text-xl font-bold">
+                  <Text className="text-gray-800 text-xl font-bold font-poppins">
                     {waterIntake.current} / {waterIntake.target} ml
                   </Text>
-                  <Text className="text-gray-600">
+                  <Text className="text-gray-600 font-poppins">
                     {waterIntake.current}ml air ({getWaterGlasses(waterIntake.current)} Gelas)
                   </Text>
                 </View>
@@ -269,7 +271,7 @@ const NutritionDashboard = () => {
                 {waterLoading ? (
                   <ActivityIndicator size="small" color="#666" />
                 ) : (
-                  <Text className="text-gray-700 font-medium">+100ml</Text>
+                  <Text className="text-gray-700 font-medium font-poppins">minum</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -280,16 +282,17 @@ const NutritionDashboard = () => {
         <View className="mx-4 mb-6">
           <View className="bg-pink-semi-medium rounded-2xl p-4">
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-gray-800 text-lg font-semibold">Info Nutrisi</Text>
+              <Text className="text-black-medium text-lg font-semibold font-poppins">Info Nutrisi</Text>
               <TouchableOpacity onPress={() => router.push('/nutrisi/detail')}>
-                <Text className="text-gray-600 text-2xl">›</Text>
+                {/* <Text className="text-gray-600 text-2xl">›</Text> */}
+                <Entypo name='chevron-small-right' size={width*0.08}> </Entypo>
               </TouchableOpacity>
             </View>
 
             <View className="flex-row flex-wrap justify-between">
               {nutritionData.map((item, index) => (
                 <View key={index} className="w-[48%] items-center mb-4">
-                  <Text className="text-gray-800 font-medium mb-2">{item.name}</Text>
+                  <Text className="text-gray-800 font-bold mb-2 font-poppins">{item.name}</Text>
                   
                   <View className="relative items-center justify-center">
                     <CircularProgress
@@ -302,13 +305,13 @@ const NutritionDashboard = () => {
                       lineCap="round"
                     />
                     <View className="absolute items-center">
-                      <Text className="text-gray-800 font-bold text-lg">
+                      <Text className="text-gray-800 font-bold text-lg font-poppins">
                         {formatValue(item.current)}
                       </Text>
-                      <Text className="text-gray-600 text-xs">
+                      <Text className="text-gray-600 text-xs font-poppins">
                         dari {formatValue(item.target)} {item.unit}
                       </Text>
-                      <Text className="text-gray-600 text-xs">kebutuhan</Text>
+                      <Text className="text-gray-600 text-xs font-poppins">kebutuhan</Text>
                     </View>
                   </View>
                 </View>
@@ -319,7 +322,7 @@ const NutritionDashboard = () => {
               className="bg-white rounded-full py-3 mt-4"
               onPress={() => router.push('/nutrisi/recommendation')}
             >
-              <Text className="text-center text-gray-700 font-medium">
+              <Text className="text-center text-gray-700 font-medium font-poppins">
                 Rekomendasi Makanan
               </Text>
             </TouchableOpacity>
@@ -329,27 +332,28 @@ const NutritionDashboard = () => {
         {/* Food Log */}
         <View className="mx-4 mb-6">
           <View className="bg-pink-semi-medium rounded-2xl p-4">
-            <Text className="text-gray-800 text-lg font-semibold mb-4">
+            <Text className="text-gray-800 text-lg font-semibold mb-4 font-poppins">
               Catatan Makanan
             </Text>
 
             {mealTypes.map((meal, index) => (
-              <View key={index} className="flex-row items-center justify-between py-3 border-b border-pink-300/50">
+              <View key={index} className="flex-row items-center justify-between py-3 border-b-[1px] border-pink-medium ">
                 <View className="flex-row items-center">
                   <View className="w-12 h-12 bg-pink-medium rounded-full items-center justify-center mr-3">
-                    <Text className="text-white text-xs font-medium">{meal.calories}</Text>
-                    <Text className="text-white text-xs">Cal</Text>
+                    <Text className="text-black text-xs font-medium font-poppins">{meal.calories}</Text>
+                    <Text className="text-black text-xs  font-poppins">Cal</Text>
                   </View>
-                  <Text className="text-gray-800 font-medium">{meal.name}</Text>
+                  <Text className="text-gray-800 font-medium font-poppins">{meal.name}</Text>
                 </View>
                 
                 <TouchableOpacity 
                   onPress={() => navigateToAddFood(meal.routeParam)}
                 >           
-                  <Image 
+                  {/* <Image 
                     source={require('../../../assets/images/plus.png')} 
                     style={{width: 24, height: 24}} 
-                  />
+                  /> */}
+                  <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
                 </TouchableOpacity>
               </View>
             ))}
@@ -378,7 +382,7 @@ const NutritionDashboard = () => {
                       >
                         <Text className="text-pink-500 font-medium">Batal</Text>
                       </TouchableOpacity>
-                      <Text className="text-lg font-semibold text-gray-800">
+                      <Text className="text-lg font-semibold text-gray-1">
                         Pilih Tanggal
                       </Text>
                       <TouchableOpacity

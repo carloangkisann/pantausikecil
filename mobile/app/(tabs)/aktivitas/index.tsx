@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator, RefreshControl, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '../../../context/AuthContext';
@@ -7,6 +7,7 @@ import { extractApiData, extractApiArrayData } from '../../../utils/apiHelpers';
 import Header from '../../components/Header';
 import { UserActivitySummary, PregnancyData } from '../../../types';
 import React, { useState } from 'react';
+import { AntDesign } from '@expo/vector-icons';
 
 
 const AktivitasIndex = () => {
@@ -110,7 +111,7 @@ const AktivitasIndex = () => {
         <Header />
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#FFFFFF" />
-          <Text className="text-white mt-4">Memuat data aktivitas...</Text>
+          <Text className="text-white mt-4 font-poppins">Memuat data aktivitas...</Text>
         </View>
       </LinearGradient>
     );
@@ -120,6 +121,7 @@ const AktivitasIndex = () => {
   const totalMinutes = todayActivities?.totalDurationMinutes || 0;
   const totalActivities = todayActivities?.activities.length || 0;
   const targetAchieved = calculateWeeklyTarget();
+  const width = Dimensions.get('window').width;
 
   return (
     <LinearGradient
@@ -144,7 +146,7 @@ const AktivitasIndex = () => {
         {/* Week Info */}
         <View className="px-4 py-6 items-center">
           <View className="bg-pink-medium rounded-full px-6 py-3">
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-base font-semibold font-poppins">
               Minggu ke-{weekNumber} Kehamilan
             </Text>
           </View>
@@ -154,10 +156,10 @@ const AktivitasIndex = () => {
         <View className="px-4 mb-6">
           <View className="flex-row justify-between">
             <View className="bg-white rounded-2xl p-4 flex-1 mr-2 items-center">
-              <Text className="text-pink-medium text-2xl font-bold">
+              <Text className="text-pink-medium text-2xl font-bold font-poppins">
                 {totalMinutes}
               </Text>
-              <Text className="text-gray-1 text-sm">
+              <Text className="text-pink-medium font-poppins text-sm ">
                 Menit
               </Text>
             </View>
@@ -166,7 +168,7 @@ const AktivitasIndex = () => {
               <Text className="text-pink-medium text-2xl font-bold">
                 {totalActivities}
               </Text>
-              <Text className="text-gray-1 text-sm">
+              <Text className="text-pink-medium font-poppins text-sm">
                 Aktivitas
               </Text>
             </View>
@@ -175,7 +177,7 @@ const AktivitasIndex = () => {
               <Text className="text-pink-medium text-2xl font-bold">
                 {targetAchieved}
               </Text>
-              <Text className="text-gray-1 text-sm">
+              <Text className="text-pink-medium font-poppins text-sm">
                 Target
               </Text>
             </View>
@@ -186,15 +188,16 @@ const AktivitasIndex = () => {
         <View className="px-4 mb-6">
           <View className="bg-pink-semi-medium rounded-2xl p-4">
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-white text-xl font-semibold">
+              <Text className="text-white text-xl font-semibold font-poppins">
                 Aktivitas Hari Ini
               </Text>
               <TouchableOpacity onPress={() => router.push('/aktivitas/add')}>
-                <Image 
+                {/* <Image 
                   source={require('../../../assets/images/plus.png')}
                   className="w-6 h-6"
                   resizeMode="contain"
-                />
+                /> */}
+                  <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
               </TouchableOpacity>
             </View>
 
@@ -207,23 +210,23 @@ const AktivitasIndex = () => {
                   
                   <View className="bg-pink-low rounded-2xl p-3 flex-1 flex-row items-center justify-between">
                     <View className="flex-1">
-                      <Text className="text-black-low text-base font-semibold mb-1">
+                      <Text className="text-black-low text-base font-semibold mb-1 font-poppins">
                         {activity.activityName}
                       </Text>
-                      <Text className="text-gray-1 text-sm">
+                      <Text className="text-black-low text-sm font-poppins">
                         {activity.durationMinutes} menit
                       </Text>
                     </View>
                     
                     <View className="items-end">
-                      <Text className="text-gray-1 text-sm mb-1">
+                      <Text className="text-black-low text-sm mb-1 font-poppins ">
                         {activity.totalCalories} Kalori
                       </Text>
                       <TouchableOpacity 
                         className="bg-pink-medium rounded-full px-3 py-1"
                         onPress={() => handleRemoveActivity(activity.id)}
                       >
-                        <Text className="text-white text-xs">
+                        <Text className="text-white text-xs font-poppins">
                           Hapus
                         </Text>
                       </TouchableOpacity>
@@ -233,10 +236,10 @@ const AktivitasIndex = () => {
               ))
             ) : (
               <View className="bg-pink-low rounded-2xl p-6 items-center">
-                <Text className="text-gray-1 text-base text-center mb-2">
+                <Text className="text-gray-1 text-base text-center mb-2 font-poppins">
                   Belum ada aktivitas hari ini
                 </Text>
-                <Text className="text-gray-1 text-sm text-center opacity-75">
+                <Text className="text-gray-1 text-sm text-center opacity-75 font-poppins">
                   Tambahkan aktivitas untuk mulai tracking
                 </Text>
               </View>
@@ -255,7 +258,7 @@ const AktivitasIndex = () => {
             className="bg-pink-medium rounded-2xl py-4 px-6"
             onPress={() => router.push('/aktivitas/rekomendasi')}
           >
-            <Text className="text-white text-center text-lg font-semibold">
+            <Text className="text-white text-center text-lg font-semimedium font-poppins">
               Rekomendasi Aktivitas
             </Text>
           </TouchableOpacity>

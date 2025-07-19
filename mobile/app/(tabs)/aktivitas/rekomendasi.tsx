@@ -1,11 +1,12 @@
 import  { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../../../context/AuthContext';
 import { apiService } from '../../../services/api';
 import { extractApiArrayData } from '../../../utils/apiHelpers';
 import { ActivityItem } from '../../../types';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const RekomendasiAktivitas = () => {
   const { user } = useAuth();
@@ -74,7 +75,7 @@ const RekomendasiAktivitas = () => {
     };
     return levelConfig[level as keyof typeof levelConfig] || { text: level, color: 'bg-gray-500' };
   };
-
+  const width = Dimensions.get('window').width;
   if (loading) {
     return (
       <LinearGradient
@@ -86,20 +87,17 @@ const RekomendasiAktivitas = () => {
         {/* Header */}
         <View className="flex-row items-center px-4 py-6 pt-12">
           <TouchableOpacity onPress={() => router.back()}>
-            <Image 
-              source={require('../../../assets/images/back-arrow.png')}
-              className="w-6 h-6"
-              resizeMode="contain"
-            />
+
+            <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
           </TouchableOpacity>
-          <Text className="text-white text-xl font-semibold ml-4">
+          <Text className="text-white text-xl font-semibold ml-4 font-poppins">
             Rekomendasi Aktivitas
           </Text>
         </View>
 
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#FFFFFF" />
-          <Text className="text-white mt-4">Memuat rekomendasi aktivitas...</Text>
+          <Text className="text-white mt-4 font-poppins">Memuat rekomendasi aktivitas...</Text>
         </View>
       </LinearGradient>
     );
@@ -113,15 +111,16 @@ const RekomendasiAktivitas = () => {
       style={{ flex: 1 }}
     >
       {/* Header */}
-      <View className="flex-row items-center px-4 py-6 pt-12">
+      <View className="flex-row items-center px-4 py-6 ">
         <TouchableOpacity onPress={() => router.back()}>
-          <Image 
+          {/* <Image 
             source={require('../../../assets/images/back-arrow.png')}
             className="w-6 h-6"
             resizeMode="contain"
-          />
+          /> */}
+           <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
         </TouchableOpacity>
-        <Text className="text-white text-xl font-semibold ml-4">
+        <Text className="text-white text-xl font-semibold ml-4 font-poppins">
           Rekomendasi Aktivitas
         </Text>
       </View>
@@ -161,7 +160,7 @@ const RekomendasiAktivitas = () => {
                   
                   {/* Activity Info */}
                   <View className="flex-1">
-                    <Text className="text-white text-lg font-semibold mb-2">
+                    <Text className="text-white text-base font-semibold mb-2 font-poppins">
                       {activity.activityName}
                     </Text>
                     
@@ -171,7 +170,7 @@ const RekomendasiAktivitas = () => {
                         className="w-4 h-4 mr-2"
                         resizeMode="contain"
                       />
-                      <Text className="text-white text-sm opacity-90 mr-4">
+                      <Text className="text-white text-sm opacity-90 mr-4 font-poppins">
                         {activity.caloriesPerHour} Kalori/jam
                       </Text>
                       
@@ -180,7 +179,7 @@ const RekomendasiAktivitas = () => {
                         className="w-4 h-4 mr-2"
                         resizeMode="contain"
                       />
-                      <Text className="text-white text-sm opacity-90">
+                      <Text className="text-white text-sm opacity-90 font-poppins">
                         {activity.estimatedDuration} min
                       </Text>
                     </View>
@@ -191,7 +190,7 @@ const RekomendasiAktivitas = () => {
                         className="w-3 h-3"
                         resizeMode="contain"
                       />
-                      <Text className="text-black ml-2 text-xs font-semibold">
+                      <Text className="text-black ml-2 text-xs font-semibold font-poppins">
                         {levelDisplay.text}
                       </Text>
                     </View>
@@ -201,10 +200,10 @@ const RekomendasiAktivitas = () => {
             })
           ) : (
             <View className="bg-pink-medium rounded-2xl p-6 items-center">
-              <Text className="text-white text-lg font-semibold mb-2">
+              <Text className="text-white text-lg font-semibold mb-2 font-poppins">
                 Tidak ada rekomendasi aktivitas
               </Text>
-              <Text className="text-white text-sm opacity-90 text-center">
+              <Text className="text-white text-sm opacity-90 text-center font-poppins">
                 Silakan lengkapi profil Anda untuk mendapatkan rekomendasi yang lebih personal
               </Text>
             </View>

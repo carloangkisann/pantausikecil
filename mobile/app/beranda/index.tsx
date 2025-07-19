@@ -49,11 +49,11 @@ export default function BerandaIndex() {
   };
 
   return (
-    <View className="flex-1 bg-pink-low">
+    <View className="flex-1 bg-pink-medium">
       <Header />
       
       {/* Main Content */}
-      <View className="flex-1">
+      <View className="flex-1 rounded-2xl bg-pink-low">
 
         {/* Main Content Container */}
         <View className="items-center justify-center" style={{ flex: 0.8 }}>
@@ -95,7 +95,7 @@ export default function BerandaIndex() {
           {/* Buat Data Kehamilan Baru */}
           <TouchableOpacity
             onPress={handleBuatKehamilan}
-            className="bg-pink-medium rounded-3xl py-4 px-6 shadow-sm mb-4"
+            className="bg-pink-medium rounded-3xl py-4 px-6 mb-4"
             style={{ height: 56 }}
             activeOpacity={0.8}
           >
@@ -107,7 +107,7 @@ export default function BerandaIndex() {
     
           <TouchableOpacity
             onPress={handlePilihKehamilan}
-            className={`rounded-3xl py-4 px-6 shadow-sm border ${
+            className={`rounded-3xl py-4 px-6 border ${
               loading 
                 ? 'bg-gray-100 border-gray-200' 
                 : hasPregnancies 

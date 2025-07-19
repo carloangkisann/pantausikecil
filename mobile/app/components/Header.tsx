@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <View className="px-4 py-6 pb-4 bg-pink-medium">
       <View className="flex-row items-center justify-between">
-        <Text className="text-white text-lg font-medium">
+        <Text className="text-white text-lg font-medium font-poppins">
           {greeting === "Selamat datang" ? getGreetingByTime() : greeting}, {getDisplayName()}!
         </Text>
         

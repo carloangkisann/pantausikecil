@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar, Dimensions} from 'react-native';
 import { useRouter } from 'expo-router';
 import { CircularProgress } from 'react-native-circular-progress';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Header from '../components/Header';
+import { AntDesign } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 interface KehamilanData {
   id: string;
@@ -76,47 +79,48 @@ export default function Dashboard() {
       </View>
     );
   }
-
+  const width = Dimensions.get('window').width;
   return (
-    <View className="flex-1 bg-pink-low">
+    <View className="flex-1 bg-pink-medium">
       <StatusBar barStyle="light-content" backgroundColor="#F789AC" />
       
       {/* Header */}
       <Header />
       
       {/* Content */}
-      <View className="flex-1 bg-pink-low rounded-t-3xl">
+      <View className="flex-1 bg-pink-low rounded-2xl">
         <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
         
           {/* Insight Banner */}
 
-          <View className="flex-row items-center mb-4">
-            <View className="bg-pink-medium rounded-2xl px-4 py-3 flex-row items-center flex-1 mr-3">
-              <Image 
-                source={require('../../assets/images/envelope.png')}
-                className="w-8 h-8 mr-3"
-                resizeMode="contain"
-              />
-              <Text className="text-white font-medium flex-1">
-                Hai Bunda, ini insight tentang harimu!
-              </Text>
-            </View>
+          <View className="flex-row items-center mb-4 ">
+             <LinearGradient
+                colors={['#F9C5D5', '#F2789F']} 
+                start={{x: 0.5, y: 0}} 
+                end={{x: 0.5, y: 1}}   
+                locations={[0.0033, 0.8923]} 
+                className="rounded-2xl pl-4 pr-2 py-3 flex-row items-center flex-1 mr-2" 
+              >
+                <Image 
+                  source={require('../../assets/images/envelope.png')}
+                  className="w-8 h-8 mr-3"
+                  resizeMode="contain"
+                />
+                <Text className="text-white text-base font-poppins font-medium flex-1">
+                  Hai Bunda, ini insight tentang harimu!
+                </Text>
+              </LinearGradient>
 
             <TouchableOpacity 
               onPress={openDatePicker} 
-              className="bg-pink-medium rounded-2xl p-3 items-center justify-center"
-              style={{ width: 48, height: 48 }}
+              className="bg-pink-faint-low rounded-full items-center justify-center w-16 h-16"
             >
-              <Image 
-                source={require('../../assets/images/plus.svg')}
-                className="w-6 h-6"
-                resizeMode="contain"
-              />
+              <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
             </TouchableOpacity>
           </View>
 
           {/* Konsultasi Card */}
-          <View className="bg-pink-medium rounded-t-2xl px-6 py-4 ">
+          <View className="bg-pink-faint-low rounded-t-2xl px-6 py-4 ">
             <View className="flex-row justify-between items-center">
               <View>
                 <Text className="text-white text-lg font-semibold">
@@ -133,7 +137,7 @@ export default function Dashboard() {
           </View>
 
        
-          <View className="bg-white rounded-b-2xl px-4 py-4 mb-4 shadow-sm">
+          <View className="bg-white rounded-b-2xl px-4 py-4 mb-4 ">
             <View className="flex-row items-center">
               <View className="w-2 h-2 bg-pink-medium rounded-full mr-3"></View>
               <View className="flex-1">
@@ -152,7 +156,7 @@ export default function Dashboard() {
 
           {/* Water & Nutrition Tracking */}
           <View className="bg-pink-medium rounded-2xl px-6 py-4 mb-4 flex-row items-center">
-            <Text className="text-black font-semibold text-lg mb-4">
+            <Text className="text-black font-semibold font-poppins text-lg mb-4">
               Pemenuhan Air & Gizi
             </Text>
             
@@ -161,8 +165,8 @@ export default function Dashboard() {
               <View className="items-center mr-4">
                 <View className="relative">
                   <CircularProgress
-                    size={80}
-                    width={8}
+                    size={width*0.2}
+                    width= {width*0.02}
                     fill={75}
                     tintColor="#3B82F6"
                     backgroundColor="#FBB1C6"
@@ -186,8 +190,8 @@ export default function Dashboard() {
               <View className="items-center">
                 <View className="relative">
                   <CircularProgress
-                    size={80}
-                    width={8}
+                    size={width*0.2}
+                    width={width*0.02}
                     fill={50}
                     tintColor="#EAB308"
                     backgroundColor="#FBB1C6"
@@ -210,7 +214,7 @@ export default function Dashboard() {
           </View>
 
           {/* Activities Card */}
-          <View className="bg-pink-faint rounded-2xl px-4 py-4 mb-6 shadow-sm">
+          <View className="bg-pink-faint rounded-2xl px-4 py-4 mb-6 ">
             <Text className="text-gray-800 font-semibold text-center text-lg mb-3">
               Aktivitas
             </Text>

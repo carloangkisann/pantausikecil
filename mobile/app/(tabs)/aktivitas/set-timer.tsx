@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const SetTimer = () => {
   const params = useLocalSearchParams();
@@ -39,7 +40,7 @@ const SetTimer = () => {
             onPress={() => onChange(num)}
           >
             <Text 
-              className={`text-2xl font-semibold ${
+              className={`text-2xl font-semibold font-poppins${
                 value === num ? 'text-white' : 'text-white opacity-50'
               }`}
             >
@@ -69,7 +70,7 @@ const SetTimer = () => {
       }
     });
   };
-
+  const width = Dimensions.get('window').width;
   return (
     <LinearGradient
       colors={['#FF9EBD', '#F2789F']}
@@ -78,15 +79,16 @@ const SetTimer = () => {
       style={{ flex: 1 }}
     >
       {/* Header */}
-      <View className="flex-row items-center px-4 py-6 pt-12">
+      <View className="flex-row items-center px-4 py-6">
         <TouchableOpacity onPress={() => router.back()}>
-          <Image 
+          {/* <Image 
             source={require('../../../assets/images/back-arrow.png')}
             className="w-6 h-6"
             resizeMode="contain"
-          />
+          /> */}
+          <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
         </TouchableOpacity>
-        <Text className="text-white text-xl font-semibold ml-4">
+        <Text className="text-white text-xl font-semibold ml-4 font-poppins">
           {name}
         </Text>
       </View>
@@ -102,7 +104,7 @@ const SetTimer = () => {
         <View className="flex-1 justify-center px-4">
           {/* Timer Section */}
           <View className="bg-pink-semi-medium rounded-2xl p-6 mb-8">
-            <Text className="text-white text-xl font-semibold text-center mb-6">
+            <Text className="text-white text-xl font-semibold text-center mb-6 font-poppins">
               Target Durasi
             </Text>
             
@@ -115,7 +117,7 @@ const SetTimer = () => {
                 label="Jam"
               />
               
-              <Text className="text-white text-3xl font-bold mx-2">:</Text>
+              <Text className="text-white text-3xl font-bold mx-2 font-poppins">:</Text>
               
               <NumberPicker 
                 value={selectedMinutes}
@@ -124,7 +126,7 @@ const SetTimer = () => {
                 label="Menit"
               />
               
-              <Text className="text-white text-3xl font-bold mx-2">:</Text>
+              <Text className="text-white text-3xl font-bold mx-2 font-poppins">:</Text>
               
               <NumberPicker 
                 value={selectedSeconds}
@@ -136,7 +138,7 @@ const SetTimer = () => {
 
             {/* Current Selection Display */}
             <View className="bg-white bg-opacity-20 rounded-xl p-4 mt-4">
-              <Text className="text-white text-center text-2xl font-bold">
+              <Text className="text-white text-center text-2xl font-bold font-poppins">
                 {selectedHours.toString().padStart(2, '0')} : {selectedMinutes.toString().padStart(2, '0')} : {selectedSeconds.toString().padStart(2, '0')}
               </Text>
             </View>
@@ -147,7 +149,7 @@ const SetTimer = () => {
             className="bg-pink-medium rounded-2xl py-4 px-6"
             onPress={handleStartTimer}
           >
-            <Text className="text-white text-center text-lg font-semibold">
+            <Text className="text-white text-center text-lg font-semibold font-poppins">
               Mulai
             </Text>
           </TouchableOpacity>

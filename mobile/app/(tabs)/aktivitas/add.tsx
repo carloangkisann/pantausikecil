@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator,Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../../../context/AuthContext';
 import { apiService } from '../../../services/api';
 import { extractApiArrayData } from '../../../utils/apiHelpers';
 import { ActivityItem } from '../../../types';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const AddAktivitas = () => {
   const { user } = useAuth();
@@ -116,7 +117,7 @@ const AddAktivitas = () => {
       </LinearGradient>
     );
   }
-
+  const width = Dimensions.get('window').width;
   return (
     <LinearGradient
       colors={['#FF9EBD', '#F2789F']}
@@ -125,15 +126,16 @@ const AddAktivitas = () => {
       style={{ flex: 1 }}
     >
       {/* Header */}
-      <View className="flex-row items-center px-4 py-6 pt-12">
+      <View className="flex-row items-center px-4 py-6 ">
         <TouchableOpacity onPress={() => router.push('/aktivitas')}>
-          <Image 
+          {/* <Image 
             source={require('../../../assets/images/back-arrow.png')}
             className="w-6 h-6"
             resizeMode="contain"
-          />
+          /> */}
+          <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
         </TouchableOpacity>
-        <Text className="text-white text-xl font-semibold ml-4">
+        <Text className="text-white text-xl font-semibold ml-4 font-poppins">
           Tambah Aktivitas
         </Text>
       </View>
@@ -148,15 +150,15 @@ const AddAktivitas = () => {
       >
         {/* Search Bar */}
         <View className="px-4 py-6">
-          {/* Instructions */}
+          {/* Instructions
           <View className="bg-blue-100 rounded-2xl p-4 mb-4">
-            <Text className="text-blue-800 text-sm font-semibold mb-1">
+            <Text className="text-blue-800 text-sm font-semibold mb-1 font-poppins">
               💡 Cara Menambah Aktivitas
             </Text>
-            <Text className="text-blue-700 text-xs leading-4">
+            <Text className="text-blue-700 text-xs leading-4 font-poppins">
               Pilih aktivitas → Set timer → Lakukan aktivitas → Otomatis tersimpan
             </Text>
-          </View>
+          </View> */}
           
           <View className="flex-row items-center bg-white rounded-2xl px-4 py-3">
             <Image 
@@ -205,10 +207,10 @@ const AddAktivitas = () => {
                 
                 {/* Activity Info */}
                 <View className="flex-1">
-                  <Text className="text-white text-lg font-semibold mb-1">
+                  <Text className="text-white text-lg font-semibold mb-1 font-poppins">
                     {activity.name}
                   </Text>
-                  <Text className="text-white text-sm opacity-90">
+                  <Text className="text-white text-sm opacity-90 font-poppins">
                     {activity.calories} Kalori/jam, {activity.duration}
                   </Text>
                 </View>
@@ -220,10 +222,10 @@ const AddAktivitas = () => {
         {/* No Results State */}
         {searchQuery.length > 0 && searchResults.length === 0 && (
           <View className="px-4 py-12 items-center">
-            <Text className="text-gray-500 text-base text-center">
+            <Text className="text-gray-500 text-base text-center font-poppins">
               Tidak ada aktivitas yang ditemukan untuk &quot;{searchQuery}&quot;
             </Text>
-            <Text className="text-gray-400 text-sm text-center mt-2">
+            <Text className="text-gray-400 text-sm text-center mt-2 font-poppins">
               Coba kata kunci lain atau input aktivitas custom
             </Text>
           </View>

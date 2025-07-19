@@ -1,8 +1,9 @@
 import  { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
+import { Feather } from '@expo/vector-icons';
 // import {apiService} from '../../services/api';
 
 export default function LoginScreen() {
@@ -59,6 +60,7 @@ export default function LoginScreen() {
   const handleRegister = () => {
     router.push('/register');
   };
+  const width = Dimensions.get('window').width;
 
   return (
     <>
@@ -78,11 +80,7 @@ export default function LoginScreen() {
             resizeMode="contain"
           />
           <Text 
-            className="text-white text-lg font-medium text-center mr-12"
-            style={{ 
-              lineHeight: 18,
-              fontFamily: 'Poppins-Medium'
-            }}
+            className="text-white text-lg font-medium text-center mr-12 font-poppins leading-5"
           >
             Selamat datang kembali,{'\n'}calon Bunda hebat!
           </Text>
@@ -97,22 +95,19 @@ export default function LoginScreen() {
 
         {/* Login Card */}
         <View 
-          className="rounded-[30px] mx-4 px-6 pt-8 pb-6 mt-2"
-          style={{ backgroundColor: '#FFF0F5' }}
+          className="rounded-[30px] mx-4 px-6 pt-8 pb-6 mt-2 bg-pink-low"
         >
-          <Text className="text-black text-2xl font-bold text-center mb-6">
+          <Text className="text-black text-2xl font-bold text-center mb-6 font-poppins">
             Login
           </Text>
 
           {/* Email Input */}
-          <Text className="text-black text-sm font-semibold mb-2">
+          <Text className="text-black text-sm font-semibold mb-2 font-poppins">
             Email
           </Text>
           <TextInput
-            className="rounded-xl px-4 py-3 text-sm mb-4"
-            style={{ backgroundColor: '#FFFFFF' }}
-            placeholder="Masukkan email kamu"
-            placeholderTextColor="#999"
+            className="rounded-xl px-4 py-3 text-sm mb-4 bg-white text-gray-1 font-poppins"
+            placeholder="Masukkan email kamu" 
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -121,29 +116,29 @@ export default function LoginScreen() {
           />
 
           {/* Password Input */}
-          <Text className="text-black text-sm font-semibold mb-2">
+          <Text className="text-black text-sm font-semibold mb-2 font-poppins">
             Password
           </Text>
-          <View className="rounded-xl px-4 py-3 mb-6 flex-row items-center" style={{ backgroundColor: '#FFFFFF' }}>
+          <View className="rounded-xl px-4 py-3 mb-6 flex-row items-center bg-white " >
             <TextInput
-              className="flex-1 text-sm"
+              className="flex-1 text-sm bg-white text-gray-1 font-poppins"
               placeholder="Masukkan password kamu"
-              placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
-              style={{ color: '#666' }}
+ 
               editable={!loading}
             />
             <TouchableOpacity 
               onPress={() => setShowPassword(!showPassword)}
               disabled={loading}
             >
-              <Image 
+              {/* <Image 
                 source={require('../../assets/images/eye.png')} 
                 className="w-5 h-5"
                 resizeMode="contain"
-              />
+              /> */}
+              <Feather name={showPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
             </TouchableOpacity>
           </View>
 
@@ -160,7 +155,7 @@ export default function LoginScreen() {
             {loading ? (
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (
-              <Text className="text-white text-base font-bold text-center">
+              <Text className="text-white text-base font-bold text-center font-poppins">
                 Login
               </Text>
             )}
@@ -168,14 +163,14 @@ export default function LoginScreen() {
 
           {/* Register Link */}
           <View className="flex-row justify-center items-center">
-            <Text className="text-gray-600 text-xs">
+            <Text className="text-gray-600 text-xs font-poppins">
               Belum punya akun? 
             </Text>
             <TouchableOpacity 
               onPress={handleRegister}
               disabled={loading}
             >
-              <Text className="text-xs font-semibold ml-1" style={{ color: '#F278A0' }}>
+              <Text className="text-xs font-semibold ml-1 font-poppins" style={{ color: '#F278A0' }}>
                 Registrasi
               </Text>
             </TouchableOpacity>

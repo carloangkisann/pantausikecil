@@ -1,18 +1,28 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { router } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
 import { FontAwesome5 } from '@expo/vector-icons';
+import CustomPicker from '../components/CustomPicker';
+const pilihanHubunganOptions = [
+  {label:'Suami', value :'Suami'},
+  {label:'Mertua', value :'Mertua'},
+  {label:'Saudara Kandung', value : 'Saudara Kandung'},
+  {label:'Teman', value :'Teman'},
+  {label:'Lainnya',value:'Lainya'},
+
+];
 
 export default function AddKoneksi() {
+
+
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
   
   const [formData, setFormData] = useState({
     nama: '',
-    hubungan: 'Suami' as 'Suami' | 'Lainnya',
+    hubungan: 'Suami' as 'Suami' | 'Mertua'|'Saudara Kandung'|'Teman'|'Lainnya',
     email: ''
   });
 
@@ -78,7 +88,9 @@ export default function AddKoneksi() {
   };
 
   const width = Dimensions.get('window').width;
-
+  const handlePilihanHubunganChange =(value : string |number) => {
+    setFormData({...formData,hubungan:value as 'Suami' | 'Mertua'|'Saudara Kandung'|'Teman'|'Lainnya'})
+  }
   return (
     <ScrollView className="flex-1 bg-pink-medium" showsVerticalScrollIndicator={false}>
       {/* Header - diperkecil sama seperti ProfileEdit */}
@@ -122,19 +134,25 @@ export default function AddKoneksi() {
             <Text className="text-black-low font-medium mb-1 text-xs font-poppins">
               Hubungan dengan Ibu
             </Text>
-            <View className="bg-pink-low rounded-lg border border-gray-1 overflow-hidden min-h-8" >
-              <Picker
-                selectedValue={formData.hubungan}
-                onValueChange={(itemValue) => setFormData({...formData, hubungan: itemValue})}
-         
-                className='bg-pink-low  font-poppins text-gray-1 font-poppins text-xs my-auto pl-2'
-              >
-                <Picker.Item label="Suami" value="Suami" />
-                <Picker.Item label="Keluarga" value="Keluarga" />
-                <Picker.Item label="Lainnya" value="Lainnya" />
-              </Picker>
-            </View>
+            <CustomPicker
+                 value={formData.hubungan}
+                onValueChange={handlePilihanHubunganChange}
+                items={pilihanHubunganOptions}
+                      placeholder="Pilih kondisi finansial"
+                      disabled={saving}
+                      modalTitle="Kondisi Finansial"
+                      containerStyle={{
+                        height: 32, // Height yang lebih kecil
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 12, // Text size yang lebih kecil
+                    fontFamily: 'Poppins',
+                  }}
+                />
           </View>
+
 
           {/* Alamat Email */}
           <View className="mb-2">

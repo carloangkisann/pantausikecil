@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
@@ -19,7 +19,6 @@ const Masuk = () => {
       end={{ x: 0.5, y: 1 }}
       style={{ flex: 1 }}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" />
       
       <View className="flex-1 justify-center items-center px-3">
         {/* Logo/Icon */}
@@ -45,7 +44,7 @@ const Masuk = () => {
         <View className="w-full space-y-4">
           {/* Login Button */}
           <TouchableOpacity 
-            className="bg-white rounded-full py-4 px-8 w-full"
+            className="bg-white rounded-full py-4 px-8 w-full mb-4"
             onPress={handleLogin}
             activeOpacity={0.8}
           >

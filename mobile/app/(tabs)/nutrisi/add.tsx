@@ -150,11 +150,7 @@ const AddFood = () => {
       {/* Header */}
       <View className="flex-row items-center px-4 py-6 ">
         <TouchableOpacity onPress={() => router.push('/nutrisi')}>
-          {/* <Image 
-            source={require('../../../assets/images/back-arrow.png')}
-            className="w-6 h-6"
-            resizeMode="contain"
-          /> */}
+
 
           <FontAwesome5 name ='arrow-circle-left' color='white' size={0.074*width}></FontAwesome5>
         </TouchableOpacity>
@@ -166,17 +162,12 @@ const AddFood = () => {
       </View>
 
       <ScrollView 
-        className="bg-pink-low"
-        style={{ 
-          flex: 1, 
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-        }}
+        className="bg-pink-low rounded-3xl"
       >
         {/* Meal Type Indicator */}
         <View className="px-4 pt-4">
           <View className="bg-pink-medium/20 rounded-lg px-3 py-2 self-start">
-            <Text className="text-pink-hard font-medium">
+            <Text className="text-pink-hard font-medium font-poppins">
               Menambah ke {getMealTypeName(mealType as string)}
             </Text>
           </View>
@@ -222,19 +213,8 @@ const AddFood = () => {
                 disabled={addingFood === food.id}
                 style={{ opacity: addingFood === food.id ? 0.7 : 1 }}
               >
-                {/* Plus Icon or Loading */}
-                <View className="mr-4 w-5 h-5 items-center justify-center">
-                  {addingFood === food.id ? (
-                    <ActivityIndicator size="small" color="#FFFFFF" />
-                  ) : (
-                    // <Image   
-                    //   source={require('../../../assets/images/plus.png')}
-                    //   className="w-5 h-5"
-                    //   resizeMode="contain"
-                    // />
-                    <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
-                  )}
-                </View>
+
+                  <AntDesign  name='plus' size={width*0.074} color="white" className='mr-2'></AntDesign>
                 
                 {/* Food Info */}
                 <View className="flex-1">

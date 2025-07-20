@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, ScrollView, Modal, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Modal, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Picker } from '@react-native-picker/picker';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
-import {apiService} from '../../services/api';
+import { apiService } from '../../services/api';
 import { UpdateProfileRequest } from '../../types';
 import { AntDesign } from '@expo/vector-icons';
+import CustomPicker from '../components/CustomPicker';// Import CustomPicker
 
 interface MultiSelectModalProps {
   visible: boolean;
@@ -21,8 +21,14 @@ interface MultiSelectModalProps {
 }
 const width = Dimensions.get('window').width;
 
+// Data options untuk CustomPicker
+const kondisiFinansialOptions = [
+  { label: 'Rendah', value: 'Rendah' },
+  { label: 'Menengah', value: 'Menengah' },
+  { label: 'Tinggi', value: 'Tinggi' },
+];
+
 const MultiSelectModal: React.FC<MultiSelectModalProps> = ({ 
-  
   visible, 
   onClose, 
   title, 
@@ -33,7 +39,6 @@ const MultiSelectModal: React.FC<MultiSelectModalProps> = ({
   setCustomValue, 
   onAddCustom
 }) => (
-
   <Modal visible={visible} transparent animationType="fade">
     <View className="flex-1 bg-black/50 justify-center items-center">
       <View className="bg-pink-low w-[90%] max-h-[70%] rounded-xl p-5">
@@ -85,7 +90,7 @@ const MultiSelectModal: React.FC<MultiSelectModalProps> = ({
                 onPress={onAddCustom}
                 className="bg-pink-medium p-2 rounded-2xl justify-center"
               >
-                  <AntDesign  name='plus' size={width*0.048} color="white"></AntDesign>
+                <AntDesign name='plus' size={width*0.048} color="white" />
               </TouchableOpacity>
             </View>
           </View>
@@ -176,6 +181,11 @@ export default function IsidataScreen() {
     }
   }, [customMedis, kondisiMedis]);
 
+  // Handler untuk kondisi finansial
+  const handleKondisiFinansialChange = (value: string | number) => {
+    setKondisiFinansial(value as string);
+  };
+
   const handleSubmit = async () => {
     // Validasi input
     if (!namaLengkap.trim()) {
@@ -240,7 +250,6 @@ export default function IsidataScreen() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" />
       <LinearGradient
         colors={['#FF9EBD', '#F2789F']}
         start={{ x: 0, y: 0 }}
@@ -262,142 +271,143 @@ export default function IsidataScreen() {
         </View>
 
         {/* Data Form Card */}
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          className="bg-pink-low rounded-t-3xl w-full h-full p-4"
+        >
+          <Text className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-poppins-bold text-black-3 text-center mb-4">
+            Lengkapi Data Diri Anda
+          </Text>
 
-          <ScrollView 
-            showsVerticalScrollIndicator={false}
-            className="bg-pink-low rounded-t-2xl w-full h-full p-4"
-          >
-            <Text className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-poppins-bold text-black-3 text-center mb-4">
-              Lengkapi Data Diri Anda
-            </Text>
-
-            {/* Nama Lengkap Input */}
-            <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3">
-              Nama Lengkap *
-            </Text>
-            <TextInput
-              className={`w-full bg-white rounded-lg px-3 py-1 text-sm sm:text-base lg:text-lg text-gray-600 mt-2 font-poppins ${
-                loading ? 'opacity-50' : 'opacity-100'
-              }`}
-              placeholder="Masukkan nama lengkap kamu"
-              placeholderTextColor="#999"
-              value={namaLengkap}
-              onChangeText={setNamaLengkap}
-              editable={!loading}
-            />
-
-            {/* Usia Input */}
-            <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
-              Usia *
-            </Text>
-            <TextInput
-              className={`w-full bg-white rounded-lg px-3 py-1 text-sm sm:text-base lg:text-lg text-gray-600 mt-2 font-poppins ${
-                loading ? 'opacity-50' : 'opacity-100'
-              }`}
-              placeholder="Masukkan usia kamu"
-              placeholderTextColor="#999"
-              value={usia}
-              onChangeText={setUsia}
-              keyboardType="numeric"
-              editable={!loading}
-            />
-
-            {/* Vegetarian Toggle */}
-            <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
-              Vegetarian?
-            </Text>
-            <View className="flex-row items-center mt-2 mb-2">
-              <TouchableOpacity
-                onPress={() => setIsVegetarian(!isVegetarian)}
-                disabled={loading}
-                className={`w-12 h-7 sm:w-14 sm:h-8 lg:w-16 lg:h-9 rounded-full justify-center px-1 ${
-                  isVegetarian ? 'bg-pink-medium' : 'bg-gray-300'
-                } ${loading ? 'opacity-50' : 'opacity-100'}`}
-              >
-                <View className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 rounded-full bg-white shadow-md justify-center items-center ${
-                  isVegetarian ? 'self-end' : 'self-start'
-                }`}>
-                  {isVegetarian && (
-                    <Text className="text-pink-medium text-xs sm:text-sm lg:text-base font-poppins-bold">
-                      ✓
-                    </Text>
-                  )}
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            {/* Kondisi Finansial Picker */}
-            <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
-              Kondisi Finansial *
-            </Text>
-            <View className={`w-full bg-white rounded-lg mt-2 ${
+          {/* Nama Lengkap Input */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3">
+            Nama Lengkap *
+          </Text>
+          <TextInput
+            className={`w-full bg-white rounded-lg px-3 py-1 text-sm sm:text-base lg:text-lg text-gray-600 mt-2 font-poppins ${
               loading ? 'opacity-50' : 'opacity-100'
-            }`}>
-              <Picker
-                selectedValue={kondisiFinansial}
-                onValueChange={(itemValue) => setKondisiFinansial(itemValue)}
-                enabled={!loading}
-                className="rounded-lg font-poppins p-1 text-sm sm:text-base lg:text-lg text-gray-1"
-              >
-                <Picker.Item label="Pilih kondisi finansial" value={"Rendah"} enabled={false} />
-                <Picker.Item label="Rendah" value="Rendah" />
-                <Picker.Item label="Menengah" value="Menengah" />
-                <Picker.Item label="Tinggi" value="Tinggi" />
-              </Picker>
-            </View>
+            }`}
+            placeholder="Masukkan nama lengkap kamu"
+            placeholderTextColor="#999"
+            value={namaLengkap}
+            onChangeText={setNamaLengkap}
+            editable={!loading}
+          />
 
-            {/* Alergi Multi Select */}
-            <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
-              Alergi
-            </Text>
+          {/* Usia Input */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Usia *
+          </Text>
+          <TextInput
+            className={`w-full bg-white rounded-lg px-3 py-1 text-sm sm:text-base lg:text-lg text-gray-600 mt-2 font-poppins ${
+              loading ? 'opacity-50' : 'opacity-100'
+            }`}
+            placeholder="Masukkan usia kamu"
+            placeholderTextColor="#999"
+            value={usia}
+            onChangeText={setUsia}
+            keyboardType="numeric"
+            editable={!loading}
+          />
+
+          {/* Vegetarian Toggle */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Vegetarian?
+          </Text>
+          <View className="flex-row items-center mt-2 mb-2">
             <TouchableOpacity
-              onPress={() => setShowAlergiModal(true)}
+              onPress={() => setIsVegetarian(!isVegetarian)}
               disabled={loading}
-              className={`w-full bg-white rounded-lg px-3 py-1 mt-2 justify-center ${
-                loading ? 'opacity-50' : 'opacity-100'
-              }`}
+              className={`w-12 h-7 sm:w-14 sm:h-8 lg:w-16 lg:h-9 rounded-full justify-center px-1 ${
+                isVegetarian ? 'bg-pink-medium' : 'bg-gray-300'
+              } ${loading ? 'opacity-50' : 'opacity-100'}`}
             >
-              <Text className={`text-sm sm:text-base lg:text-lg font-poppins text-gray-1`}>
-                {alergi.length > 0 ? alergi.join(', ') : 'Pilih alergi (bisa lebih dari 1)'}
-              </Text>
+              <View className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 rounded-full bg-white shadow-md justify-center items-center ${
+                isVegetarian ? 'self-end' : 'self-start'
+              }`}>
+                {isVegetarian && (
+                  <Text className="text-pink-medium text-xs sm:text-sm lg:text-base font-poppins-bold">
+                    ✓
+                  </Text>
+                )}
+              </View>
             </TouchableOpacity>
+          </View>
 
-            {/* Kondisi Medis Multi Select */}
-            <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
-              Kondisi Medis
+          {/* Kondisi Finansial - menggunakan CustomPicker */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Kondisi Finansial *
+          </Text>
+            <CustomPicker
+              value={kondisiFinansial}
+              onValueChange={handleKondisiFinansialChange}
+              items={kondisiFinansialOptions}
+              placeholder="Pilih kondisi finansial"
+              disabled={loading}
+              modalTitle="Kondisi Finansial"
+              containerStyle={{
+                backgroundColor: 'white',
+                paddingVertical: 12,
+                paddingHorizontal: 12,
+                borderRadius: 8,
+              }}
+              textStyle={{
+                fontSize: 12,
+                fontFamily: 'Poppins',
+              }}
+            />
+      
+          {/* Alergi Multi Select */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Alergi
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowAlergiModal(true)}
+            disabled={loading}
+            className={`w-full bg-white rounded-lg px-3 py-1 mt-2 justify-center ${
+              loading ? 'opacity-50' : 'opacity-100'
+            }`}
+          >
+            <Text className={`text-sm sm:text-base lg:text-lg font-poppins text-gray-1`}>
+              {alergi.length > 0 ? alergi.join(', ') : 'Pilih alergi (bisa lebih dari 1)'}
             </Text>
-            <TouchableOpacity
-              onPress={() => setShowMedisModal(true)}
-              disabled={loading}
-              className={`w-full bg-white rounded-lg px-3 py-1 mt-2 justify-center ${
-                loading ? 'opacity-50' : 'opacity-100'
-              }`}
-            >
-              <Text className={`text-sm sm:text-base lg:text-lg font-poppins text-gray-1`}>
-                {kondisiMedis.length > 0 ? kondisiMedis.join(', ') : 'Pilih kondisi medis (bisa lebih dari 1)'}
+          </TouchableOpacity>
+
+          {/* Kondisi Medis Multi Select */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Kondisi Medis
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowMedisModal(true)}
+            disabled={loading}
+            className={`w-full bg-white rounded-lg px-3 py-1 mt-2 justify-center ${
+              loading ? 'opacity-50' : 'opacity-100'
+            }`}
+          >
+            <Text className={`text-sm sm:text-base lg:text-lg font-poppins text-gray-1`}>
+              {kondisiMedis.length > 0 ? kondisiMedis.join(', ') : 'Pilih kondisi medis (bisa lebih dari 1)'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Submit Button */}
+          <TouchableOpacity 
+            className={`w-full rounded-2xl justify-center items-center mt-12 py-2 ${
+              loading 
+                ? 'bg-pink-faint-low opacity-70' 
+                : 'bg-pink-medium opacity-100'
+            }`}
+            onPress={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <Text className="text-white text-base sm:text-lg lg:text-xl xl:text-2xl font-poppins-semibold">
+                Simpan
               </Text>
-            </TouchableOpacity>
-
-            {/* Submit Button */}
-            <TouchableOpacity 
-              className={`w-full rounded-2xl justify-center items-center mt-12 py-2 ${
-                loading 
-                  ? 'bg-pink-faint-low opacity-70' 
-                  : 'bg-pink-medium opacity-100'
-              }`}
-              onPress={handleSubmit}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#FFFFFF" size="small" />
-              ) : (
-                <Text className="text-white text-base sm:text-lg lg:text-xl xl:text-2xl font-poppins-semibold">
-                  Simpan
-                </Text>
-              )}
-            </TouchableOpacity>
-          </ScrollView>
-
+            )}
+          </TouchableOpacity>
+        </ScrollView>
 
         {/* Alergi Modal */}
         <MultiSelectModal

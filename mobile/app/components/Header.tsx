@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
 import { UserProfile } from '../../types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface HeaderProps {
   greeting?: string;
@@ -68,9 +69,10 @@ const Header: React.FC<HeaderProps> = ({
     if (hour < 18) return "Selamat sore";
     return "Selamat malam";
   };
-
-  return (
-    <View className="px-4 py-6 pb-4 bg-pink-medium">
+  const insets = useSafeAreaInsets();
+  return ( 
+    
+    <View className="px-4 pb-4 bg-pink-medium mt-1" style= {{paddingTop:insets.top}}>
       <View className="flex-row items-center justify-between">
         <Text className="text-white text-lg font-medium font-poppins">
           {greeting === "Selamat datang" ? getGreetingByTime() : greeting}, {getDisplayName()}!

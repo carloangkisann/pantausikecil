@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Dimensions, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
@@ -56,7 +56,6 @@ export default function RegisterScreen() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" />
       <LinearGradient
         colors={['#F99AB6', '#F278A0']}
         start={{ x: 0, y: 0 }}
@@ -92,7 +91,7 @@ export default function RegisterScreen() {
             Email
           </Text>
           <TextInput
-            className="bg-white rounded-lg px-3 py-1 text-gray-1 mt-2 font-poppins text-sm"
+            className="bg-white rounded-lg px-3 py-1 text-gray-1 mt-2 font-poppins text-sm min-h-8"
             placeholder="Masukkan email kamu"
             value={email}
             onChangeText={setEmail}
@@ -106,10 +105,10 @@ export default function RegisterScreen() {
             Password
           </Text>
           <View 
-            className="bg-white rounded-lg flex-row px-3  py-1 mt-2 justify-between items-center"
+            className="bg-white rounded-lg flex-row px-1  mt-2 justify-between items-center"
           >
             <TextInput
-              className="bg-white rounded-lg text-gray-1 font-poppins text-sm"
+              className="bg-white rounded-lg text-gray-1 py-2 font-poppins text-sm flex-1"
               placeholder="Masukkan password kamu"
               value={password}
               onChangeText={setPassword}
@@ -134,10 +133,10 @@ export default function RegisterScreen() {
             Konfirmasi Password 
           </Text>
           <View 
-            className="bg-white rounded-lg px-3 py-1  mt-2 flex-row justify-between items-center"
+            className="bg-white rounded-lg px-1  mt-2 flex-row justify-between items-center"
           >
             <TextInput
-              className="bg-white rounded-lg text-gray-1 font-poppins text-sm"
+              className="bg-white rounded-lg text-gray-1 py-2 font-poppins text-sm flex-1"
               placeholder="Masukkan kembali password kamu"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -153,7 +152,7 @@ export default function RegisterScreen() {
                 className="w-6 h-6"
                 resizeMode="contain"
               /> */}
-              <Feather name={showPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
+              <Feather name={showConfirmPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
             </TouchableOpacity>
           </View>
 

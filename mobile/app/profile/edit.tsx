@@ -2,12 +2,19 @@ import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, TextInput, Alert, Dimensions, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
-import { Picker } from '@react-native-picker/picker';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
 import { UserConnection, PregnancyData } from '../../types';
+import CustomPicker from '../components/CustomPicker';
 
 const { width } = Dimensions.get('window');
+
+// Data options untuk picker
+const kondisiFinansialOptions = [
+  { label: 'Rendah', value: 'Rendah' },
+  { label: 'Menengah', value: 'Menengah' },
+  { label: 'Tinggi', value: 'Tinggi' },
+];
 
 export default function ProfileEdit() {
   const { user } = useAuth();
@@ -193,6 +200,11 @@ export default function ProfileEdit() {
     }
   };
 
+  // Handler untuk kondisi finansial
+  const handleKondisiFinansialChange = (value: string | number) => {
+    setFormData({...formData, kondisiFinansial: value as 'Rendah' | 'Menengah' | 'Tinggi'});
+  };
+
   if (loading) {
     return (
       <View className="flex-1 bg-pink-medium items-center justify-center">
@@ -205,16 +217,15 @@ export default function ProfileEdit() {
   return (
     <ScrollView className="flex-1 bg-pink-medium" showsVerticalScrollIndicator={false}>
       {/* Header - diperkecil */}
-      <View className="flex-row items-center justify-between px-4 pt-2 pb-2">
+      <View className="flex-row  items-center justify-between px-4  pb-2">
         <TouchableOpacity 
           onPress={handleGoBack}
-          className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
+          className=" rounded-full items-center justify-center"
         >
-          {/* <Image source={require('../../assets/images/back-arrow.png')} /> */}
-            <FontAwesome5 name ='arrow-circle-left' color='white' size={0.08*width}></FontAwesome5>
+          <FontAwesome5 name='arrow-circle-left' color='white' size={0.08*width} />
         </TouchableOpacity>
         
-        <Text className="text-white text-lg font-semibold font-poppins">Edit Profile</Text>
+        <Text className="text-white text-lg font-bold font-poppins ">Edit Profile</Text>
         
         <View className="w-8 h-8" />
       </View>
@@ -253,9 +264,8 @@ export default function ProfileEdit() {
             <TextInput
               value={formData.nama}
               onChangeText={(text) => setFormData({...formData, nama: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1 text-gray-1 font-poppins  text-xs" 
+              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1 text-gray-1 font-poppins text-xs" 
               placeholder="Masukkan nama"
-            
             />
           </View>
 
@@ -266,7 +276,7 @@ export default function ProfileEdit() {
             <TextInput
               value={formData.usia}
               onChangeText={(text) => setFormData({...formData, usia: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1 text-gray-1 text-gray-1 font-poppins text-xs"
+              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1 text-gray-1 font-poppins text-xs"
               placeholder="Masukkan usia"
               keyboardType="numeric"
             />
@@ -296,7 +306,6 @@ export default function ProfileEdit() {
                     borderRadius: 10,
                     backgroundColor: '#fff',
                     alignSelf: formData.vegetarian ? 'flex-end' : 'flex-start',
-          
                     elevation: 2,
                   }}
                 />
@@ -304,23 +313,28 @@ export default function ProfileEdit() {
             </View>
           </View>
 
-          {/* Kondisi Finansial - diperkecil */}
+          {/* Kondisi Finansial - menggunakan CustomPicker */}
           <View className="mb-2">
             <Text className="text-black-low font-medium mb-1 text-xs font-poppins">
               Kondisi Finansial
             </Text>
-            <View className="bg-pink-low rounded-lg border border-gray-1 overflow-hidden min-h-6" >
-              <Picker
-                selectedValue={formData.kondisiFinansial}
-                onValueChange={(itemValue) => setFormData({...formData, kondisiFinansial: itemValue})}
-
-                className='bg-pink-low text-gray-1 font-poppins  text-xs my-auto pl-2'
-              >
-                <Picker.Item label="Rendah" value="Rendah" />
-                <Picker.Item label="Menengah" value="Menengah" />
-                <Picker.Item label="Tinggi" value="Tinggi" />
-              </Picker>
-            </View>
+            <CustomPicker
+              value={formData.kondisiFinansial}
+              onValueChange={handleKondisiFinansialChange}
+              items={kondisiFinansialOptions}
+              placeholder="Pilih kondisi finansial"
+              disabled={saving}
+              modalTitle="Kondisi Finansial"
+              containerStyle={{
+                height: 32, // Height yang lebih kecil
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+              }}
+              textStyle={{
+                fontSize: 12, // Text size yang lebih kecil
+                fontFamily: 'Poppins',
+              }}
+            />
           </View>
 
           <View className="mb-2">
@@ -330,7 +344,7 @@ export default function ProfileEdit() {
             <TextInput
               value={formData.alergi}
               onChangeText={(text) => setFormData({...formData, alergi: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1  text-gray-1 font-poppins  text-xs"
+              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1 text-gray-1 font-poppins text-xs"
               placeholder="Masukkan alergi"
             />
           </View>
@@ -342,7 +356,7 @@ export default function ProfileEdit() {
             <TextInput
               value={formData.kondisiMedis}
               onChangeText={(text) => setFormData({...formData, kondisiMedis: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1  text-gray-1 font-poppins  text-xs"
+              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1 text-gray-1 font-poppins text-xs"
               placeholder="Masukkan kondisi medis"
             />
           </View>
@@ -352,8 +366,7 @@ export default function ProfileEdit() {
             <TouchableOpacity 
               onPress={handleSaveProfile}
               disabled={saving}
-              className="rounded-lg items-center justify-center bg-pink-medium px-7 disabled:opacity-75 min-h-8 "
-     
+              className="rounded-lg items-center justify-center bg-pink-medium px-7 disabled:opacity-75 min-h-8"
             >
               {saving ? (
                 <ActivityIndicator size="small" color="#ffffff" />
@@ -382,7 +395,7 @@ export default function ProfileEdit() {
       {/* Koneksi - diperkecil */}
       <View className="mx-4 mb-4 bg-pink-low rounded-xl p-3 shadow-sm">
         <View className="flex-row items-center justify-between mb-2">
-          <Text className="text-black-low text-base font-semibold font-poppins ">
+          <Text className="text-black-low text-base font-semibold font-poppins">
             Koneksi
           </Text>
           <TouchableOpacity 
@@ -402,7 +415,7 @@ export default function ProfileEdit() {
                   <Text className="text-gray-1 font-medium mr-2 text-xs font-poppins">{index + 1}.</Text>
                   <View className="flex-1">
                     <Text className="text-gray-1 underline text-xs font-poppins">{connection.connectionEmail}</Text>
-                    <Text className="text-gray-1 text-xs font-poppins" >({connection.relationshipType})</Text>
+                    <Text className="text-gray-1 text-xs font-poppins">({connection.relationshipType})</Text>
                   </View>
                 </View>
                 <TouchableOpacity 

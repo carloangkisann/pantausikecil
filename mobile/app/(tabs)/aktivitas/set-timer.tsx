@@ -133,12 +133,13 @@ const SetTimer = () => {
                 onChange={setSelectedSeconds}
                 max={59}
                 label="Detik"
+                
               />
             </View>
 
             {/* Current Selection Display */}
-            <View className="bg-white bg-opacity-20 rounded-xl p-4 mt-4">
-              <Text className="text-white text-center text-2xl font-bold font-poppins">
+            <View className="bg-pink-faint-low rounded-2xl p-4 mt-4">
+              <Text className="text-white text-center  text-2xl font-bold font-poppins">
                 {selectedHours.toString().padStart(2, '0')} : {selectedMinutes.toString().padStart(2, '0')} : {selectedSeconds.toString().padStart(2, '0')}
               </Text>
             </View>
@@ -149,7 +150,7 @@ const SetTimer = () => {
             className="bg-pink-medium rounded-2xl py-4 px-6"
             onPress={handleStartTimer}
           >
-            <Text className="text-white text-center text-lg font-semibold font-poppins">
+            <Text className="text-white text-center text-2xl font-bold font-poppins">
               Mulai
             </Text>
           </TouchableOpacity>

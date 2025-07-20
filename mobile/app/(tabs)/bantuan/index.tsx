@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, Switch, ActivityIndicator } from 'react-native';
 import Header from '../../components/Header';
 import { useAuth } from '../../../context/AuthContext';
@@ -58,6 +58,7 @@ export default function Bantuan() {
     }
   };
 
+
   return (
     <View className="flex-1 bg-pink-medium">
       {/* Header area */}
@@ -67,7 +68,7 @@ export default function Bantuan() {
       
       {/* Main content container with rounded corners */}
       <View 
-        className="flex-1 mt-4 rounded-t-2xl bg-pink-low"
+        className="flex-1 mt-4 rounded-t-3xl bg-pink-low"
       >
         <View className="flex-1 px-6 pt-8">
           {/* Title */}
@@ -126,9 +127,9 @@ export default function Bantuan() {
           
           {/* Lokasi Toggle */}
           <View 
-            className="mx-4 mb-8 p-4 rounded-xl flex-row justify-between items-center bg-white -bottom-24"
+            className="mx-4 mb-8 rounded-xl flex-row justify-between items-center bg-white -bottom-24 max-h-12  "
           >
-            <Text className="text-gray-800 font-semibold text-base">
+            <Text className="text-gray-800 font-semibold text-base pb-2 font-poppins pl-6">
               Aktifkan Lokasi
             </Text>
             <Switch

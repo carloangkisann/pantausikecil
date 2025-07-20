@@ -53,7 +53,7 @@ export default function BerandaIndex() {
       <Header />
       
       {/* Main Content */}
-      <View className="flex-1 rounded-2xl bg-pink-low">
+      <View className="flex-1 rounded-3xl bg-pink-low">
 
         {/* Main Content Container */}
         <View className="items-center justify-center" style={{ flex: 0.8 }}>
@@ -84,7 +84,6 @@ export default function BerandaIndex() {
           <View className="items-center ml-12">
             <Image 
               source={require('../../assets/images/ibuhamil.png')}
-              className="w-1/2 h-1/2"
               resizeMode="contain"
             />
           </View>

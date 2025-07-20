@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, StatusBar, Dimensions} from 'react-native';
 import { useRouter } from 'expo-router';
 import { CircularProgress } from 'react-native-circular-progress';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Header from '../components/Header';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -34,8 +33,6 @@ export default function Dashboard() {
 
   const [activeKehamilan, setActiveKehamilan] = useState<KehamilanData | null>(mockActiveKehamilan);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     // Update date every minute
@@ -60,17 +57,6 @@ export default function Dashboard() {
     return match ? parseInt(match[0]) : 12;
   };
 
-  const handleDateChange = (event: any, date?: Date) => {
-    setShowDatePicker(false);
-    if (date) {
-      setSelectedDate(date);
-      setCurrentDate(date);
-    }
-  };
-
-  const openDatePicker = () => {
-    setShowDatePicker(true);
-  };
 
   if (!activeKehamilan) {
     return (
@@ -88,7 +74,7 @@ export default function Dashboard() {
       <Header />
       
       {/* Content */}
-      <View className="flex-1 bg-pink-low rounded-2xl">
+      <View className="flex-1 bg-pink-low rounded-3xl">
         <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
         
           {/* Insight Banner */}
@@ -99,20 +85,21 @@ export default function Dashboard() {
                 start={{x: 0.5, y: 0}} 
                 end={{x: 0.5, y: 1}}   
                 locations={[0.0033, 0.8923]} 
-                className="rounded-2xl pl-4 pr-2 py-3 flex-row items-center flex-1 mr-2" 
+                style ={{borderTopRightRadius:20,borderTopLeftRadius:20,borderBottomLeftRadius:20,borderBottomRightRadius:20}}
+                className="pl-4 pr-2 py-3 flex-row items-center flex-1 mr-2" 
               >
                 <Image 
                   source={require('../../assets/images/envelope.png')}
                   className="w-8 h-8 mr-3"
                   resizeMode="contain"
                 />
-                <Text className="text-white text-base font-poppins font-medium flex-1">
+                <Text className="text-white text-base font-poppins font-medium flex-1 ">
                   Hai Bunda, ini insight tentang harimu!
                 </Text>
               </LinearGradient>
 
             <TouchableOpacity 
-              onPress={openDatePicker} 
+              onPress={()=> {router.push('/beranda/tambah-pengingat')}} 
               className="bg-pink-faint-low rounded-full items-center justify-center w-16 h-16"
             >
               <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
@@ -155,8 +142,8 @@ export default function Dashboard() {
           </View>
 
           {/* Water & Nutrition Tracking */}
-          <View className="bg-pink-medium rounded-2xl px-6 py-4 mb-4 flex-row items-center">
-            <Text className="text-black font-semibold font-poppins text-lg mb-4">
+          <View className="bg-pink-medium rounded-2xl py-2 px-2 mb-4 flex-row items-center">
+            <Text className="text-black font-semibold font-poppins text-lg mb-4 flex-1 text-center">
               Pemenuhan Air & Gizi
             </Text>
             
@@ -176,7 +163,7 @@ export default function Dashboard() {
                       <View className="items-center justify-center">
                         <Image 
                           source={require('../../assets/images/water.png')}
-                          className="w-8 h-8"
+                          className="min-w-4 min-h-4"
                           resizeMode="contain"
                         />
                       </View>
@@ -201,7 +188,7 @@ export default function Dashboard() {
                       <View className="items-center justify-center">
                         <Image 
                           source={require('../../assets/images/nutrition.png')}
-                          className="w-8 h-8"
+                          className="min-w-4 min-h-4"
                           resizeMode="contain"
                         />
                       </View>
@@ -255,15 +242,6 @@ export default function Dashboard() {
         </ScrollView>
       </View>
 
-      {/* DateTimePicker */}
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-        />
-      )}
     </View>
   );
 }

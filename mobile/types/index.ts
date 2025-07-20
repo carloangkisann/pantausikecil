@@ -83,7 +83,7 @@ export interface PregnancyData {
 export interface CreateConnectionRequest {
   connectionEmail: string;
   connectionName: string;
-  relationshipType: 'Suami' | 'Lainnya';
+  relationshipType: 'Suami' |'Mertua'|'Saudara Kandung'|'Teman'|'Lainnya';
 }
 
 export interface UserConnection {

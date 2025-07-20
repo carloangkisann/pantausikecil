@@ -97,18 +97,14 @@ export default function PilihKehamilan() {
     <View className="flex-1 bg-pink-medium">
       <Header />
       
-      <ScrollView className="flex-1 px-6 py-4 bg-pink-low rounded-2xl" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-6 py-4 bg-pink-low rounded-3xl" showsVerticalScrollIndicator={false}>
     
         <View className="flex-row items-center justify-between mb-4">
           <TouchableOpacity 
             onPress={() => router.back()}
-            className="w-8 h-8  items-center justify-center"
+            className="min-w-10 min-h-10  items-center justify-center"
           >
-            {/* <Image 
-              source={require('../../assets/images/back-arrow-black.png')}
-              resizeMode="contain"
-            /> */}
-              <FontAwesome5 name ='arrow-circle-left' color='#656565' size={0.1*width}></FontAwesome5>
+              <FontAwesome5 name ='arrow-circle-left' color='#656565' size={0.083*width}></FontAwesome5>
           </TouchableOpacity>
           
           <Text className="text-black-low text-lg font-semibold flex-1 text-center mx-8 pl-1 pb-1 font-poppins">

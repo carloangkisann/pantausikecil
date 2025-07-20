@@ -125,20 +125,15 @@ const AktivitasIndex = () => {
 
   return (
     <LinearGradient
-      colors={['#FF9EBD', '#F2789F']}
-      start={{ x: 0.2, y: 0 }}
-      end={{ x: 0.8, y: 1 }}
-      style={{ flex: 1 }}
+        colors={['#F99AB6', '#F278A0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1 }}
     >
       <Header />
 
       <ScrollView 
-        className="bg-pink-low"
-        style={{ 
-          flex: 1, 
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-        }}
+        className="bg-pink-low rounded-t-3xl"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

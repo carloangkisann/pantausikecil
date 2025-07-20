@@ -6,7 +6,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { apiService } from '../../../services/api';
 import { extractApiArrayData } from '../../../utils/apiHelpers';
 import { ActivityItem } from '../../../types';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
 const AddAktivitas = () => {
   const { user } = useAuth();
@@ -128,11 +128,6 @@ const AddAktivitas = () => {
       {/* Header */}
       <View className="flex-row items-center px-4 py-6 ">
         <TouchableOpacity onPress={() => router.push('/aktivitas')}>
-          {/* <Image 
-            source={require('../../../assets/images/back-arrow.png')}
-            className="w-6 h-6"
-            resizeMode="contain"
-          /> */}
           <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
         </TouchableOpacity>
         <Text className="text-white text-xl font-semibold ml-4 font-poppins">
@@ -141,12 +136,7 @@ const AddAktivitas = () => {
       </View>
 
       <ScrollView 
-        className="bg-pink-low"
-        style={{ 
-          flex: 1, 
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-        }}
+        className="bg-pink-low rounded-3xl"
       >
         {/* Search Bar */}
         <View className="px-4 py-6">
@@ -160,7 +150,7 @@ const AddAktivitas = () => {
             </Text>
           </View> */}
           
-          <View className="flex-row items-center bg-white rounded-2xl px-4 py-3">
+          <View className="flex-row items-center bg-white rounded-3xl px-4 py-3">
             <Image 
               source={require('../../../assets/images/search.png')}
               className="w-5 h-5 mr-3"
@@ -197,14 +187,14 @@ const AddAktivitas = () => {
                 onPress={() => handleAddActivity(activity)}
               >
                 {/* Plus Icon */}
-                <View className="mr-4">
+                {/* <View className="mr-4">
                   <Image   
                     source={require('../../../assets/images/plus.png')}
                     className="w-5 h-5"
                     resizeMode="contain"
                   />
-                </View>
-                
+                </View> */}
+                <AntDesign  name='plus' size={width*0.074} color="white" className='mr-2'></AntDesign>
                 {/* Activity Info */}
                 <View className="flex-1">
                   <Text className="text-white text-lg font-semibold mb-1 font-poppins">

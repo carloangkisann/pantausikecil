@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
@@ -109,12 +109,6 @@ const FoodRecommendation = () => {
       {/* Header */}
       <View className="flex-row items-center px-4 py-6 pt-4">
         <TouchableOpacity onPress={() => router.back()}>
-          {/* <Image 
-            source={require('../../../assets/images/back-arrow.png')}
-            className="w-6 h-6"
-            resizeMode="contain"
-          /> */}
-
           <FontAwesome5 name ='arrow-circle-left' color='white' size={0.074*width}></FontAwesome5>
         </TouchableOpacity>
         <Text className="text-white text-xl font-semibold mx-auto font-poppins">
@@ -123,21 +117,16 @@ const FoodRecommendation = () => {
       </View>
 
       <ScrollView 
-        className="bg-pink-low"
-        style={{ 
-          flex: 1, 
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-        }}
+        className="bg-pink-low rounded-3xl"
       >
         {/* Category Filter */}
         <View className="px-4 py-4">
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View className="flex-row space-x-3">
+            <View className="flex-row">
               {categories.map((category) => (
                 <TouchableOpacity
                   key={category.id}
-                  className={`px-4 py-2 rounded-full ${
+                  className={`px-4 py-2 rounded-full mr-2 ${
                     selectedCategory === category.id 
                       ? 'bg-pink-medium' 
                       : 'bg-pink-semi-low'

@@ -1,11 +1,13 @@
 
 
 import { useEffect, useState } from 'react';
-import { StatusBar } from 'react-native';
+
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments, useNavigationContainerRef } from 'expo-router';
 import { AuthProvider, useAuth } from '../context/AuthContext';
+import { SafeAreaView } from 'react-native';
+import { StatusBar  as ExpoStatusBar} from 'expo-status-bar';
 import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
@@ -81,8 +83,10 @@ function RootLayoutNav() {
 
   return (
     <AuthGuard>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      
       <Stack screenOptions={{ headerShown: false }}>
+        
+        
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -95,8 +99,17 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+    // <AuthProvider>
+    //   <RootLayoutNav />
+    // </AuthProvider>z
+    <> 
+      <ExpoStatusBar style='light' backgroundColor='#F99AB6CC"' />
+      <SafeAreaView className='flex-1' >
+            <AuthProvider>
+                <RootLayoutNav />
+         </AuthProvider>
+      </SafeAreaView>
+
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
@@ -64,13 +64,14 @@ export default function LoginScreen() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" />
+
       <LinearGradient
         colors={['#F99AB6', '#F278A0']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         className="flex-1"
       >
+      
         {/* Header */}
         <View className="flex-row items-center justify-center pt-12 pb-4 px-5">
           <Image 
@@ -119,9 +120,9 @@ export default function LoginScreen() {
           <Text className="text-black text-sm font-semibold mb-2 font-poppins">
             Password
           </Text>
-          <View className="rounded-xl px-4 py-3 mb-6 flex-row items-center bg-white " >
+          <View className="rounded-xl mb-6 flex-row items-center bg-white pr-2" >
             <TextInput
-              className="flex-1 text-sm bg-white text-gray-1 font-poppins"
+              className="flex-1 text-sm bg-transparent text-gray-1 font-poppins flex-1  px-4 py-3 "
               placeholder="Masukkan password kamu"
               value={password}
               onChangeText={setPassword}

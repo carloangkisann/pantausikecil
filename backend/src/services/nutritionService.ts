@@ -6,6 +6,7 @@ import {
   userWaterLogs, 
   food,
   priceCategoryEnum,
+  mealCategoryEnum
 } from '../db/schema.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { UserService } from './userService.js';
@@ -20,6 +21,7 @@ import {
 } from '../types/api.js';
 
 type FoodPriceCategory = typeof priceCategoryEnum.enumValues[number];
+type MealCategory = typeof mealCategoryEnum.enumValues[number];
 
 export class NutritionService {
   static async getNutritionalNeeds(trimester: number): Promise<NutritionalNeeds | null> {
@@ -110,11 +112,13 @@ export class NutritionService {
       );
 
     const totalWaterMl = waterResult[0]?.totalWater || 0;
+    // console.log('Type of totalWaterMl:', typeof totalWaterMl);
+    const finalTotalWaterMl = Number(totalWaterMl)
 
     return {
       date,
       ...totalNutrition,
-      totalWaterMl,
+      totalWaterMl: finalTotalWaterMl,
     };
   }
 
@@ -222,8 +226,17 @@ export class NutritionService {
     }
   }
 
-  static async getUserMeals(userId: number, date: string) {
+  static async getUserMeals(userId: number, date: string, mealCategory?: MealCategory) {
     await UserService.getUserProfile(userId);
+
+    const whereConditions = [
+      eq(userMeal.userId, userId),
+      eq(userMeal.consumptionDate, date)
+    ];
+
+    if (mealCategory) {
+      whereConditions.push(eq(userMeal.mealCategory, mealCategory));
+    }
 
     const meals = await db
       .select({
@@ -249,12 +262,7 @@ export class NutritionService {
       })
       .from(userMeal)
       .innerJoin(food, eq(userMeal.foodId, food.id))
-      .where(
-        and(
-          eq(userMeal.userId, userId),
-          eq(userMeal.consumptionDate, date)
-        )
-      );
+      .where(and(...whereConditions));
 
     return meals;
   }

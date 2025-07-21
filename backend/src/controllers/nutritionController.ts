@@ -6,6 +6,9 @@ import { sendSuccess, sendError } from '../utils/helper.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { nutritionSchemas } from '../middleware/validation.js';
+import { mealCategoryEnum } from '../db/schema.js';
+
+type MealCategory = typeof mealCategoryEnum.enumValues[number];
 
 export class NutritionController {
   static getNutritionalNeeds = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -97,12 +100,17 @@ export class NutritionController {
   static getUserMeals = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = parseInt(req.params.user_id);
     const date = req.query.date as string;
+    const mealCategory = req.query.mealCategory as MealCategory | undefined;
 
     if (!date) {
       return sendError(res, 'Date parameter is required', 400);
     }
-
-    const meals = await NutritionService.getUserMeals(userId, date);
+    
+    if (mealCategory && !mealCategoryEnum.enumValues.includes(mealCategory)) {
+      return sendError(res, `Invalid meal category. Valid options: ${mealCategoryEnum.enumValues.join(', ')}`, 400);
+    }
+    
+    const meals = await NutritionService.getUserMeals(userId, date, mealCategory);
 
     return sendSuccess(res, 'User meals retrieved successfully', meals);
   });

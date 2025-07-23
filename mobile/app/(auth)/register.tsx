@@ -1,10 +1,11 @@
 import  { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Dimensions, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
+import { Feather } from '@expo/vector-icons';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
@@ -55,89 +56,43 @@ export default function RegisterScreen() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" />
       <LinearGradient
-        colors={['#FF9EBD', '#F2789F']}
+        colors={['#F99AB6', '#F278A0']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{ flex: 1 }}
       >
-        {/* Header */}
-        <View 
-          className="absolute flex-row items-center w-full"
-          style={{
-            top: height * 0.06,
-            left: 0,
-            width: width,
-            paddingLeft: width * 0.025,
-            paddingRight: width * 0.025,
-          }}
-        >
-          <TouchableOpacity 
-            onPress={() => router.back()}
-            style={{ position: 'absolute', left: width * 0.05, zIndex: 1 }}
-          >
-            <Image 
-              source={require('../../assets/images/back-arrow.png')} 
-              className="w-6 h-6"
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          
+       <View className="flex-row items-center justify-center pt-8 pb-4 mx-auto">
           <Image 
             source={require('../../assets/images/pantausikecil.png')} 
-            style={{
-              width: width * 0.25,
-              height: height * 0.1
-            }}
+            style={{ width: 100, height: 100 }}
+            className="mx-auto"
             resizeMode="contain"
           />
           <Text 
-            className="text-white text-8xl font-bold text-center flex-1"
-            style={{
-              fontSize: width * 0.05,
-              fontWeight: '500'
-            }}
+            className="text-white text-lg font-medium text-center mr-12 font-poppins leading-5"
           >
             Selamat datang,{'\n'}calon Bunda hebat!
           </Text>
         </View>
 
+
         {/* Register Card */}
         <View 
-          className="absolute bg-pink-low"
-          style={{
-            width: width,
-            height: height,
-            top: height * 0.18,
-            backgroundColor: '#FFE3EC',
-            borderTopLeftRadius: 40,
-            borderTopRightRadius: 40,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            paddingHorizontal: width * 0.06,
-            paddingTop: height * 0.05,
-          }}
+          className="bg-pink-low rounded-t-2xl w-full h-full p-4 " 
         >
-          <Text className="text-xl font-bold text-black text-center mb-4">
+          <Text className="text-xl font-bold text-black text-center mb-4 font-poppins" >
             Registrasi
           </Text>
 
    
           {/* Email Input */}
-          <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Email *
+          <Text className="text-black font-semibold font-poppins text-sm" >
+            Email
           </Text>
           <TextInput
-            className="bg-white rounded-xl px-4 text-gray-600"
-            style={{
-              width: width * 0.82,
-              height: height * 0.045,
-              fontSize: width * 0.04,
-              marginBottom: 15
-            }}
+            className="bg-white rounded-lg px-3 py-1 text-gray-1 mt-2 font-poppins text-sm min-h-8"
             placeholder="Masukkan email kamu"
-            placeholderTextColor="#999"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -146,22 +101,15 @@ export default function RegisterScreen() {
           />
 
           {/* Password Input */}
-          <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Password *
+          <Text className="text-black font-semibold  mt-2 font-poppins" >
+            Password
           </Text>
           <View 
-            className="bg-white rounded-xl px-4 flex-row items-center"
-            style={{
-              width: width * 0.82,
-              height: height * 0.045,
-              marginBottom: 15
-            }}
+            className="bg-white rounded-lg flex-row px-1  mt-2 justify-between items-center"
           >
             <TextInput
-              className="flex-1 text-gray-600"
-              style={{ fontSize: width * 0.04 }}
+              className="bg-white rounded-lg text-gray-1 py-2 font-poppins text-sm flex-1"
               placeholder="Masukkan password kamu"
-              placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
@@ -171,31 +119,25 @@ export default function RegisterScreen() {
               onPress={() => setShowPassword(!showPassword)}
               disabled={loading}
             >
-              <Image 
+              {/* <Image 
                 source={require('../../assets/images/eye.png')} 
                 className="w-6 h-6"
                 resizeMode="contain"
-              />
+              /> */}
+                <Feather name={showPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
             </TouchableOpacity>
           </View>
 
           {/* Confirm Password Input */}
-          <Text className="text-black font-semibold mb-1" style={{ fontSize: width * 0.04 }}>
-            Konfirmasi Password *
+          <Text className="text-black font-semibold mt-2 font-poppins " >
+            Konfirmasi Password 
           </Text>
           <View 
-            className="bg-white rounded-xl px-4 flex-row items-center"
-            style={{
-              width: width * 0.82,
-              height: height * 0.045,
-              marginBottom: height * 0.05
-            }}
+            className="bg-white rounded-lg px-1  mt-2 flex-row justify-between items-center"
           >
             <TextInput
-              className="flex-1 text-gray-600"
-              style={{ fontSize: width * 0.04 }}
+              className="bg-white rounded-lg text-gray-1 py-2 font-poppins text-sm flex-1"
               placeholder="Masukkan kembali password kamu"
-              placeholderTextColor="#999"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry={!showConfirmPassword}
@@ -205,24 +147,18 @@ export default function RegisterScreen() {
               onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={loading}
             >
-              <Image 
+              {/* <Image 
                 source={require('../../assets/images/eye.png')} 
                 className="w-6 h-6"
                 resizeMode="contain"
-              />
+              /> */}
+              <Feather name={showConfirmPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
             </TouchableOpacity>
           </View>
 
           {/* Register Button */}
           <TouchableOpacity 
-            className="bg-pink-400 rounded-2xl justify-center items-center"
-            style={{
-              width: width * 0.8,
-              height: height * 0.06,
-              backgroundColor: loading ? '#F99AB6' : '#F789AC',
-              marginBottom: height * 0.025,
-              opacity: loading ? 0.7 : 1
-            }}
+            className="bg-pink-medium rounded-2xl justify-center items-center mt-12 py-2"
             onPress={handleRegister}
             disabled={loading}
           >
@@ -230,8 +166,7 @@ export default function RegisterScreen() {
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (
               <Text 
-                className="text-white font-bold"
-                style={{ fontSize: width * 0.045 }}
+                className="text-white font-semibold text-lg font-poppins"
               >
                 Registrasi
               </Text>
@@ -239,10 +174,9 @@ export default function RegisterScreen() {
           </TouchableOpacity>
 
           {/* Login Link */}
-          <View className="flex-row justify-center items-center">
+          <View className="flex-row justify-center items-center mt-3">
             <Text 
-              className="text-gray-600"
-              style={{ fontSize: width * 0.035 }}
+              className="text-gray-600 font-poppins text-xs"
             >
               Sudah punya akun? 
             </Text>
@@ -251,11 +185,7 @@ export default function RegisterScreen() {
               disabled={loading}
             >
               <Text 
-                className="font-semibold ml-1"
-                style={{ 
-                  color: '#F789AC',
-                  fontSize: width * 0.035 
-                }}
+                className="font-semibold ml-1 text-[#F789AC] text-xs font-poppins "
               >
                 Login
               </Text>

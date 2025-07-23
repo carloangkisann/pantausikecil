@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { apiService } from '../../../services/api';
 import { extractApiData } from '../../../utils/apiHelpers';
 import { FoodItem } from '../../../types';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const FoodDetail = () => {
   const { foodId } = useLocalSearchParams();
@@ -108,6 +109,7 @@ const FoodDetail = () => {
     return entries;
   };
 
+  const width = Dimensions.get('window').width;
   if (loading) {
     return (
       <LinearGradient
@@ -118,11 +120,8 @@ const FoodDetail = () => {
       >
         <View className="flex-row items-center px-4 py-6 pt-4">
           <TouchableOpacity onPress={() => router.back()}>
-            <Image 
-              source={require('../../../assets/images/back-arrow.png')}
-              className="w-6 h-6"
-              resizeMode="contain"
-            />
+
+              <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
           </TouchableOpacity>
           <Text className="text-white text-xl font-semibold ml-4">
             Detail Makanan
@@ -164,28 +163,20 @@ const FoodDetail = () => {
       {/* Header */}
       <View className="flex-row items-center px-4 py-6 pt-4">
         <TouchableOpacity onPress={() => router.back()}>
-          <Image 
-            source={require('../../../assets/images/back-arrow.png')}
-            className="w-6 h-6"
-            resizeMode="contain"
-          />
+          
+            <FontAwesome5 name ='arrow-circle-left' color='white' size={0.074*width}></FontAwesome5>
         </TouchableOpacity>
-        <Text className="text-white text-xl font-semibold ml-4" numberOfLines={1}>
+        <Text className="text-white text-xl font-semibold mx-auto " numberOfLines={1}>
           {food.foodName}
         </Text>
       </View>
 
       <ScrollView 
-        className="bg-pink-low"
-        style={{ 
-          flex: 1, 
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-        }}
+        className="bg-pink-low rounded-3xl"
       >
         {/* Food Image */}
         <View className="mt-4 mb-6">
-          <View className="w-full h-48 bg-pink-medium rounded-2xl overflow-hidden items-center justify-center mx-4" style={{ width: '92%' }}>
+          <View className="w-7/8 h-48 bg-pink-medium rounded-2xl overflow-hidden items-center justify-center mx-4">
             <Text className="text-8xl">🥣</Text>
           </View>
         </View>

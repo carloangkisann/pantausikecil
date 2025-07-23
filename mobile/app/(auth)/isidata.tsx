@@ -1,13 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StatusBar, Dimensions, ScrollView, Modal, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, Modal, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Picker } from '@react-native-picker/picker';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
-import {apiService} from '../../services/api';
+import { apiService } from '../../services/api';
 import { UpdateProfileRequest } from '../../types';
-
-const { width, height } = Dimensions.get('window');
+import { AntDesign } from '@expo/vector-icons';
+import CustomPicker from '../components/CustomPicker';// Import CustomPicker
 
 interface MultiSelectModalProps {
   visible: boolean;
@@ -20,6 +19,14 @@ interface MultiSelectModalProps {
   setCustomValue: (value: string) => void;
   onAddCustom: () => void;
 }
+const width = Dimensions.get('window').width;
+
+// Data options untuk CustomPicker
+const kondisiFinansialOptions = [
+  { label: 'Rendah', value: 'Rendah' },
+  { label: 'Menengah', value: 'Menengah' },
+  { label: 'Tinggi', value: 'Tinggi' },
+];
 
 const MultiSelectModal: React.FC<MultiSelectModalProps> = ({ 
   visible, 
@@ -33,15 +40,9 @@ const MultiSelectModal: React.FC<MultiSelectModalProps> = ({
   onAddCustom
 }) => (
   <Modal visible={visible} transparent animationType="fade">
-    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
-      <View style={{
-        backgroundColor: '#FFE3EC',
-        width: width * 0.9,
-        maxHeight: height * 0.7,
-        borderRadius: 20,
-        padding: 20
-      }}>
-        <Text style={{ fontSize: width * 0.05, fontWeight: 'bold', textAlign: 'center', marginBottom: 20, color: '#333' }}>
+    <View className="flex-1 bg-black/50 justify-center items-center">
+      <View className="bg-pink-low w-[90%] max-h-[70%] rounded-xl p-5">
+        <Text className="text-xl sm:text-2xl lg:text-3xl font-poppins-bold text-center mb-5 text-black-3">
           {title}
         </Text>
         
@@ -50,72 +51,46 @@ const MultiSelectModal: React.FC<MultiSelectModalProps> = ({
             <TouchableOpacity
               key={index}
               onPress={() => onSelect(item)}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                backgroundColor: selected.includes(item) ? '#F789AC' : '#fff',
-                marginBottom: 8,
-                borderRadius: 12,
-              }}
+              className={`flex-row items-center py-3 px-4 mb-2 rounded-xl ${
+                selected.includes(item) ? 'bg-pink-medium' : 'bg-white'
+              }`}
             >
-              <View style={{
-                width: 20,
-                height: 20,
-                borderRadius: 10,
-                backgroundColor: selected.includes(item) ? '#fff' : 'transparent',
-                borderWidth: 2,
-                borderColor: selected.includes(item) ? '#fff' : '#F789AC',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: 12
-              }}>
+              <View className={`w-5 h-5 rounded-full border-2 items-center justify-center mr-3 ${
+                selected.includes(item) 
+                  ? 'bg-white border-white' 
+                  : 'bg-transparent border-pink-medium'
+              }`}>
                 {selected.includes(item) && (
-                  <Text style={{ color: '#F789AC', fontSize: 12, fontWeight: 'bold' }}>✓</Text>
+                  <Text className="text-pink-medium text-xs font-bold">✓</Text>
                 )}
               </View>
-              <Text style={{ 
-                color: selected.includes(item) ? '#fff' : '#333',
-                fontSize: width * 0.04,
-                fontWeight: selected.includes(item) ? 'bold' : 'normal'
-              }}>
+              <Text className={`text-sm sm:text-base lg:text-lg font-poppins ${
+                selected.includes(item) 
+                  ? 'text-white font-poppins-bold' 
+                  : 'text-black-3 font-poppins'
+              }`}>
                 {item}
               </Text>
             </TouchableOpacity>
           ))}
           
           {/* Custom Input */}
-          <View style={{ marginTop: 16 }}>
-            <Text style={{ fontSize: width * 0.04, fontWeight: 'bold', marginBottom: 8, color: '#333' }}>
+          <View className="mt-4">
+            <Text className="text-sm sm:text-base lg:text-lg font-poppins-bold mb-2 text-black-3">
               Tambah Manual:
             </Text>
-            <View style={{ flexDirection: 'row' }}>
+            <View className="flex-row">
               <TextInput
-                style={{
-                  flex: 1,
-                  backgroundColor: '#fff',
-                  borderRadius: 12,
-                  paddingHorizontal: 12,
-                  paddingVertical: 10,
-                  fontSize: width * 0.04,
-                  marginRight: 8
-                }}
+                className="flex-1 bg-white rounded-xl px-3 py-2.5 text-sm sm:text-base lg:text-lg mr-2 font-poppins"
                 placeholder="Ketik manual..."
                 value={customValue}
                 onChangeText={setCustomValue}
               />
               <TouchableOpacity
                 onPress={onAddCustom}
-                style={{
-                  backgroundColor: '#F789AC',
-                  paddingHorizontal: 16,
-                  paddingVertical: 10,
-                  borderRadius: 12,
-                  justifyContent: 'center'
-                }}
+                className="bg-pink-medium p-2 rounded-2xl justify-center"
               >
-                <Text style={{ color: '#fff', fontWeight: 'bold' }}>+</Text>
+                <AntDesign name='plus' size={width*0.048} color="white" />
               </TouchableOpacity>
             </View>
           </View>
@@ -123,15 +98,9 @@ const MultiSelectModal: React.FC<MultiSelectModalProps> = ({
         
         <TouchableOpacity
           onPress={onClose}
-          style={{
-            backgroundColor: '#F789AC',
-            paddingVertical: 12,
-            borderRadius: 12,
-            marginTop: 20,
-            alignItems: 'center'
-          }}
+          className="bg-pink-medium py-3 rounded-xl mt-5 items-center"
         >
-          <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: width * 0.04 }}>
+          <Text className="text-white font-poppins-bold text-sm sm:text-base lg:text-lg">
             Selesai
           </Text>
         </TouchableOpacity>
@@ -212,6 +181,11 @@ export default function IsidataScreen() {
     }
   }, [customMedis, kondisiMedis]);
 
+  // Handler untuk kondisi finansial
+  const handleKondisiFinansialChange = (value: string | number) => {
+    setKondisiFinansial(value as string);
+  };
+
   const handleSubmit = async () => {
     // Validasi input
     if (!namaLengkap.trim()) {
@@ -276,299 +250,164 @@ export default function IsidataScreen() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#F99AB6" />
       <LinearGradient
         colors={['#FF9EBD', '#F2789F']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{ flex: 1 }}
+        className="flex-1"
       >
-        {/* Header */}
-        <View 
-          style={{
-            position: 'absolute',
-            top: height * 0.06,
-            left: 0,
-            width: width,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: width * 0.025,
-          }}
-        >
-          <TouchableOpacity 
-            onPress={() => router.back()}
-            style={{ position: 'absolute', left: width * 0.05, zIndex: 1 }}
-            disabled={loading}
-          >
-            <Image 
-              source={require('../../assets/images/back-arrow.png')} 
-              style={{ width: 24, height: 24 }}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          
+        <View className="flex-row items-center justify-center items-center pt-8 pb-4 mx-auto">
           <Image 
             source={require('../../assets/images/pantausikecil.png')} 
-            style={{
-              width: width * 0.25,
-              height: height * 0.1
-            }}
+            style={{ width: 100, height: 100 }}
+            className="mx-auto"
             resizeMode="contain"
           />
           <Text 
-            style={{
-              flex: 1,
-              color: '#fff',
-              fontSize: width * 0.05,
-              fontWeight: '500',
-              textAlign: 'center',
-              lineHeight: width * 0.06
-            }}
+            className="text-white text-lg font-medium text-center mr-12 font-poppins leading-5"
           >
             Selamat datang,{'\n'}calon Bunda hebat!
           </Text>
         </View>
 
         {/* Data Form Card */}
-        <View 
-          style={{
-            position: 'absolute',
-            width: width,
-            height: height,
-            top: height * 0.18,
-            backgroundColor: '#FFE3EC',
-            borderTopLeftRadius: 40,
-            borderTopRightRadius: 40,
-            paddingHorizontal: width * 0.06,
-            paddingTop: height * 0.03,
-          }}
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          className="bg-pink-low rounded-t-3xl w-full h-full p-4"
         >
-          <ScrollView 
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: height * 0.15 }}
+          <Text className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-poppins-bold text-black-3 text-center mb-4">
+            Lengkapi Data Diri Anda
+          </Text>
+
+          {/* Nama Lengkap Input */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3">
+            Nama Lengkap *
+          </Text>
+          <TextInput
+            className={`w-full bg-white rounded-lg px-3 py-1 text-sm sm:text-base lg:text-lg text-gray-600 mt-2 font-poppins ${
+              loading ? 'opacity-50' : 'opacity-100'
+            }`}
+            placeholder="Masukkan nama lengkap kamu"
+            placeholderTextColor="#999"
+            value={namaLengkap}
+            onChangeText={setNamaLengkap}
+            editable={!loading}
+          />
+
+          {/* Usia Input */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Usia *
+          </Text>
+          <TextInput
+            className={`w-full bg-white rounded-lg px-3 py-1 text-sm sm:text-base lg:text-lg text-gray-600 mt-2 font-poppins ${
+              loading ? 'opacity-50' : 'opacity-100'
+            }`}
+            placeholder="Masukkan usia kamu"
+            placeholderTextColor="#999"
+            value={usia}
+            onChangeText={setUsia}
+            keyboardType="numeric"
+            editable={!loading}
+          />
+
+          {/* Vegetarian Toggle */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Vegetarian?
+          </Text>
+          <View className="flex-row items-center mt-2 mb-2">
+            <TouchableOpacity
+              onPress={() => setIsVegetarian(!isVegetarian)}
+              disabled={loading}
+              className={`w-12 h-7 sm:w-14 sm:h-8 lg:w-16 lg:h-9 rounded-full justify-center px-1 ${
+                isVegetarian ? 'bg-pink-medium' : 'bg-gray-300'
+              } ${loading ? 'opacity-50' : 'opacity-100'}`}
+            >
+              <View className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 rounded-full bg-white shadow-md justify-center items-center ${
+                isVegetarian ? 'self-end' : 'self-start'
+              }`}>
+                {isVegetarian && (
+                  <Text className="text-pink-medium text-xs sm:text-sm lg:text-base font-poppins-bold">
+                    ✓
+                  </Text>
+                )}
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Kondisi Finansial - menggunakan CustomPicker */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Kondisi Finansial *
+          </Text>
+            <CustomPicker
+              value={kondisiFinansial}
+              onValueChange={handleKondisiFinansialChange}
+              items={kondisiFinansialOptions}
+              placeholder="Pilih kondisi finansial"
+              disabled={loading}
+              modalTitle="Kondisi Finansial"
+              containerStyle={{
+                backgroundColor: 'white',
+                paddingVertical: 12,
+                paddingHorizontal: 12,
+                borderRadius: 8,
+              }}
+              textStyle={{
+                fontSize: 12,
+                fontFamily: 'Poppins',
+              }}
+            />
+      
+          {/* Alergi Multi Select */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Alergi
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowAlergiModal(true)}
+            disabled={loading}
+            className={`w-full bg-white rounded-lg px-3 py-1 mt-2 justify-center ${
+              loading ? 'opacity-50' : 'opacity-100'
+            }`}
           >
-            <Text 
-              style={{
-                fontSize: width * 0.055,
-                fontWeight: 'bold',
-                color: '#333',
-                textAlign: 'center',
-                marginBottom: 24
-              }}
-            >
-              Lengkapi Data Diri Anda
+            <Text className={`text-sm sm:text-base lg:text-lg font-poppins text-gray-1`}>
+              {alergi.length > 0 ? alergi.join(', ') : 'Pilih alergi (bisa lebih dari 1)'}
             </Text>
+          </TouchableOpacity>
 
-            {/* Nama Lengkap Input */}
-            <Text style={{ fontSize: width * 0.04, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-              Nama Lengkap *
+          {/* Kondisi Medis Multi Select */}
+          <Text className="text-sm sm:text-base lg:text-lg font-poppins-semibold text-black-3 mt-2">
+            Kondisi Medis
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowMedisModal(true)}
+            disabled={loading}
+            className={`w-full bg-white rounded-lg px-3 py-1 mt-2 justify-center ${
+              loading ? 'opacity-50' : 'opacity-100'
+            }`}
+          >
+            <Text className={`text-sm sm:text-base lg:text-lg font-poppins text-gray-1`}>
+              {kondisiMedis.length > 0 ? kondisiMedis.join(', ') : 'Pilih kondisi medis (bisa lebih dari 1)'}
             </Text>
-            <TextInput
-              style={{
-                width: width * 0.88,
-                height: height * 0.05,
-                backgroundColor: '#fff',
-                borderRadius: 12,
-                paddingHorizontal: 16,
-                fontSize: width * 0.04,
-                color: '#666',
-                marginBottom: 16
-              }}
-              placeholder="Masukkan nama lengkap kamu"
-              placeholderTextColor="#999"
-              value={namaLengkap}
-              onChangeText={setNamaLengkap}
-              editable={!loading}
-            />
+          </TouchableOpacity>
 
-            {/* Usia Input */}
-            <Text style={{ fontSize: width * 0.04, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-              Usia *
-            </Text>
-            <TextInput
-              style={{
-                width: width * 0.88,
-                height: height * 0.05,
-                backgroundColor: '#fff',
-                borderRadius: 12,
-                paddingHorizontal: 16,
-                fontSize: width * 0.04,
-                color: '#666',
-                marginBottom: 16
-              }}
-              placeholder="Masukkan usia kamu"
-              placeholderTextColor="#999"
-              value={usia}
-              onChangeText={setUsia}
-              keyboardType="numeric"
-              editable={!loading}
-            />
-
-            {/* Vegetarian Toggle */}
-            <Text style={{ fontSize: width * 0.04, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-              Vegetarian?
-            </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
-              <TouchableOpacity
-                onPress={() => setIsVegetarian(!isVegetarian)}
-                disabled={loading}
-                style={{
-                  width: width * 0.13,
-                  height: height * 0.035,
-                  borderRadius: height * 0.0175,
-                  backgroundColor: isVegetarian ? '#F789AC' : '#E5E5E5',
-                  justifyContent: 'center',
-                  paddingHorizontal: 3,
-                  opacity: loading ? 0.5 : 1,
-                }}
-              >
-                <View
-                  style={{
-                    width: height * 0.029,
-                    height: height * 0.029,
-                    borderRadius: height * 0.0145,
-                    backgroundColor: '#fff',
-                    alignSelf: isVegetarian ? 'flex-end' : 'flex-start',
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3,
-                    elevation: 4,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {isVegetarian && (
-                    <Text 
-                      style={{ 
-                        color: '#F789AC', 
-                        fontSize: width * 0.025, 
-                        fontWeight: 'bold',
-                        lineHeight: width * 0.025
-                      }}
-                    >
-                      ✓
-                    </Text>
-                  )}
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            {/* Kondisi Finansial Picker */}
-            <Text style={{ fontSize: width * 0.04, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-              Kondisi Finansial *
-            </Text>
-            <View 
-              style={{
-                width: width * 0.88,
-                height: height * 0.05,
-                backgroundColor: '#fff',
-                borderRadius: 12,
-                marginBottom: 16,
-                opacity: loading ? 0.5 : 1,
-              }}
-            >
-              <Picker
-                selectedValue={kondisiFinansial}
-                onValueChange={(itemValue) => setKondisiFinansial(itemValue)}
-                enabled={!loading}
-                style={{
-                  height: height * 0.05,
-                  width: width * 0.88,
-                }}
-              >
-                <Picker.Item label="Pilih kondisi finansial" value="" color="#999" enabled={false} />
-                <Picker.Item label="Rendah" value="Rendah" />
-                <Picker.Item label="Menengah" value="Menengah" />
-                <Picker.Item label="Tinggi" value="Tinggi" />
-              </Picker>
-            </View>
-
-            {/* Alergi Multi Select */}
-            <Text style={{ fontSize: width * 0.04, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-              Alergi
-            </Text>
-            <TouchableOpacity
-              onPress={() => setShowAlergiModal(true)}
-              disabled={loading}
-              style={{
-                width: width * 0.88,
-                minHeight: height * 0.05,
-                backgroundColor: '#fff',
-                borderRadius: 12,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                marginBottom: 16,
-                justifyContent: 'center',
-                opacity: loading ? 0.5 : 1,
-              }}
-            >
-              <Text style={{ 
-                color: alergi.length > 0 ? '#333' : '#999',
-                fontSize: width * 0.04 
-              }}>
-                {alergi.length > 0 ? alergi.join(', ') : 'Pilih alergi (bisa lebih dari 1)'}
+          {/* Submit Button */}
+          <TouchableOpacity 
+            className={`w-full rounded-2xl justify-center items-center mt-12 py-2 ${
+              loading 
+                ? 'bg-pink-faint-low opacity-70' 
+                : 'bg-pink-medium opacity-100'
+            }`}
+            onPress={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <Text className="text-white text-base sm:text-lg lg:text-xl xl:text-2xl font-poppins-semibold">
+                Simpan
               </Text>
-            </TouchableOpacity>
-
-            {/* Kondisi Medis Multi Select */}
-            <Text style={{ fontSize: width * 0.04, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-              Kondisi Medis
-            </Text>
-            <TouchableOpacity
-              onPress={() => setShowMedisModal(true)}
-              disabled={loading}
-              style={{
-                width: width * 0.88,
-                minHeight: height * 0.05,
-                backgroundColor: '#fff',
-                borderRadius: 12,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                marginBottom: 32,
-                justifyContent: 'center',
-                opacity: loading ? 0.5 : 1,
-              }}
-            >
-              <Text style={{ 
-                color: kondisiMedis.length > 0 ? '#333' : '#999',
-                fontSize: width * 0.04 
-              }}>
-                {kondisiMedis.length > 0 ? kondisiMedis.join(', ') : 'Pilih kondisi medis (bisa lebih dari 1)'}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Submit Button */}
-            <TouchableOpacity 
-              style={{
-                width: width * 0.88,
-                height: height * 0.06,
-                backgroundColor: loading ? '#F99AB6' : '#F789AC',
-                borderRadius: 20,
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignSelf: 'center',
-                opacity: loading ? 0.7 : 1,
-              }}
-              onPress={handleSubmit}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#FFFFFF" size="small" />
-              ) : (
-                <Text 
-                  style={{
-                    color: '#fff',
-                    fontSize: width * 0.045,
-                    fontWeight: 'bold'
-                  }}
-                >
-                  Simpan
-                </Text>
-              )}
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
 
         {/* Alergi Modal */}
         <MultiSelectModal

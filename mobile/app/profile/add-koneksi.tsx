@@ -10,7 +10,7 @@ const pilihanHubunganOptions = [
   {label:'Mertua', value :'Mertua'},
   {label:'Saudara Kandung', value : 'Saudara Kandung'},
   {label:'Teman', value :'Teman'},
-  {label:'Lainnya',value:'Lainya'},
+  {label:'Lainnya',value:'Lainnya'},
 
 ];
 
@@ -72,7 +72,7 @@ export default function AddKoneksi() {
           [
             {
               text: 'OK',
-              onPress: () => router.back()
+              onPress: () => router.push('/profile')
             }
           ]
         );
@@ -93,11 +93,12 @@ export default function AddKoneksi() {
   }
   return (
     <ScrollView className="flex-1 bg-pink-medium" showsVerticalScrollIndicator={false}>
-      {/* Header - diperkecil sama seperti ProfileEdit */}
+
+         <View className='h-12'></View>
       <View className="flex-row items-center justify-between px-4 pt-2 pb-4">
         <TouchableOpacity 
           onPress={handleGoBack}
-          className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
+          className="w-10 h-12 bg-white/20 rounded-full items-center justify-center"
         >
           {/* <Image source={require('../../assets/images/back-arrow.png')} /> */}
             <FontAwesome5 name ='arrow-circle-left' color='white' size={0.08*width}></FontAwesome5>

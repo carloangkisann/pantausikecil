@@ -9,7 +9,6 @@ import { UserActivitySummary, PregnancyData } from '../../../types';
 import React, { useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 
-
 const AktivitasIndex = () => {
   const { user } = useAuth();
   const [todayActivities, setTodayActivities] = useState<UserActivitySummary | null>(null);
@@ -29,7 +28,6 @@ const AktivitasIndex = () => {
         apiService.getUserPregnancies(user.id)
       ]);
 
-  
       const activitiesData = extractApiData(activitiesResponse);
       setTodayActivities(activitiesData);
 
@@ -52,20 +50,20 @@ const AktivitasIndex = () => {
     }
   };
 
-  const calculatePregnancyWeek = (startDate: string): number => {
+  const calculatePregnancyDays = (startDate: string): number => {
     const start = new Date(startDate);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(1, Math.ceil(diffDays / 7));
+    return Math.max(1, diffDays);
   };
 
-
-  const calculateWeeklyTarget = (): string => {
-    if (!todayActivities) return '0 / 7';
-
-    const daysWithActivity = todayActivities.activities.length > 0 ? 1 : 0;
-    return `${daysWithActivity} / 7`;
+  const getTotalCaloriesToday = (): number => {
+    if (!todayActivities?.activities) return 0;
+    
+    return todayActivities.activities.reduce((total, activity) => {
+      return total + (activity.totalCalories || 0);
+    }, 0);
   };
 
   // Handle activity removal
@@ -85,9 +83,6 @@ const AktivitasIndex = () => {
       Alert.alert('Error', 'Gagal menghapus aktivitas');
     }
   };
-
-
-
 
   useFocusEffect(
     React.useCallback(() => {
@@ -117,10 +112,10 @@ const AktivitasIndex = () => {
     );
   }
 
-  const weekNumber = pregnancyData ? calculatePregnancyWeek(pregnancyData.startDate) : 1;
+  const dayNumber = pregnancyData ? calculatePregnancyDays(pregnancyData.startDate) : 1;
   const totalMinutes = todayActivities?.totalDurationMinutes || 0;
   const totalActivities = todayActivities?.activities.length || 0;
-  const targetAchieved = calculateWeeklyTarget();
+  const totalCaloriesToday = getTotalCaloriesToday();
   const width = Dimensions.get('window').width;
 
   return (
@@ -138,11 +133,11 @@ const AktivitasIndex = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {/* Week Info */}
+        {/* Day Info */}
         <View className="px-4 py-6 items-center">
           <View className="bg-pink-medium rounded-full px-6 py-3">
             <Text className="text-white text-base font-semibold font-poppins">
-              Minggu ke-{weekNumber} Kehamilan
+              Hari ke-{dayNumber} Kehamilan
             </Text>
           </View>
         </View>
@@ -170,10 +165,10 @@ const AktivitasIndex = () => {
             
             <View className="bg-white rounded-2xl p-4 flex-1 ml-2 items-center">
               <Text className="text-pink-medium text-2xl font-bold">
-                {targetAchieved}
+                {totalCaloriesToday}
               </Text>
               <Text className="text-pink-medium font-poppins text-sm">
-                Target
+                Kalori
               </Text>
             </View>
           </View>
@@ -187,36 +182,36 @@ const AktivitasIndex = () => {
                 Aktivitas Hari Ini
               </Text>
               <TouchableOpacity onPress={() => router.push('/aktivitas/add')}>
-                {/* <Image 
-                  source={require('../../../assets/images/plus.png')}
-                  className="w-6 h-6"
-                  resizeMode="contain"
-                /> */}
-                  <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
+                <AntDesign name='plus' size={width*0.074} color="white"/>
               </TouchableOpacity>
-            </View>
+            </View> 
 
             {/* Activity List */}
             {todayActivities && todayActivities.activities.length > 0 ? (
               todayActivities.activities.map((activity, index) => (
                 <View key={activity.id} className="flex-row items-center mb-3 relative">
-                  {/* Timeline dot */}
-                  <View className="w-3 h-3 rounded-full mr-4 z-10 bg-pink-medium" />
+    
+                  {/* <View className="w-3 h-3 rounded-full mr-4 z-10 bg-pink-medium" /> */}
                   
                   <View className="bg-pink-low rounded-2xl p-3 flex-1 flex-row items-center justify-between">
                     <View className="flex-1">
                       <Text className="text-black-low text-base font-semibold mb-1 font-poppins">
                         {activity.activityName}
                       </Text>
-                      <Text className="text-black-low text-sm font-poppins">
-                        {activity.durationMinutes} menit
+                      <View className='flex flex-row w-1/2 justify-between '>
+                              <Text className="text-black-low text-sm font-poppins">
+                        {activity.durationMinutes} menit 
                       </Text>
+                                 <Text className="text-black-low text-sm mb-1 font-poppins ">
+                        {activity.totalCalories} Kalori
+                      </Text>
+                      </View>
+                      {/* <Text className="text-black-low text-sm font-poppins">
+                        {activity.durationMinutes} menit 
+                      </Text> */}
                     </View>
                     
                     <View className="items-end">
-                      <Text className="text-black-low text-sm mb-1 font-poppins ">
-                        {activity.totalCalories} Kalori
-                      </Text>
                       <TouchableOpacity 
                         className="bg-pink-medium rounded-full px-3 py-1"
                         onPress={() => handleRemoveActivity(activity.id)}
@@ -241,9 +236,9 @@ const AktivitasIndex = () => {
             )}
 
             {/* Timeline line */}
-            {todayActivities && todayActivities.activities.length > 1 && (
+            {/* {todayActivities && todayActivities.activities.length > 1 && (
               <View className="absolute left-1.5 top-16 bottom-4 w-0.5 bg-white opacity-30" />
-            )}
+            )} */}
           </View>
         </View>
 

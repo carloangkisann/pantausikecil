@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator, SafeAreaView ,Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
 import { UserProfile, UserConnection, PregnancyData } from '../../types';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ProfileIndex() {
   const { user, logout } = useAuth();
@@ -13,9 +14,7 @@ export default function ProfileIndex() {
   const [pregnancies, setPregnancies] = useState<PregnancyData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadProfileData();
-  }, []);
+
 
   const loadProfileData = async () => {
     if (!user?.id) return;
@@ -47,6 +46,11 @@ export default function ProfileIndex() {
     }
   };
 
+   useFocusEffect(
+    useCallback(() => {
+      loadProfileData();
+    }, [user?.id])
+  );
   const calculatePregnancyWeeks = () => {
     if (!pregnancies.length) return 'Belum ada data kehamilan';
     
@@ -126,6 +130,7 @@ export default function ProfileIndex() {
         bounces={false}
       >
         {/* Header */}
+        <View className='h-12'></View>
         <View className="flex-row items-center justify-between px-4 pt-2 pb-4">
           <TouchableOpacity 
             onPress={handleGoBack}

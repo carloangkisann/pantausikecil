@@ -1,13 +1,11 @@
-import  { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image,Platform, TextInput, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Image, Platform, TextInput, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-
 import { useAuth } from '../../context/AuthContext';
-import {apiService} from '../../services/api';
+import { apiService } from '../../services/api';
 import { CreateReminderRequest } from '../../types';
 import { FontAwesome5 } from '@expo/vector-icons';
-
 
 export default function TambahPengingat() {
   const { user } = useAuth();
@@ -24,7 +22,6 @@ export default function TambahPengingat() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
-
 
   const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowDatePicker(false);
@@ -69,10 +66,11 @@ export default function TambahPengingat() {
   };
 
   const formatTimeForAPI = (time: Date): string => {
-    // Format: HH:MM
+    // ✅ Fix: Format HH:MM:SS (backend expects this format)
     const hours = time.getHours().toString().padStart(2, '0');
     const minutes = time.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
+    const seconds = time.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
   };
 
   const validateTimeRange = (): boolean => {
@@ -156,13 +154,13 @@ export default function TambahPengingat() {
       <View className="flex-row items-center justify-between mb-4 mt-2">
         <TouchableOpacity 
           onPress={() => router.back()}
-          className="min-w-10 min-h-10  items-center justify-center"
+          className="min-w-10 min-h-10 items-center justify-center"
         >
-            <FontAwesome5 name ='arrow-circle-left' color='white' size={0.083*width}></FontAwesome5>
+          <FontAwesome5 name='arrow-circle-left' color='white' size={0.083*width} />
         </TouchableOpacity>
         
         <Text className="text-white text-lg font-semibold flex-1 text-center mx-auto font-poppins">
-            Tambah Pengingat
+          Tambah Pengingat
         </Text>
       </View>
         

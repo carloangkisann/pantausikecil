@@ -217,6 +217,7 @@ export default function ProfileEdit() {
   return (
     <ScrollView className="flex-1 bg-pink-medium" showsVerticalScrollIndicator={false}>
       {/* Header - diperkecil */}
+         <View className='h-12'></View>
       <View className="flex-row  items-center justify-between px-4  pb-2">
         <TouchableOpacity 
           onPress={handleGoBack}

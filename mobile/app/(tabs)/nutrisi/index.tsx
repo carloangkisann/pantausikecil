@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, Platform, Image, ActivityIndicator, Alert,Dimensions} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, Platform, Image, ActivityIndicator, Alert,Dimensions, RefreshControl} from 'react-native';
 import { CircularProgress } from 'react-native-circular-progress';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -32,6 +32,8 @@ const NutritionDashboard = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(true);
   const [waterLoading, setWaterLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
   
   // Nutrition data states
   const [nutritionData, setNutritionData] = useState<NutritionItem[]>([]);
@@ -49,6 +51,11 @@ const NutritionDashboard = () => {
       fetchNutritionData();
     }
   }, [user, selectedDate]);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchNutritionData();
+    setRefreshing(false);
+  };
 
   const fetchNutritionData = async () => {
     try {
@@ -140,11 +147,6 @@ const NutritionDashboard = () => {
       
       const waterData = {
         amountMl: 250, 
-        date: selectedDate.toISOString().split('T')[0],
-        time: new Date().toLocaleTimeString('id-ID', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        })
       };
 
       const response = await apiService.addWaterIntake(user!.id, waterData);
@@ -152,7 +154,7 @@ const NutritionDashboard = () => {
       if (response.success) {
         setWaterIntake(prev => ({
           ...prev,
-          current: prev.current + 100
+          current: prev.current + 250
         }));
         // Refresh data untuk update yang akurat
         await fetchNutritionData();
@@ -234,7 +236,15 @@ const NutritionDashboard = () => {
       <Header 
 
       />
-      <ScrollView className='bg-pink-low rounded-t-2xl'>
+      <ScrollView className='bg-pink-low rounded-t-2xl'
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={['#F2789F']}
+          />
+        }
+      >
         
         <View className='flex-row justify-end mt-2 mb-2'>
           <Text className='text-sm p-2 mr-4 text-black-3 font-poppins font-semibold'>
@@ -349,11 +359,8 @@ const NutritionDashboard = () => {
                 <TouchableOpacity 
                   onPress={() => navigateToAddFood(meal.routeParam)}
                 >           
-                  {/* <Image 
-                    source={require('../../../assets/images/plus.png')} 
-                    style={{width: 24, height: 24}} 
-                  /> */}
-                  <AntDesign  name='plus' size={width*0.074} color="white"></AntDesign>
+        
+                  <AntDesign  name='plus' size={width*0.074} color="white"/>
                 </TouchableOpacity>
               </View>
             ))}

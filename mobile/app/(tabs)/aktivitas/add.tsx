@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, Image, ActivityIndicator,Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../../../context/AuthContext';
 import { apiService } from '../../../services/api';
 import { extractApiArrayData } from '../../../utils/apiHelpers';
 import { ActivityItem } from '../../../types';
+import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
 const AddAktivitas = () => {
   const { user } = useAuth();
@@ -26,62 +27,38 @@ const AddAktivitas = () => {
 
   useEffect(() => {
     const fetchAllActivities = async () => {
-      if (!user?.id) return; // Early return if no user
+      if (!user?.id) return; 
       
       try {
         setLoading(true);
-        console.log('Fetching activities...');
+
         
         const response = await apiService.getAllActivities();
         const activitiesData = extractApiArrayData(response);
         
         if (activitiesData.length > 0) {
-          // Filter activities safe for pregnancy
+
           const pregnancySafeActivities = activitiesData.filter(
             activity => activity.level === 'Ringan' || activity.level === 'Sedang'
           );
           
-          // Convert to mock format to maintain existing styling
+
           const mockFormattedActivities = convertToMockFormat(pregnancySafeActivities);
           setAllActivities(mockFormattedActivities);
           setSearchResults(mockFormattedActivities);
           console.log('Activities loaded:', mockFormattedActivities.length);
-        } else {
-          // Fallback to mock data if API returns empty
-          console.log('No activities from API, using fallback data');
-          const mockActivityData = [
-            { id: 1, name: 'Yoga', calories: 180, duration: '30 menit', category: 'flexibility' },
-            { id: 2, name: 'Jalan Santai', calories: 200, duration: '30 menit', category: 'cardio' },
-            { id: 3, name: 'Berenang', calories: 250, duration: '30 menit', category: 'cardio' },
-            { id: 4, name: 'Pilates', calories: 200, duration: '30 menit', category: 'strength' },
-            { id: 5, name: 'Tai Chi', calories: 150, duration: '30 menit', category: 'flexibility' }
-          ];
-          setAllActivities(mockActivityData);
-          setSearchResults(mockActivityData);
-        }
+        } 
       } catch (error) {
         console.error('Error fetching activities:', error);
         
-        // Use mock data as fallback on error
-        console.log('API error, using fallback data');
-        const mockActivityData = [
-          { id: 1, name: 'Yoga', calories: 180, duration: '30 menit', category: 'flexibility' },
-          { id: 2, name: 'Jalan Santai', calories: 200, duration: '30 menit', category: 'cardio' },
-          { id: 3, name: 'Berenang', calories: 250, duration: '30 menit', category: 'cardio' },
-          { id: 4, name: 'Pilates', calories: 200, duration: '30 menit', category: 'strength' },
-          { id: 5, name: 'Tai Chi', calories: 150, duration: '30 menit', category: 'flexibility' }
-        ];
-        setAllActivities(mockActivityData);
-        setSearchResults(mockActivityData);
       } finally {
         setLoading(false);
       }
     };
 
     fetchAllActivities();
-  }, [user?.id]); // ✅ Only depends on user?.id
+  }, [user?.id]); 
 
-  // Filter results based on search query
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setSearchResults(allActivities);
@@ -94,14 +71,14 @@ const AddAktivitas = () => {
   }, [searchQuery, allActivities]);
 
   const handleAddActivity = (activity: any) => {
-    // Navigate to set timer instead of directly saving to DB
+
     router.push({
       pathname: '/aktivitas/set-timer',
       params: {
         activityId: activity.id,
         name: activity.name,
         calories: activity.calories,
-        duration: parseInt(activity.duration) || 30 // Extract minutes from "30 menit" format
+        duration: parseInt(activity.duration) || 30 
       }
     });
   };
@@ -140,7 +117,7 @@ const AddAktivitas = () => {
       </LinearGradient>
     );
   }
-
+  const width = Dimensions.get('window').width;
   return (
     <LinearGradient
       colors={['#FF9EBD', '#F2789F']}
@@ -149,40 +126,31 @@ const AddAktivitas = () => {
       style={{ flex: 1 }}
     >
       {/* Header */}
-      <View className="flex-row items-center px-4 py-6 pt-12">
+      <View className="flex-row items-center px-4 py-6 ">
         <TouchableOpacity onPress={() => router.push('/aktivitas')}>
-          <Image 
-            source={require('../../../assets/images/back-arrow.png')}
-            className="w-6 h-6"
-            resizeMode="contain"
-          />
+          <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
         </TouchableOpacity>
-        <Text className="text-white text-xl font-semibold ml-4">
+        <Text className="text-white text-xl font-semibold ml-4 font-poppins">
           Tambah Aktivitas
         </Text>
       </View>
 
       <ScrollView 
-        className="bg-pink-low"
-        style={{ 
-          flex: 1, 
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-        }}
+        className="bg-pink-low rounded-3xl"
       >
         {/* Search Bar */}
         <View className="px-4 py-6">
-          {/* Instructions */}
+          {/* Instructions
           <View className="bg-blue-100 rounded-2xl p-4 mb-4">
-            <Text className="text-blue-800 text-sm font-semibold mb-1">
+            <Text className="text-blue-800 text-sm font-semibold mb-1 font-poppins">
               💡 Cara Menambah Aktivitas
             </Text>
-            <Text className="text-blue-700 text-xs leading-4">
+            <Text className="text-blue-700 text-xs leading-4 font-poppins">
               Pilih aktivitas → Set timer → Lakukan aktivitas → Otomatis tersimpan
             </Text>
-          </View>
+          </View> */}
           
-          <View className="flex-row items-center bg-white rounded-2xl px-4 py-3">
+          <View className="flex-row items-center bg-white rounded-3xl px-4 py-3">
             <Image 
               source={require('../../../assets/images/search.png')}
               className="w-5 h-5 mr-3"
@@ -219,20 +187,20 @@ const AddAktivitas = () => {
                 onPress={() => handleAddActivity(activity)}
               >
                 {/* Plus Icon */}
-                <View className="mr-4">
+                {/* <View className="mr-4">
                   <Image   
                     source={require('../../../assets/images/plus.png')}
                     className="w-5 h-5"
                     resizeMode="contain"
                   />
-                </View>
-                
+                </View> */}
+                <AntDesign  name='plus' size={width*0.074} color="white" className='mr-2'></AntDesign>
                 {/* Activity Info */}
                 <View className="flex-1">
-                  <Text className="text-white text-lg font-semibold mb-1">
+                  <Text className="text-white text-lg font-semibold mb-1 font-poppins">
                     {activity.name}
                   </Text>
-                  <Text className="text-white text-sm opacity-90">
+                  <Text className="text-white text-sm opacity-90 font-poppins">
                     {activity.calories} Kalori/jam, {activity.duration}
                   </Text>
                 </View>
@@ -244,10 +212,10 @@ const AddAktivitas = () => {
         {/* No Results State */}
         {searchQuery.length > 0 && searchResults.length === 0 && (
           <View className="px-4 py-12 items-center">
-            <Text className="text-gray-500 text-base text-center">
+            <Text className="text-gray-500 text-base text-center font-poppins">
               Tidak ada aktivitas yang ditemukan untuk &quot;{searchQuery}&quot;
             </Text>
-            <Text className="text-gray-400 text-sm text-center mt-2">
+            <Text className="text-gray-400 text-sm text-center mt-2 font-poppins">
               Coba kata kunci lain atau input aktivitas custom
             </Text>
           </View>

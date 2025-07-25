@@ -1,17 +1,28 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { router } from 'expo-router';
-import { Picker } from '@react-native-picker/picker';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
+import { FontAwesome5 } from '@expo/vector-icons';
+import CustomPicker from '../components/CustomPicker';
+const pilihanHubunganOptions = [
+  {label:'Suami', value :'Suami'},
+  {label:'Mertua', value :'Mertua'},
+  {label:'Saudara Kandung', value : 'Saudara Kandung'},
+  {label:'Teman', value :'Teman'},
+  {label:'Lainnya',value:'Lainnya'},
+
+];
 
 export default function AddKoneksi() {
+
+
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
   
   const [formData, setFormData] = useState({
     nama: '',
-    hubungan: 'Suami' as 'Suami' | 'Lainnya',
+    hubungan: 'Suami' as 'Suami' | 'Mertua'|'Saudara Kandung'|'Teman'|'Lainnya',
     email: ''
   });
 
@@ -61,7 +72,7 @@ export default function AddKoneksi() {
           [
             {
               text: 'OK',
-              onPress: () => router.back()
+              onPress: () => router.push('/profile')
             }
           ]
         );
@@ -76,76 +87,87 @@ export default function AddKoneksi() {
     }
   };
 
+  const width = Dimensions.get('window').width;
+  const handlePilihanHubunganChange =(value : string |number) => {
+    setFormData({...formData,hubungan:value as 'Suami' | 'Mertua'|'Saudara Kandung'|'Teman'|'Lainnya'})
+  }
   return (
     <ScrollView className="flex-1 bg-pink-medium" showsVerticalScrollIndicator={false}>
-      {/* Header - diperkecil sama seperti ProfileEdit */}
+
+         <View className='h-12'></View>
       <View className="flex-row items-center justify-between px-4 pt-2 pb-4">
         <TouchableOpacity 
           onPress={handleGoBack}
-          className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
+          className="w-10 h-12 bg-white/20 rounded-full items-center justify-center"
         >
-          <Image source={require('../../assets/images/back-arrow.png')} />
+          {/* <Image source={require('../../assets/images/back-arrow.png')} /> */}
+            <FontAwesome5 name ='arrow-circle-left' color='white' size={0.08*width}></FontAwesome5>
         </TouchableOpacity>
         
-        <Text className="text-white text-lg font-semibold">Tambah Koneksi</Text>
+        <Text className="text-white text-lg font-semibold font-poppins">Tambah Koneksi</Text>
         
         <View className="w-8 h-8" />
       </View>
 
       {/* Detail Koneksi Form - styling konsisten dengan ProfileEdit */}
       <View className="mx-4 mb-3 bg-pink-low rounded-xl p-3 shadow-sm">
-        <Text className="text-black-low text-base font-semibold mb-3 text-center">
+        <Text className="text-black-low text-base font-semibold mb-3 text-center font-poppins">
           Detail Koneksi
         </Text>
         
         <View>
           {/* Nama */}
           <View className="mb-2">
-            <Text className="text-black-low font-medium mb-1 text-xs">
+            <Text className="text-black-low font-medium mb-1 text-xs font-poppins">
               Nama
             </Text>
             <TextInput
               value={formData.nama}
               onChangeText={(text) => setFormData({...formData, nama: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border border-black shadow-sm"
+              className="bg-pink-low rounded-lg px-3 py-1 border border-gray-1 font-poppins text-gray-1 font-poppins  text-xs"
               placeholder="Masukkan nama koneksi"
-              placeholderTextColor="#666666"
-              style={{ fontSize: 12, height: 32, color: '#666666' }}
+
             />
           </View>
 
           {/* Hubungan dengan Ibu */}
           <View className="mb-2">
-            <Text className="text-black-low font-medium mb-1 text-xs">
+            <Text className="text-black-low font-medium mb-1 text-xs font-poppins">
               Hubungan dengan Ibu
             </Text>
-            <View className="bg-pink-low rounded-lg border border-black overflow-hidden shadow-sm" style={{ height: 32 }}>
-              <Picker
-                selectedValue={formData.hubungan}
-                onValueChange={(itemValue) => setFormData({...formData, hubungan: itemValue})}
-                style={{ height: 32, fontSize: 12 }}
-                className='bg-pink-low'
-              >
-                <Picker.Item label="Suami" value="Suami" />
-                <Picker.Item label="Lainnya" value="Lainnya" />
-              </Picker>
-            </View>
+            <CustomPicker
+                 value={formData.hubungan}
+                onValueChange={handlePilihanHubunganChange}
+                items={pilihanHubunganOptions}
+                      placeholder="Pilih kondisi finansial"
+                      disabled={saving}
+                      modalTitle="Kondisi Finansial"
+                      containerStyle={{
+                        height: 32, // Height yang lebih kecil
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                  }}
+                  textStyle={{
+                    fontSize: 12, // Text size yang lebih kecil
+                    fontFamily: 'Poppins',
+                  }}
+                />
           </View>
+
 
           {/* Alamat Email */}
           <View className="mb-2">
-            <Text className="text-black-low font-medium mb-1 text-xs">
+            <Text className="text-black-low font-medium mb-1 text-xs font-poppins">
               Alamat Email
             </Text>
             <TextInput
               value={formData.email}
               onChangeText={(text) => setFormData({...formData, email: text})}
-              className="bg-pink-low rounded-lg px-3 py-1 border border-black shadow-sm"
+              className="bg-pink-low text-gray-1 rounded-lg px-3 py-1 border border-gray-1  text-gray-1 font-poppins  text-xs"
               placeholder="Contoh: example@gmail.com"
-              placeholderTextColor="#666666"
+           
               keyboardType="email-address"
               autoCapitalize="none"
-              style={{ fontSize: 12, height: 32, color: '#666666' }}
             />
           </View>
         </View>
@@ -156,13 +178,12 @@ export default function AddKoneksi() {
         <TouchableOpacity 
           onPress={handleSimpan}
           disabled={saving}
-          className="bg-pink-low rounded-xl py-3 items-center shadow-sm"
-          style={{ opacity: saving ? 0.7 : 1 }}
+          className="bg-pink-low rounded-xl py-3 items-center shadow-sm disabled:opacity-75 " 
         >
           {saving ? (
             <ActivityIndicator size="small" color="#000000" />
           ) : (
-            <Text className="text-black-low font-medium text-base">
+            <Text className="text-black-low font-medium text-base font-poppins font-bold">
               Simpan
             </Text>
           )}

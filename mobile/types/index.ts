@@ -83,14 +83,14 @@ export interface PregnancyData {
 export interface CreateConnectionRequest {
   connectionEmail: string;
   connectionName: string;
-  relationshipType: 'Suami' | 'Lainnya';
+  relationshipType: 'Suami' |'Mertua'|'Saudara Kandung'|'Teman'|'Lainnya';
 }
 
 export interface UserConnection {
   id: number;
   connectionEmail: string;
   connectionName: string;
-  relationshipType: 'Suami' | 'Lainnya';
+  relationshipType: 'Suami' |'Mertua'|'Saudara Kandung'|'Teman'|'Lainnya';
 }
 
 export interface CreateReminderRequest {
@@ -202,8 +202,16 @@ export interface UserActivitySummary {
 }
 
 // ===== EMERGENCY TYPES =====
+export interface LocationData {
+  latitude: number;
+  longitude:number;
+  address?:string;
+  timestamp?:Date;
+}
+
 export interface EmergencyRequest {
   message?: string;
+  location?:LocationData;
 }
 
 // ===== ALIAS FOR COMPATIBILITY =====

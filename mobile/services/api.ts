@@ -300,11 +300,11 @@ class ApiService {
     return this.makeRequest(url);
   }
 
-  async getUpcomingReminders(
-    userId: number
-  ): Promise<ApiResponse<UserReminder[]>> {
-    return this.makeRequest(`/users/${userId}/reminders/upcoming`);
-  }
+    async getUpcomingReminders(
+      userId: number
+    ): Promise<ApiResponse<UserReminder[]>> {
+      return this.makeRequest(`/users/${userId}/reminders/upcoming`);
+    }
 
   async deleteReminder(
     userId: number,
@@ -446,16 +446,14 @@ class ApiService {
   }
 
   async calculateCalories(data: {
-    weight: number;
-    duration: number;
-    activityType: string;
+    caloriesPerHour: number;
+    durationMinutes: number;
   }): Promise<ApiResponse<{ calories: number }>> {
     return this.makeRequest("/activities/calculate-calories", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
-
   // ===== EMERGENCY METHODS =====
   async sendEmergencyNotification(
     userId: number,

@@ -1,10 +1,12 @@
 import  { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator,Dimensions} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import {apiService} from '../../services/api';
 import { PregnancyData } from '../../types';
 import Header from '../components/Header';
+import { FontAwesome5 } from "@expo/vector-icons";
+
 
 export default function PilihKehamilan() {
   const router = useRouter();
@@ -90,33 +92,29 @@ export default function PilihKehamilan() {
     );
   }
 
+  const width = Dimensions.get('window').width;
   return (
-    <View className="flex-1 bg-pink-low">
+    <View className="flex-1 bg-pink-medium">
       <Header />
       
-      <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-6 py-4 bg-pink-low rounded-3xl" showsVerticalScrollIndicator={false}>
     
         <View className="flex-row items-center justify-between mb-4">
           <TouchableOpacity 
             onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-white/20 items-center justify-center mr-1"
-            activeOpacity={0.8}
+            className="min-w-10 min-h-10  items-center justify-center"
           >
-            <Image 
-              source={require('../../assets/images/back-arrow-black.png')}
-              className="w-5 h-5"
-              resizeMode="contain"
-            />
+              <FontAwesome5 name ='arrow-circle-left' color='#656565' size={0.083*width}></FontAwesome5>
           </TouchableOpacity>
           
-          <Text className="text-black-low text-xl font-semibold flex-1 text-center mx-auto">
+          <Text className="text-black-low text-lg font-semibold flex-1 text-center mx-8 pl-1 pb-1 font-poppins">
             Data Kehamilan yang Sudah Ada
           </Text>
         </View>
         
         {kehamilanList.length === 0 ? (
           <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-gray-500 text-center text-lg mb-4">
+            <Text className="text-gray-500 text-center text-lg mb-4 font-poppins">
               Belum ada data kehamilan tersimpan
             </Text>
             <TouchableOpacity
@@ -124,7 +122,7 @@ export default function PilihKehamilan() {
               className="bg-pink-medium rounded-2xl py-3 px-6"
               activeOpacity={0.8}
             >
-              <Text className="text-white text-center font-semibold">
+              <Text className="text-white text-center font-semibold font-poppins">
                 Buat Data Kehamilan Baru
               </Text>
             </TouchableOpacity>
@@ -132,15 +130,15 @@ export default function PilihKehamilan() {
         ) : (
           <>
             {/* Header Table */}
-            <View className="bg-pink-medium rounded-t-xl px-4 py-4 mb-2">
+            <View className="bg-pink-medium rounded-xl px-4 py-4 mb-2">
               <View className="flex-row justify-between">
-                <Text className="text-white font-semibold flex-1 text-center text-base">
+                <Text className="text-white font-light flex-1 text-center text-base font-poppins">
                   Kehamilan
                 </Text>
-                <Text className="text-white font-semibold flex-1 text-center text-base">
+                <Text className="text-white font-light flex-1 text-center text-base font-poppins">
                   Periode Kehamilan
                 </Text>
-                <Text className="text-white font-semibold flex-1 text-center text-base">
+                <Text className="text-white font-light flex-1 text-center text-base font-poppins">
                   Jenis Kelamin
                 </Text>
               </View>
@@ -155,20 +153,20 @@ export default function PilihKehamilan() {
                 activeOpacity={0.8}
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className="font-semibold text-gray-800 flex-1 text-center text-base">
+                  <Text className="font-semibold text-gray-800 flex-1 text-center text-base font-poppins">
                     {kehamilan.pregnancyNumber}
                   </Text>
-                  <Text className="text-gray-600 flex-1 text-center text-sm">
+                  <Text className="text-gray-600 flex-1 text-center text-sm font-poppins">
                     {getPeriodeKehamilan(kehamilan.startDate, kehamilan.endDate)}
                   </Text>
-                  <Text className="text-gray-600 flex-1 text-center text-sm">
+                  <Text className="text-gray-600 flex-1 text-center text-sm font-poppins">
                     {kehamilan.babyGender || 'Tidak Diketahui'}
                   </Text>
                 </View>
                 
                 {/* Additional Info */}
                 <View className="mt-2 pt-2 border-t border-pink-semi-low">
-                  <Text className="text-xs text-gray-500 text-center">
+                  <Text className="text-xs text-gray-500 text-center font-poppins">
                     Dibuat: {formatDate(kehamilan.createdAt?.toString() || '')}
                   </Text>
                 </View>
@@ -178,11 +176,11 @@ export default function PilihKehamilan() {
             {/* Tambah Data Baru Button */}
             <TouchableOpacity
               onPress={() => router.push('/beranda/buat-kehamilan')}
-              className="bg-pink-medium rounded-3xl py-4 px-6 shadow-sm mb-8 mt-4 mx-auto"
-              style={{ width: 350, height: 56 }}
+              className="bg-pink-medium rounded-3xl px-6 shadow-sm pt-3 mx-auto w-7/8 h-12"
+           
               activeOpacity={0.8}
             >
-              <Text className="text-white text-center text-lg font-semibold">
+              <Text className="text-white text-center text-base font-semibold font-poppins">
                 Tambah Data Kehamilan Baru
               </Text>
             </TouchableOpacity>

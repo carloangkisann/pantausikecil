@@ -1,10 +1,11 @@
 import  { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { apiService } from '../../../services/api';
 import { extractApiData } from '../../../utils/apiHelpers';
 import { ActivityItem } from '../../../types';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const DetailRekomendasiAktivitas = () => {
   const params = useLocalSearchParams();
@@ -96,6 +97,7 @@ const DetailRekomendasiAktivitas = () => {
     });
   };
 
+  const width = Dimensions.get('window').width;
   return (
     <LinearGradient
       colors={['#FF9EBD', '#F2789F']}
@@ -104,15 +106,17 @@ const DetailRekomendasiAktivitas = () => {
       style={{ flex: 1 }}
     >
       {/* Header */}
-      <View className="flex-row items-center px-4 py-6 pt-12">
+      <View className="flex-row items-center px-4 py-6 ">
         <TouchableOpacity onPress={() => router.back()}>
-          <Image 
+          {/* <Image 
             source={require('../../../assets/images/back-arrow.png')}
             className="w-6 h-6"
             resizeMode="contain"
-          />
+          /> */}
+
+          <FontAwesome5 name ='arrow-circle-left' color='white' size={0.1*width}></FontAwesome5>
         </TouchableOpacity>
-        <Text className="text-white text-xl font-semibold ml-4">
+        <Text className="text-white text-xl font-semibold ml-4 font-poppins">
           {displayData.activityName}
         </Text>
       </View>
@@ -131,10 +135,10 @@ const DetailRekomendasiAktivitas = () => {
 
           {/* Description Section */}
           <View className="bg-pink-medium rounded-2xl p-4 mb-4">
-            <Text className="text-white text-lg font-semibold mb-2">
+            <Text className="text-white text-lg font-semibold mb-2 font-poppins">
               Deskripsi
             </Text>
-            <Text className="text-white text-sm opacity-90 leading-5">
+            <Text className="text-white text-sm opacity-90 leading-5 font-poppins">
               {displayData.description || 
                 'Aktivitas ini baik untuk kesehatan ibu hamil. Lakukan dengan durasi yang sesuai dan jangan memaksakan diri.'
               }
@@ -143,7 +147,7 @@ const DetailRekomendasiAktivitas = () => {
 
           {/* Calories Info */}
           <View className="bg-pink-medium rounded-2xl p-4 mb-4">
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-white text-lg font-semibold font-poppins">
               Kalori: {displayData.caloriesPerHour} kal/jam
             </Text>
           </View>
@@ -156,11 +160,11 @@ const DetailRekomendasiAktivitas = () => {
                 className="w-5 h-5 mr-2"
                 resizeMode="contain"
               />
-              <Text className="text-white text-lg font-semibold">
+              <Text className="text-white text-lg font-semibold font-poppins">
                 Tips
               </Text>
             </View>
-            <Text className="text-white text-sm opacity-90 leading-5">
+            <Text className="text-white text-sm opacity-90 leading-5 font-poppins">
               {displayData.tips || 
                 'Lakukan dengan perlahan dan dengarkan tubuh Anda. Hentikan jika merasa tidak nyaman.'
               }
@@ -172,7 +176,7 @@ const DetailRekomendasiAktivitas = () => {
             className="bg-pink-medium rounded-2xl w-1/2 mx-auto py-4 px-6 mb-6"
             onPress={handleStartActivity}
           >
-            <Text className="text-white text-center text-lg font-semibold">
+            <Text className="text-white text-center text-lg font-semibold font-poppins">
               Lakukan
             </Text>
           </TouchableOpacity>

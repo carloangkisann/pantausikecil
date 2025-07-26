@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/badge/Status-Development-orange?style=flat-square" alt="Status"/>
     <img src="https://img.shields.io/badge/React_Native-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React Native"/>
     <img src="https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi" alt="FastAPI"/>
-    <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
+    <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white" alt="SupaBase"/>
   </p>
   <img src="docs/img/PantauSiKecil.png" alt="PantauSiKecil" width="200"/>
 </div>
@@ -79,7 +79,7 @@ Dengan pendekatan berbasis data dan teknologi machine learning, PantauSiKecil be
       <td align="center">
         <img src="https://img.shields.io/badge/Database-FF9800?style=for-the-badge" alt="Database"/>
       </td>
-      <td><strong>PostgreSQL</strong><br>Redis</td>
+      <td><strong>SupaBase</strong>
       <td>Data storage dan caching untuk performa optimal</td>
     </tr>
     <tr>

@@ -146,21 +146,23 @@ const RekomendasiAktivitas = () => {
                   onPress={() => handleActivityPress(activity)}
                 >
                   {/* Activity Image */}
-                  <View className="mr-4">
-                    <Image 
+                  <View className="mr-4 ">
+                    {/* <Image 
                       source={
                         activity.thumbnailUrl 
                           ? { uri: activity.thumbnailUrl }
                           : require('../../../assets/images/olahraga-contoh.png')
                       }
                       className="w-16 h-16 rounded-xl"
-                      resizeMode="cover"
-                    />
+                      resizeMode="cover
+                      "
+                    /> */}
+                    <Image source ={require('../../../assets/images/default-olahraga.png')}  resizeMode='cover'  style={{width:100,height:75,borderRadius:10}}></Image>
                   </View>
                   
                   {/* Activity Info */}
                   <View className="flex-1">
-                    <Text className="text-white text-base font-semibold mb-2 font-poppins">
+                    <Text className="text-white text-base font-semibold mb-2  ml-6 font-poppins">
                       {activity.activityName}
                     </Text>
                     
@@ -184,7 +186,7 @@ const RekomendasiAktivitas = () => {
                       </Text>
                     </View>
                     
-                    <View className="bg-white rounded-full px-3 py-1 self-start flex-row items-center">
+                    <View className="bg-white rounded-full px-3 py-1 self-start ml-6 flex-row items-center">
                       <Image 
                         source={require('../../../assets/images/chart.png')}
                         className="w-3 h-3"

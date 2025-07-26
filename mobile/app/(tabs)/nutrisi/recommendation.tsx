@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions , Image} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
@@ -166,7 +166,13 @@ const FoodRecommendation = () => {
                 >
                   {/* Food Image Placeholder */}
                   <View className="w-full h-24 bg-pink-semi-low rounded-xl mb-3 items-center justify-center overflow-hidden">
-                    <Text className="text-4xl">🍲</Text>
+                    {/* <Text className="text-4xl">🍲</Text> */}
+                      <Image 
+                          source={require('../../../assets/images/default-food.png')} 
+                          className="w-full h-full"
+                          resizeMode="cover"
+                        />
+
                   </View>
 
                   {/* Food Info */}

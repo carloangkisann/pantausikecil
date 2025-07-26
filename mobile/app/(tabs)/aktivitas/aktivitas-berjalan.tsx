@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, AppState, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, AppState, Dimensions, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../../context/AuthContext';
@@ -306,7 +306,7 @@ const AktivitasBerjalan = () => {
         </Text>
       </View>
 
-      <View 
+      <ScrollView 
         className="bg-pink-low"
         style={{ 
           flex: 1, 
@@ -386,7 +386,7 @@ const AktivitasBerjalan = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </LinearGradient>
   );
 };

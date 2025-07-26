@@ -179,6 +179,7 @@ const FoodDetail = () => {
           <View className="w-7/8 h-48 bg-pink-medium rounded-2xl overflow-hidden items-center justify-center mx-4">
             <Text className="text-8xl">🥣</Text>
           </View>
+          {/* <Image source= {require('//z')}></Image> */}
         </View>
 
         {/* Description Section */}

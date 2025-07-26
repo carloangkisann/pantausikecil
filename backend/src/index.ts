@@ -29,7 +29,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? ["https://your-frontend-domain.com"] // Replace with your actual frontend domain(s)
+        ? ["https://pantausikecil-ai-service.up.railway.app"] 
         : [
             "http://localhost:3000",
             "http://localhost:3001",

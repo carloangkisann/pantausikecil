@@ -13,6 +13,7 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   
   const { register, loading } = useAuth();
 
@@ -39,6 +40,12 @@ export default function RegisterScreen() {
       return;
     }
 
+    // Validasi persetujuan
+    if (!agreeToTerms) {
+      Alert.alert('Error', 'Mohon setujui syarat dan ketentuan penggunaan data');
+      return;
+    }
+
     try {
       const result = await register(email, password);
       
@@ -53,6 +60,46 @@ export default function RegisterScreen() {
       Alert.alert('Error', 'Terjadi kesalahan saat registrasi');
     }
   };
+
+  const handleTermsPress = () => {
+    Alert.alert(
+      'Syarat dan Ketentuan',
+      'Dengan mendaftar, Anda menyetujui penggunaan data pribadi sesuai dengan kebijakan privasi kami untuk memberikan layanan terbaik.',
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handlePrivacyPress = () => {
+    Alert.alert(
+      'Kebijakan Privasi',
+      `Tanggal berlaku: 26 Juli 2025
+
+Aplikasi PantauSiKecil berkomitmen untuk melindungi privasi Anda. Kebijakan privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, menyimpan, dan mengungkapkan informasi Anda saat Anda menggunakan layanan kami.
+
+1. Pengumpulan dan Penggunaan Informasi
+
+1.1 Informasi Pribadi
+Kami dapat mengumpulkan informasi pribadi yang Anda berikan secara sukarela, seperti nama lengkap, alamat email, serta informasi kehamilan dan kesehatan yang Anda isi secara manual. Informasi ini digunakan semata-mata untuk menyediakan layanan aplikasi sesuai kebutuhan Anda, menyesuaikan fitur berbasis AI sesuai kondisi pengguna, serta meningkatkan kualitas dan pengalaman pengguna secara keseluruhan.
+
+1.2 Informasi Perangkat
+Kami juga dapat mengumpulkan informasi tertentu secara otomatis dari perangkat Anda, termasuk namun tidak terbatas pada jenis dan model perangkat, versi sistem operasi, alamat IP dan ID perangkat unik, dan informasi jaringan. Informasi ini digunakan untuk memastikan kinerja aplikasi yang optimal, serta meningkatkan keamanan dan stabilitas sistem.
+
+2. Berbagi dan Pengungkapan Informasi
+
+2.1 Penyedia Layanan Pihak Ketiga
+Kami dapat bekerja sama dengan pihak ketiga terpercaya untuk membantu dalam pengembangan, pengoperasian, atau analisis aplikasi. Pihak ketiga ini dapat mengakses informasi pribadi Anda hanya untuk tujuan yang ditentukan dan wajib menjaga kerahasiaannya sesuai dengan perjanjian kerahasiaan (NDA) dan peraturan perlindungan data yang berlaku.
+
+2.2 Kewajiban Hukum
+Kami dapat mengungkapkan informasi pribadi Anda jika diminta oleh hukum atau sebagai bagian dari proses hukum yang sah, seperti perintah pengadilan atau permintaan resmi dari penegak hukum.
+
+3. Keamanan Data
+
+Kami menerapkan langkah-langkah keamanan teknis dan administratif yang sesuai standar industri untuk melindungi informasi Anda dari akses, penggunaan, atau pengungkapan yang tidak sah.
+
+Namun, perlu diingat bahwa tidak ada metode transmisi data melalui internet atau penyimpanan elektronik yang sepenuhnya aman. Oleh karena itu, meskipun kami berupaya maksimal, kami tidak dapat menjamin keamanan absolut dari data Anda.`,
+      [{ text: 'OK' }]
+    )
+  }
 
   return (
     <>
@@ -76,7 +123,6 @@ export default function RegisterScreen() {
           </Text>
         </View>
 
-
         {/* Register Card */}
         <View 
           className="bg-pink-low rounded-t-2xl w-full h-full p-4 " 
@@ -85,7 +131,6 @@ export default function RegisterScreen() {
             Registrasi
           </Text>
 
-   
           {/* Email Input */}
           <Text className="text-black font-semibold font-poppins text-sm" >
             Email
@@ -119,12 +164,7 @@ export default function RegisterScreen() {
               onPress={() => setShowPassword(!showPassword)}
               disabled={loading}
             >
-              {/* <Image 
-                source={require('../../assets/images/eye.png')} 
-                className="w-6 h-6"
-                resizeMode="contain"
-              /> */}
-                <Feather name={showPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
+              <Feather name={showPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
             </TouchableOpacity>
           </View>
 
@@ -147,26 +187,68 @@ export default function RegisterScreen() {
               onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               disabled={loading}
             >
-              {/* <Image 
-                source={require('../../assets/images/eye.png')} 
-                className="w-6 h-6"
-                resizeMode="contain"
-              /> */}
               <Feather name={showConfirmPassword?'eye':'eye-off'} size = {width*0.04}></Feather>
             </TouchableOpacity>
           </View>
 
+          {/* Agreement Checkbox */}
+          <View className="flex-row items-start mt-4 px-1">
+            <TouchableOpacity 
+              onPress={() => setAgreeToTerms(!agreeToTerms)}
+              disabled={loading}
+              className="mr-3 mt-1"
+            >
+              <View 
+                className={`w-5 h-5 rounded border-2 items-center justify-center ${
+                  agreeToTerms 
+                    ? 'bg-pink-medium border-pink-medium' 
+                    : 'bg-white border-gray-300'
+                }`}
+              >
+                {agreeToTerms && (
+                  <Feather name="check" size={12} color="white" />
+                )}
+              </View>
+            </TouchableOpacity>
+            
+            <View className="flex-1">
+              <Text className="text-gray-600 font-poppins text-xs leading-4">
+                Saya menyetujui{' '}
+                <Text 
+                  className="text-[#F789AC] font-semibold"
+                  onPress={handleTermsPress}
+                >
+                  syarat dan ketentuan
+                </Text>
+                {' '}serta{' '}
+                <Text 
+                  className="text-[#F789AC] font-semibold"
+                  onPress={handlePrivacyPress}
+                >
+                  kebijakan privasi
+                </Text>
+                {' '}penggunaan data pribadi untuk memberikan layanan yang optimal.
+              </Text>
+            </View>
+          </View>
+
           {/* Register Button */}
           <TouchableOpacity 
-            className="bg-pink-medium rounded-2xl justify-center items-center mt-12 py-2"
+            className={`rounded-2xl justify-center items-center mt-8 py-2 ${
+              agreeToTerms && !loading 
+                ? 'bg-pink-medium' 
+                : 'bg-gray-300'
+            }`}
             onPress={handleRegister}
-            disabled={loading}
+            disabled={loading || !agreeToTerms}
           >
             {loading ? (
               <ActivityIndicator color="#FFFFFF" size="small" />
             ) : (
               <Text 
-                className="text-white font-semibold text-lg font-poppins"
+                className={`font-semibold text-lg font-poppins ${
+                  agreeToTerms ? 'text-white' : 'text-gray-500'
+                }`}
               >
                 Registrasi
               </Text>

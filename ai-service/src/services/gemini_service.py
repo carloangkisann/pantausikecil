@@ -109,6 +109,7 @@ def food_recommendation(
         - PASTIKAN REKOMENDASI MAKANAN MEMPERHATIKAN ALERGI DAN KONDISI IBU HAMIL SESUAI PROFIL
         OUTPUT harus valid JSON tanpa komentar atau teks tambahan.
         - BUAT MAKANAN PADA "menu" berisi objek makanan sesuai dengan database food
+        - Berikan alasan dengan gaya bicara seperti perbincangan umum
         """
 
     response = model.generate_content(system_context)

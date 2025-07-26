@@ -78,15 +78,15 @@ def food_recommendation(
         {{
         "recommendations": {{
             "breakfast": {{
-                "menu": [ "id makanan 1", "id makanan 2", ... ],
+                "menu": [ {{"id" : 1 , "nama" : ... }}, {{"id" : 2 , "nama" : ... }}, ... ],
                 "alasan": "alasan mengapa menu ini cocok untuk sarapan ibu hamil"
             }},
             "lunch": {{
-                "menu": [ "id makanan 1", "id makanan 2", ... ],
+                "menu": [ {{"id" : 1 , "nama" : ... }}, {{"id" : 2 , "nama" : ... }}, ... ],
                 "alasan": "alasan mengapa menu ini cocok untuk makan siang ibu hamil"
             }},
             "dinner": {{
-                "menu": [ "id makanan 1", "id makanan 2", ... ],
+                "menu": [ {{"id" : 1 , "nama" : ... }}, {{"id" : 2 , "nama" : ... }}, ... ],
                 "alasan": "alasan mengapa menu ini cocok untuk makan malam ibu hamil"
             }}
         }},
@@ -108,7 +108,8 @@ def food_recommendation(
         -  JANGAN CANTUMKAN ID PADA ALASAN
         - PASTIKAN REKOMENDASI MAKANAN MEMPERHATIKAN ALERGI DAN KONDISI IBU HAMIL SESUAI PROFIL
         OUTPUT harus valid JSON tanpa komentar atau teks tambahan.
-
+        - BUAT MAKANAN PADA "menu" berisi objek makanan sesuai dengan database food
+        - Berikan alasan dengan gaya bicara seperti perbincangan umum
         """
 
     response = model.generate_content(system_context)

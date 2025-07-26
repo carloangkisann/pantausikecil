@@ -1,3 +1,4 @@
+// Fixed routes/ai.ts
 import { Router } from "express";
 import { AIController } from "../controllers/aiController.js";
 import { authenticateToken } from "../middleware/auth.js";
@@ -19,5 +20,9 @@ router.post(
   ),
   AIController.chatWithBot
 );
+
+// Fixed endpoint URL - should match the FastAPI endpoint
+router.get("/food-recommendation", AIController.foodRecommendation);
+router.get("/activity-recommendation", AIController.activityRecommendation);
 
 export default router;

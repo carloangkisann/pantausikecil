@@ -21,7 +21,7 @@ const RekomendasiAktivitas = () => {
       setLoading(true);
       
       // Try to get user-specific recommendations first
-      const recommendedResponse = await apiService.getAllActivities(); 
+      const recommendedResponse = await apiService.getRecommendedActivities(user.id); 
       const recommendedData = extractApiArrayData(recommendedResponse);
       
       if (recommendedData.length > 0) {

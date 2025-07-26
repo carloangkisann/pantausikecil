@@ -409,7 +409,7 @@ class ApiService {
   async getRecommendedActivities(
     userId: number
   ): Promise<ApiResponse<ActivityItem[]>> {
-    return this.makeRequest(`/users/${userId}/activities/recommended`);
+    return this.makeRequest(`/ai/activity-recommendation`);
   }
 
   async getActivityHistory(userId: number): Promise<ApiResponse<any[]>> {
